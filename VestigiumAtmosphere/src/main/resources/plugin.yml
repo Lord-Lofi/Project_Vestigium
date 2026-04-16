@@ -1,0 +1,9 @@
+name: VestigiumAtmosphere
+version: '${project.version}'
+main: com.vestigium.vestigiumatmosphere.VestigiumAtmosphere
+api-version: '1.21'
+description: All atmospheric particle and sound events across all dimensions
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

@@ -1,0 +1,10 @@
+name: VestigiumLib
+version: '${project.version}'
+main: com.vestigium.lib.VestigiumLib
+api-version: '1.21'
+description: Core library and APIs for the Project Vestigium plugin suite
+authors: [ Lord-Lofi ]
+load: STARTUP
+softdepend:
+  - WorldGuard
+  - GriefPrevention

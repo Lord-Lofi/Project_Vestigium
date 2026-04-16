@@ -1,0 +1,9 @@
+name: VestigiumEconomy
+version: '${project.version}'
+main: com.vestigium.vestigiumeconomy.VestigiumEconomy
+api-version: '1.21'
+description: Crafting depth systems, special items, market systems
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

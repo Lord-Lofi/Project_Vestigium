@@ -1,0 +1,9 @@
+name: VestigiumOcean
+version: '${project.version}'
+main: com.vestigium.vestigiumocean.VestigiumOcean
+api-version: '1.21'
+description: Drowned civilization structures, ocean atmosphere, Leviathan, tidal events
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

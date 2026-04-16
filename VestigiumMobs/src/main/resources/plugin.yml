@@ -1,0 +1,9 @@
+name: VestigiumMobs
+version: '${project.version}'
+main: com.vestigium.vestigiummobs.VestigiumMobs
+api-version: '1.21'
+description: Custom mob definitions, rare variants, territorial wildlife, minion system
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
