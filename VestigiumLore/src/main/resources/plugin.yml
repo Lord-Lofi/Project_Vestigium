@@ -1,0 +1,9 @@
+name: VestigiumLore
+version: '${project.version}'
+main: com.vestigium.vestigiumlore.VestigiumLore
+api-version: '1.21'
+description: Lore delivery systems, cipher items, Final Cartographer quest chain
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

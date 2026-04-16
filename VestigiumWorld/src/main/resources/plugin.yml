@@ -1,0 +1,9 @@
+name: VestigiumWorld
+version: '${project.version}'
+main: com.vestigium.vestigiumworld.VestigiumWorld
+api-version: '1.21'
+description: Cataclysmic events, living world behaviors, dynamic weather, ecological memory
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
