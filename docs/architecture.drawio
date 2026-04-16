@@ -1,0 +1,242 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="Project Vestigium Architecture" id="vestigium-arch">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITLE -->
+        <mxCell id="title" value="Project Vestigium — Plugin Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+          <mxGeometry x="427" y="20" width="800" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="leg-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-core" value="Core Library" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="95" width="100" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-phase2" value="Phase 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="150" y="95" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-phase3" value="Phase 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="95" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-phase4" value="Phase 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="330" y="95" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-phase5" value="Phase 5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="420" y="95" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-phase6" value="Phase 6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;strokeColor=#BD7000;fontColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="95" width="80" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 1: VestigiumLib (center top) -->
+        <!-- ============================================================ -->
+        <mxCell id="lib" value="&lt;b&gt;VestigiumLib&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Phase 1 — Build First&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="677" y="160" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Internal APIs box -->
+        <mxCell id="lib-apis" value="&lt;b&gt;Core APIs&lt;/b&gt;&lt;br/&gt;ProtectionAPI · OmenAPI · ReputationAPI&lt;br/&gt;SeasonAPI · LoreRegistry · FactionRegistry&lt;br/&gt;EventBus · ParticleManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5fff5;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="627" y="240" width="400" height="66" as="geometry" />
+        </mxCell>
+        <!-- Lib to APIs connector (visual grouping only) -->
+        <mxCell id="e-lib-apis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;dashed=1;" edge="1" source="lib" target="lib-apis" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PDC Registry box -->
+        <mxCell id="lib-pdc" value="&lt;b&gt;PDC Key Registry&lt;/b&gt;&lt;br/&gt;vestigium: namespace · typed helpers&lt;br/&gt;NamespacedKey wrappers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5fff5;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="627" y="320" width="400" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e-apis-pdc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;dashed=1;" edge="1" source="lib-apis" target="lib-pdc" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- TPS Monitor -->
+        <mxCell id="lib-tps" value="&lt;b&gt;TPS Monitor&lt;/b&gt;&lt;br/&gt;feeds ParticleManager auto-scaling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5fff5;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="627" y="384" width="400" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pdc-tps" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;dashed=1;" edge="1" source="lib-pdc" target="lib-tps" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 2: World + NPC -->
+        <!-- ============================================================ -->
+        <mxCell id="ph2-label" value="Phase 2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=10;fontColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="455" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="world" value="&lt;b&gt;VestigiumWorld&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Cataclysms · Living World · Weather&lt;br/&gt;Ecological Memory · Omen Escalation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="450" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="npc" value="&lt;b&gt;VestigiumNPC&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Villager Memory · Traveling NPCs&lt;br/&gt;Faction NPCs · Doppelganger&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1234" y="450" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lib → World, Lib → NPC -->
+        <mxCell id="e-lib-world" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6c8ebf;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="lib" target="world" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-npc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6c8ebf;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="lib" target="npc" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 3: Lore + Mobs + Structures -->
+        <!-- ============================================================ -->
+        <mxCell id="ph3-label" value="Phase 3" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=10;fontColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="570" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lore" value="&lt;b&gt;VestigiumLore&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Tablets · Ciphers · Terminals&lt;br/&gt;Final Cartographer Chain&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="127" y="570" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mobs" value="&lt;b&gt;VestigiumMobs&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Custom Mobs · Rare Variants&lt;br/&gt;Territorial Wildlife · Minions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="727" y="570" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="structures" value="&lt;b&gt;VestigiumStructures&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Worldgen Injection · Dungeons&lt;br/&gt;Wandering Dungeons&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1327" y="570" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lib → Phase 3 -->
+        <mxCell id="e-lib-lore" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="lib" target="lore" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-mobs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="lib" target="mobs" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-structures" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="lib" target="structures" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 4: Atmosphere + Quests + Player -->
+        <!-- ============================================================ -->
+        <mxCell id="ph4-label" value="Phase 4" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=10;fontColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40" y="690" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="atmosphere" value="&lt;b&gt;VestigiumAtmosphere&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;All Particles &amp; Sounds&lt;br/&gt;All Dimensions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="690" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="quests" value="&lt;b&gt;VestigiumQuests&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Bounty Boards · Quest Engine&lt;br/&gt;Escort Missions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="727" y="690" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="player" value="&lt;b&gt;VestigiumPlayer&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Achievements · Fog of War&lt;br/&gt;Titles · Notoriety · Heraldry&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1254" y="690" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lib → Phase 4 -->
+        <mxCell id="e-lib-atm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="lib" target="atmosphere" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-quests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="lib" target="quests" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-player" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="lib" target="player" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 5: Economy + Caves + Ocean + Nether -->
+        <!-- ============================================================ -->
+        <mxCell id="ph5-label" value="Phase 5" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=10;fontColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="810" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="economy" value="&lt;b&gt;VestigiumEconomy&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Runic Crafting · Ritual Crafting&lt;br/&gt;Markets · Black Market&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="810" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="caves" value="&lt;b&gt;VestigiumCaves&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Underground Traders&lt;br/&gt;Ancient City Systems&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="430" y="810" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ocean" value="&lt;b&gt;VestigiumOcean&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Drowned Civilization (4 Tiers)&lt;br/&gt;Leviathan · Tidal Events&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="810" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="nether" value="&lt;b&gt;VestigiumNether&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;Antecedent Lore · Soul Roads&lt;br/&gt;Faction Quests · Breach Point&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="810" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lib → Phase 5 -->
+        <mxCell id="e-lib-eco" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="lib" target="economy" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-caves" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="lib" target="caves" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-ocean" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="lib" target="ocean" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-lib-nether" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="lib" target="nether" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 6: End -->
+        <!-- ============================================================ -->
+        <mxCell id="ph6-label" value="Phase 6" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=10;fontColor=#BD7000;" vertex="1" parent="1">
+          <mxGeometry x="40" y="930" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="end" value="&lt;b&gt;VestigiumEnd&lt;/b&gt;&lt;br/&gt;&lt;font style='font-size:9px'&gt;End Biomes · Pre-Shattering Lore&lt;br/&gt;End Civilization · The Door (Lock 3)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;strokeColor=#BD7000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="627" y="930" width="400" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lib → End -->
+        <mxCell id="e-lib-end" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BD7000;strokeWidth=2;" edge="1" source="lib" target="end" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- EVENTBUS NOTE -->
+        <!-- ============================================================ -->
+        <mxCell id="eventbus-note" value="&lt;b&gt;All cross-plugin communication via EventBus only.&lt;/b&gt;&lt;br/&gt;No plugin may directly depend on another plugin — only on VestigiumLib." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="627" y="1010" width="400" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- KEY CROSS-PLUGIN EVENTBUS FLOWS (dashed, grey) -->
+        <!-- ============================================================ -->
+        <!-- World fires OmenThresholdEvent → Atmosphere reads via EventBus -->
+        <mxCell id="e-world-atm" value="OmenThresholdEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="world" target="atmosphere" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Mobs fires WorldBossSpawnEvent → Quests reads -->
+        <mxCell id="e-mobs-quests" value="WorldBossSpawnEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;" edge="1" source="mobs" target="quests" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- NPC fires PlayerReputationChangeEvent → Player reads -->
+        <mxCell id="e-npc-player" value="ReputationChangeEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;" edge="1" source="npc" target="player" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Structures fires lore placement → Lore reads -->
+        <mxCell id="e-struct-lore" value="StructurePlaceEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;" edge="1" source="structures" target="lore" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- World fires SeasonChangeEvent → Ocean reads -->
+        <mxCell id="e-world-ocean" value="SeasonChangeEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;" edge="1" source="world" target="ocean" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- World fires CataclysmEvent → Atmosphere reads -->
+        <mxCell id="e-world-atm2" value="CataclysmStartEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#999999;fontSize=8;" edge="1" source="world" target="atmosphere" parent="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="640" /><mxPoint x="180" y="640" /><mxPoint x="180" y="720" /></Array></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

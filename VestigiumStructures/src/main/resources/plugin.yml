@@ -1,0 +1,9 @@
+name: VestigiumStructures
+version: '${project.version}'
+main: com.vestigium.vestigiumstructures.VestigiumStructures
+api-version: '1.21'
+description: Custom structure injection at worldgen and post-gen, dungeon management
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
