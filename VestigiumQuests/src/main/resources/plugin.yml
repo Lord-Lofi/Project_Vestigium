@@ -1,0 +1,9 @@
+name: VestigiumQuests
+version: '${project.version}'
+main: com.vestigium.vestigiumquests.VestigiumQuests
+api-version: '1.21'
+description: Bounty board system, layered multi-step quest engine, escort missions
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

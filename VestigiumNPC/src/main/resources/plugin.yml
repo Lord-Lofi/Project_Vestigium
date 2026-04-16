@@ -1,0 +1,9 @@
+name: VestigiumNPC
+version: '${project.version}'
+main: com.vestigium.vestigiumnpc.VestigiumNPC
+api-version: '1.21'
+description: Villager memory, traveling NPCs, faction NPCs, hostile special NPCs
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
