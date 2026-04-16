@@ -1,0 +1,9 @@
+name: VestigiumCaves
+version: '${project.version}'
+main: com.vestigium.vestigiumcaves.VestigiumCaves
+api-version: '1.21'
+description: Cave-specific interactive content, underground traders, ancient city systems
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

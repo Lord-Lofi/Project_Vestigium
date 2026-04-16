@@ -1,0 +1,9 @@
+name: VestigiumPlayer
+version: '${project.version}'
+main: com.vestigium.vestigiumplayer.VestigiumPlayer
+api-version: '1.21'
+description: Achievement tree, fog of war, reputation titles, notoriety, utility items
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib

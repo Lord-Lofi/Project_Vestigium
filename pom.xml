@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vestigium</groupId>
+    <artifactId>vestigium-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Project Vestigium</name>
+    <description>Minecraft Paper/Spigot 1.21+ server enhancement suite</description>
+
+    <modules>
+        <!-- Phase 1: Core Library -->
+        <module>VestigiumLib</module>
+        <!-- Phase 2 -->
+        <module>VestigiumWorld</module>
+        <module>VestigiumNPC</module>
+        <!-- Phase 3 -->
+        <module>VestigiumLore</module>
+        <module>VestigiumMobs</module>
+        <module>VestigiumStructures</module>
+        <!-- Phase 4 -->
+        <module>VestigiumAtmosphere</module>
+        <module>VestigiumQuests</module>
+        <module>VestigiumPlayer</module>
+        <!-- Phase 5 -->
+        <module>VestigiumEconomy</module>
+        <module>VestigiumCaves</module>
+        <module>VestigiumOcean</module>
+        <module>VestigiumNether</module>
+        <!-- Phase 6 -->
+        <module>VestigiumEnd</module>
+    </modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <vestigium.version>1.0.0-SNAPSHOT</vestigium.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Paper API -->
+            <dependency>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>${paper.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- VestigiumLib (all plugins depend on this) -->
+            <dependency>
+                <groupId>com.vestigium</groupId>
+                <artifactId>VestigiumLib</artifactId>
+                <version>${vestigium.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
