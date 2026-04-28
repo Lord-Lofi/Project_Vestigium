@@ -140,7 +140,7 @@ public class WeatherEventManager {
         List<Player> players = world.getPlayers();
         switch (eventType) {
             case "ACID_RAIN" -> players.stream()
-                    .filter(p -> !p.getLocation().getBlock().getLightFromSky() == false)
+                    .filter(p -> p.getLocation().getBlock().getLightFromSky() > 0)
                     .filter(this::isExposedToSky)
                     .forEach(p -> p.damage(0.5));
             case "SCULK_STORM" -> players.stream()

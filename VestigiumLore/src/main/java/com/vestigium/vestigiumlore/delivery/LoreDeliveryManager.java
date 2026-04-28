@@ -92,7 +92,7 @@ public class LoreDeliveryManager implements Listener {
     }
 
     private void handleTerminalInteraction(Player player, Block lectern) {
-        String structureId = lectern.getPersistentDataContainer()
+        String structureId = ((org.bukkit.block.Lectern) lectern.getState()).getPersistentDataContainer()
                 .get(TERMINAL_STRUCTURE_ID, PersistentDataType.STRING);
         if (structureId == null) return;
 

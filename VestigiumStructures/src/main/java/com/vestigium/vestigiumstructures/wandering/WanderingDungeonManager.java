@@ -2,6 +2,7 @@ package com.vestigium.vestigiumstructures.wandering;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.event.SeasonChangeEvent;
+import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumstructures.VestigiumStructures;
 import com.vestigium.vestigiumstructures.registry.StructureDefinition;
 import org.bukkit.Location;
@@ -101,8 +102,7 @@ public class WanderingDungeonManager {
         if (VestigiumLib.getProtectionAPI().isProtected(loc)) return;
 
         Block anchor = world.getBlockAt(x, y, z);
-        anchor.getPersistentDataContainer()
-                .set(STRUCTURE_ID_KEY, PersistentDataType.STRING, def.id());
+        BlockStructureTag.set(anchor, def.id());
 
         activeEntries.put(def.id(), new WanderingEntry(world.getName(), x, y, z));
         broadcast(world, "§6A wandering structure has arrived: §e" + def.id()
@@ -117,7 +117,7 @@ public class WanderingDungeonManager {
     private void migrateEntry(StructureDefinition def, WanderingEntry entry, org.bukkit.World world) {
         // Remove old anchor tag
         Block old = world.getBlockAt(entry.x, entry.y, entry.z);
-        old.getPersistentDataContainer().remove(STRUCTURE_ID_KEY);
+        BlockStructureTag.remove(old);
 
         // New location
         ThreadLocalRandom rng = ThreadLocalRandom.current();
@@ -137,8 +137,7 @@ public class WanderingDungeonManager {
         }
 
         Block newAnchor = world.getBlockAt(nx, ny, nz);
-        newAnchor.getPersistentDataContainer()
-                .set(STRUCTURE_ID_KEY, PersistentDataType.STRING, def.id());
+        BlockStructureTag.set(newAnchor, def.id());
 
         activeEntries.put(def.id(), new WanderingEntry(world.getName(), nx, ny, nz));
         broadcast(world, "§6The wandering structure §e" + def.id()

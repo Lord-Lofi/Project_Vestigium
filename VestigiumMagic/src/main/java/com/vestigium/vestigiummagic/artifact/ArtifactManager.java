@@ -3,6 +3,7 @@ package com.vestigium.vestigiummagic.artifact;
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.model.ParticlePriority;
 import com.vestigium.vestigiummagic.VestigiumMagic;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -180,7 +181,7 @@ public class ArtifactManager implements Listener, CommandExecutor {
             case "TIDAL_LENS" -> {
                 setCooldown(player, type, def.cooldownMs());
                 // Delegate to spell caster REVEAL effect
-                plugin.getSpellCaster().getSpellRegistry()
+                plugin.getSpellRegistry()
                         .getById("deep_reveal")
                         .ifPresent(spell -> plugin.getSpellCaster().tryCast(player, spell));
             }

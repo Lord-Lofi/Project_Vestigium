@@ -3,6 +3,7 @@ package com.vestigium.vestigiumplayer.stats;
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.event.CataclysmEndEvent;
 import com.vestigium.lib.event.WorldBossSpawnEvent;
+import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import org.bukkit.NamespacedKey;
@@ -76,8 +77,7 @@ public class PlayerStatTracker implements Listener {
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
 
         Player player = event.getPlayer();
-        var pdc = event.getTo().getBlock().getRelative(0, -1, 0).getPersistentDataContainer();
-        String structureId = pdc.get(STRUCTURE_ID_KEY, PersistentDataType.STRING);
+        String structureId = BlockStructureTag.get(event.getTo().getBlock().getRelative(0, -1, 0));
         if (structureId == null) return;
 
         NamespacedKey seen = new NamespacedKey("vestigium", "vp_seen_" + structureId);
