@@ -30,6 +30,9 @@ public class VestigiumEconomy extends JavaPlugin {
         dynamicMarketManager.init();
         treasureManager.init();
 
+        var vebuy = getCommand("vebuy");
+        if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
+
         getLogger().info("VestigiumEconomy enabled.");
     }
 

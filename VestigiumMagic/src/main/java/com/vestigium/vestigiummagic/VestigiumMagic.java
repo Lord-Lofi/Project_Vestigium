@@ -30,6 +30,9 @@ public class VestigiumMagic extends JavaPlugin {
         spellCaster.init();
         artifactManager.init();
 
+        var vmana = getCommand("vmana");
+        if (vmana != null) vmana.setExecutor(spellCaster);
+
         getLogger().info("VestigiumMagic enabled.");
     }
 

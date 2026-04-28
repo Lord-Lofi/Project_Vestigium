@@ -28,10 +28,12 @@
         <module>VestigiumPlayer</module>
         <!-- Phase 5 -->
         <module>VestigiumEconomy</module>
+        <module>VestigiumCombat</module>
+        <module>VestigiumMagic</module>
+        <!-- Phase 6 -->
         <module>VestigiumCaves</module>
         <module>VestigiumOcean</module>
         <module>VestigiumNether</module>
-        <!-- Phase 6 -->
         <module>VestigiumEnd</module>
     </modules>
 

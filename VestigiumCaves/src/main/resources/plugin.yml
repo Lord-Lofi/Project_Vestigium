@@ -7,3 +7,8 @@ authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+permissions:
+  vestigium.caves.admin:
+    description: Administrative access to VestigiumCaves systems
+    default: op

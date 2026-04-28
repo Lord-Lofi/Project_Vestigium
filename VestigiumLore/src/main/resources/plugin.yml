@@ -2,8 +2,34 @@ name: VestigiumLore
 version: '${project.version}'
 main: com.vestigium.vestigiumlore.VestigiumLore
 api-version: '1.21'
-description: Lore delivery systems, cipher items, Final Cartographer quest chain
+description: Lore delivery, cipher items, Final Cartographer chain, server memory tome
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+commands:
+  vccipher:
+    description: Manage Vestigium cipher items
+    usage: /vccipher give <player> <resonant|antecedent|tidal>
+    permission: vestigium.cipher.admin
+    permission-message: §cYou do not have permission to manage cipher items.
+
+  vctome:
+    description: Obtain or give a Server Memory Tome
+    usage: /vctome [give <player>]
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use this command.
+
+permissions:
+  vestigium.cipher.admin:
+    description: Give and manage Vestigium cipher items
+    default: op
+
+  vestigium.tome.admin:
+    description: Give Server Memory Tomes to other players
+    default: op
+
+  vestigium.lore.bypass:
+    description: Bypass cipher requirements when reading terminals
+    default: op
