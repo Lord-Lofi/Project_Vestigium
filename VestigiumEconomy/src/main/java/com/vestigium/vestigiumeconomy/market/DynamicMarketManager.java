@@ -7,6 +7,9 @@ import com.vestigium.vestigiumeconomy.VestigiumEconomy;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -43,7 +46,7 @@ import java.util.*;
  *   GUNPOWDER     8   BANDITS
  *   ECHO_SHARD   60   none     (rare, flat price)
  */
-public class DynamicMarketManager implements Listener {
+public class DynamicMarketManager implements Listener, CommandExecutor {
 
     private static final long PRICE_REFRESH_TICKS = 12_000L;
     private static final NamespacedKey MARKET_TYPE_KEY =
@@ -63,8 +66,8 @@ public class DynamicMarketManager implements Listener {
     private final VestigiumEconomy plugin;
     // Cached effective prices: Material → current shard cost
     private final Map<Material, Integer> effectivePrices = new LinkedHashMap<>();
-    // Players in a pending purchase: UUID → MarketEntry chosen
-    private final Map<UUID, MarketEntry> pendingPurchase = new HashMap<>();
+    // Last market type each player interacted with — used by /vebuy
+    private final Map<UUID, String> lastMarketType = new HashMap<>();
 
     public DynamicMarketManager(VestigiumEconomy plugin) {
         this.plugin = plugin;
@@ -141,6 +144,9 @@ public class DynamicMarketManager implements Listener {
         // Absorb any physical shards first
         plugin.getCurrencyManager().absorbPhysicalShards(player);
 
+        // Remember last market type for /vebuy
+        lastMarketType.put(player.getUniqueId(), marketType);
+
         // Show catalogue for this market type
         List<MarketEntry> available = CATALOGUE.stream()
                 .filter(e -> e.faction().equals(marketType) || "none".equals(e.faction()))
@@ -181,6 +187,36 @@ public class DynamicMarketManager implements Listener {
         overflow.values().forEach(i -> player.getWorld().dropItemNaturally(player.getLocation(), i));
         player.sendMessage("§aPurchased §f" + formatMat(entry.material())
                 + " §afor §d" + price + " shards§a. Remaining: §d" + cm.getBalance(player));
+    }
+
+    // -------------------------------------------------------------------------
+    // /vebuy command
+    // -------------------------------------------------------------------------
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cPlayer only.");
+            return true;
+        }
+        if (args.length < 1) {
+            player.sendMessage("§7Usage: /vebuy <number>");
+            return true;
+        }
+        String marketType = lastMarketType.get(player.getUniqueId());
+        if (marketType == null) {
+            player.sendMessage("§cYou have not visited a market recently.");
+            return true;
+        }
+        int index;
+        try {
+            index = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            player.sendMessage("§cPlease enter a number.");
+            return true;
+        }
+        processBuy(player, index, marketType);
+        return true;
     }
 
     // -------------------------------------------------------------------------

@@ -196,7 +196,7 @@ public class ArtifactManager implements Listener, CommandExecutor {
         if (!sender.hasPermission("vestigium.artifact.admin")) {
             sender.sendMessage("§cNo permission."); return true;
         }
-        if (args.length < 2 || !args[0].equalsIgnoreCase("give")) {
+        if (args.length < 3 || !args[0].equalsIgnoreCase("give")) {
             sender.sendMessage("§7Usage: /vartifact give <player> <type>"); return true;
         }
         Player target = plugin.getServer().getPlayer(args[1]);

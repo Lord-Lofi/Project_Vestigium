@@ -116,6 +116,14 @@ public class QuestTracker implements Listener {
         }
     }
 
+    /** Admin override: force-completes a quest regardless of progress or gates. */
+    public boolean forceComplete(Player player, String questId) {
+        QuestDefinition def = questRegistry.getById(questId).orElse(null);
+        if (def == null) return false;
+        completeQuest(player, def);
+        return true;
+    }
+
     private void completeQuest(Player player, QuestDefinition def) {
         player.getPersistentDataContainer().remove(activeKey(def.id()));
         player.getPersistentDataContainer()

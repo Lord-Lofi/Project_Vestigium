@@ -7,3 +7,8 @@ authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+permissions:
+  vestigium.end.admin:
+    description: Administrative access to VestigiumEnd systems
+    default: op
