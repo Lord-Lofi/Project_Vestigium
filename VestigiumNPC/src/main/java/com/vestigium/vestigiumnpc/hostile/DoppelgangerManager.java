@@ -72,7 +72,7 @@ public class DoppelgangerManager implements Listener {
         // Despawn all active doppelgangers on shutdown
         activeDoppelgangers.keySet().forEach(entityUUID -> {
             plugin.getServer().getWorlds().forEach(world ->
-                    world.getEntitiesByType(Zombie.class).stream()
+                    world.getEntitiesByClass(Zombie.class).stream()
                             .filter(z -> z.getUniqueId().equals(entityUUID))
                             .forEach(org.bukkit.entity.Entity::remove));
         });
@@ -183,7 +183,7 @@ public class DoppelgangerManager implements Listener {
     private void checkEscalations() {
         activeDoppelgangers.keySet().forEach(entityUUID -> {
             plugin.getServer().getWorlds().forEach(world ->
-                    world.getEntitiesByType(Zombie.class).stream()
+                    world.getEntitiesByClass(Zombie.class).stream()
                             .filter(z -> z.getUniqueId().equals(entityUUID))
                             .findFirst()
                             .ifPresent(zombie -> {
@@ -203,7 +203,7 @@ public class DoppelgangerManager implements Listener {
 
     private void despawnDoppelganger(UUID entityUUID) {
         plugin.getServer().getWorlds().forEach(world ->
-                world.getEntitiesByType(Zombie.class).stream()
+                world.getEntitiesByClass(Zombie.class).stream()
                         .filter(z -> z.getUniqueId().equals(entityUUID))
                         .forEach(org.bukkit.entity.Entity::remove));
     }

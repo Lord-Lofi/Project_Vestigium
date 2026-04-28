@@ -1,0 +1,7 @@
+com\vestigium\vestigiumcombat\VestigiumCombat.class
+com\vestigium\vestigiumcombat\combo\ComboSystem.class
+com\vestigium\vestigiumcombat\status\CustomStatusEffectManager$1.class
+com\vestigium\vestigiumcombat\tracker\CombatTracker.class
+com\vestigium\vestigiumcombat\tracker\CombatTracker$CombatState.class
+com\vestigium\vestigiumcombat\status\CustomStatusEffectManager.class
+com\vestigium\vestigiumcombat\tracker\CombatTracker$1.class

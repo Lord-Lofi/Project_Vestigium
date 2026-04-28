@@ -143,11 +143,11 @@ public class ServerMemoryTome implements CommandExecutor {
     private String buildFactionPage() {
         StringBuilder sb = new StringBuilder("§0=== Faction Pulse ===\n\n");
         for (com.vestigium.lib.model.Faction faction : com.vestigium.lib.model.Faction.values()) {
-            var state = VestigiumLib.getFactionRegistry().getFactionState(faction);
+            var state = VestigiumLib.getFactionRegistry().getFactionState(faction.getKey());
             String status = state.isCollapsed() ? "§4COLLAPSED" :
                             state.canExpand()   ? "§2EXPANDING" : "§1stable";
             sb.append("§0").append(capitalize(faction.getKey())).append(": ")
-              .append(status).append(" (").append(state.health()).append(")\n");
+              .append(status).append(" (").append(state.getHealth()).append(")\n");
         }
         return sb.toString();
     }

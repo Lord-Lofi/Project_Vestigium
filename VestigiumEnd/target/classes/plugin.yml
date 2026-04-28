@@ -1,0 +1,14 @@
+name: VestigiumEnd
+version: '${project.version}'
+main: com.vestigium.vestigiumend.VestigiumEnd
+api-version: '1.21'
+description: End biomes, pre-Shattering lore systems, End civilization structures
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+permissions:
+  vestigium.end.admin:
+    description: Administrative access to VestigiumEnd systems
+    default: op

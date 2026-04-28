@@ -1,0 +1,16 @@
+name: VestigiumNPC
+version: '${project.version}'
+main: com.vestigium.vestigiumnpc.VestigiumNPC
+api-version: '1.21'
+description: Villager memory, traveling NPCs, doppelgangers, and special NPCs
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+permissions:
+  vestigium.npc.admin:
+    description: Access to VestigiumNPC administrative functions
+    default: op
+    children:
+      vestigium.admin: true

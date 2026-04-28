@@ -1,0 +1,10 @@
+com\vestigium\vestigiummagic\spell\SpellDefinition.class
+com\vestigium\vestigiummagic\spell\SpellRegistry$1DS.class
+com\vestigium\vestigiummagic\spell\SpellCaster$1.class
+com\vestigium\vestigiummagic\VestigiumMagic.class
+com\vestigium\vestigiummagic\spell\SpellRegistry.class
+com\vestigium\vestigiummagic\artifact\ArtifactManager.class
+com\vestigium\vestigiummagic\artifact\ArtifactManager$ArtifactDef.class
+com\vestigium\vestigiummagic\spell\SpellCaster$2.class
+com\vestigium\vestigiummagic\spell\SpellEffectType.class
+com\vestigium\vestigiummagic\spell\SpellCaster.class

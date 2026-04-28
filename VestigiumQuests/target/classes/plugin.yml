@@ -1,0 +1,24 @@
+name: VestigiumQuests
+version: '${project.version}'
+main: com.vestigium.vestigiumquests.VestigiumQuests
+api-version: '1.21'
+description: YAML-driven quest framework, faction quest dispatch, progress tracking
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+commands:
+  vquest:
+    description: Manage Vestigium quests
+    usage: |
+      /vquest assign <player> <questId>
+      /vquest list <player>
+      /vquest complete <player> <questId>
+    permission: vestigium.quest.admin
+    permission-message: §cYou do not have permission to manage quests.
+
+permissions:
+  vestigium.quest.admin:
+    description: Assign, inspect, and force-complete player quests
+    default: op

@@ -1,0 +1,14 @@
+name: VestigiumNether
+version: '${project.version}'
+main: com.vestigium.vestigiumnether.VestigiumNether
+api-version: '1.21'
+description: Antecedent Nether lore systems, faction quests, soul roads
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+permissions:
+  vestigium.nether.admin:
+    description: Administrative access to VestigiumNether systems
+    default: op

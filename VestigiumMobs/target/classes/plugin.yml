@@ -1,0 +1,21 @@
+name: VestigiumMobs
+version: '${project.version}'
+main: com.vestigium.vestigiummobs.VestigiumMobs
+api-version: '1.21'
+description: Custom mob variants, passive mob behaviour, minion system, named Wardens
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+commands:
+  vcwarden:
+    description: Spawn a named Warden at your location
+    usage: /vcwarden spawn <the_harbinger|echo_sovereign|deep_architect|pale_listener|final_chorus>
+    permission: vestigium.warden.admin
+    permission-message: §cYou do not have permission to spawn named Wardens.
+
+permissions:
+  vestigium.warden.admin:
+    description: Spawn and manage named Warden encounters
+    default: op

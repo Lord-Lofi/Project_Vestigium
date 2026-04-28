@@ -1,0 +1,35 @@
+name: VestigiumEconomy
+version: '${project.version}'
+main: com.vestigium.vestigiumeconomy.VestigiumEconomy
+api-version: '1.21'
+description: Vestige Shard currency, dynamic faction market, structure loot tables
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+commands:
+  vecurrency:
+    description: Manage Vestige Shard balances
+    usage: /vecurrency <balance | give <player> <amount> | take <player> <amount> | check <player>>
+    permission: vestigium.currency.use
+    permission-message: §cYou do not have permission to use this command.
+
+  vebuy:
+    description: Purchase an item from the last market you visited
+    usage: /vebuy <number>
+    permission: vestigium.market.use
+    permission-message: §cYou do not have permission to buy from markets.
+
+permissions:
+  vestigium.currency.use:
+    description: Check your own Vestige Shard balance
+    default: true
+
+  vestigium.currency.admin:
+    description: Give, take, and inspect Vestige Shard balances for any player
+    default: op
+
+  vestigium.market.use:
+    description: Purchase items from Vestigium markets
+    default: true

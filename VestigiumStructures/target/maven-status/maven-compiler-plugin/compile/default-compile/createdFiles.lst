@@ -1,0 +1,7 @@
+com\vestigium\vestigiumstructures\spawner\StructureNPCSpawner.class
+com\vestigium\vestigiumstructures\wandering\WanderingDungeonManager$WanderingEntry.class
+com\vestigium\vestigiumstructures\VestigiumStructures.class
+com\vestigium\vestigiumstructures\registry\StructureType.class
+com\vestigium\vestigiumstructures\registry\StructureRegistry.class
+com\vestigium\vestigiumstructures\wandering\WanderingDungeonManager.class
+com\vestigium\vestigiumstructures\registry\StructureDefinition.class

@@ -1,0 +1,16 @@
+name: VestigiumWorld
+version: '${project.version}'
+main: com.vestigium.vestigiumworld.VestigiumWorld
+api-version: '1.21'
+description: Cataclysmic events, living world behaviours, ecological memory, village expansion
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+permissions:
+  vestigium.world.admin:
+    description: Access to VestigiumWorld administrative functions
+    default: op
+    children:
+      vestigium.admin: true

@@ -1,0 +1,25 @@
+name: VestigiumPlayer
+version: '${project.version}'
+main: com.vestigium.vestigiumplayer.VestigiumPlayer
+api-version: '1.21'
+description: Player progression, stat tracking, and unlockable titles
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+commands:
+  vptitle:
+    description: View and set your Vestigium title
+    usage: /vptitle [list | set <title>]
+    permission: vestigium.title.use
+    permission-message: §cYou do not have permission to use titles.
+
+permissions:
+  vestigium.title.use:
+    description: View and equip unlocked titles
+    default: true
+
+  vestigium.title.admin:
+    description: Grant titles to other players
+    default: op
