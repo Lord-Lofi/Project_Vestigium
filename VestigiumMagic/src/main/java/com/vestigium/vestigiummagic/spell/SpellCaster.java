@@ -7,6 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,7 +31,7 @@ import java.util.*;
  * Mana is stored as Player PDC "vestigium:vm_mana" INTEGER (max 100, regenerates 1/10s).
  * Cooldowns are tracked in memory: UUID → Map<spellId, expireMillis>.
  */
-public class SpellCaster implements Listener {
+public class SpellCaster implements Listener, CommandExecutor {
 
     public static final NamespacedKey MANA_KEY  = new NamespacedKey("vestigium", "vm_mana");
     public static final int MAX_MANA            = 100;
@@ -215,6 +218,17 @@ public class SpellCaster implements Listener {
     public void setMana(Player player, int mana) {
         player.getPersistentDataContainer()
                 .set(MANA_KEY, PersistentDataType.INTEGER, Math.max(0, Math.min(MAX_MANA, mana)));
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cPlayer only.");
+            return true;
+        }
+        int mana = getMana(player);
+        player.sendMessage("§9Mana: §b" + mana + "§9/§b" + MAX_MANA);
+        return true;
     }
 
     private boolean isOnCooldown(Player player, String spellId) {
