@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumquests.tracker;
 
 import com.vestigium.lib.VestigiumLib;
+import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumquests.VestigiumQuests;
 import com.vestigium.vestigiumquests.registry.QuestDefinition;
 import com.vestigium.vestigiumquests.registry.QuestRegistry;
@@ -8,6 +9,7 @@ import com.vestigium.vestigiumquests.registry.QuestType;
 import com.vestigium.vestigiumquests.reward.QuestRewardManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -164,9 +166,7 @@ public class QuestTracker implements Listener {
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
 
         Player player = event.getPlayer();
-        var pdc = event.getTo().getBlock().getRelative(0, -1, 0).getPersistentDataContainer();
-        String structureId = pdc.get(new NamespacedKey("vestigium", "structure_id"),
-                PersistentDataType.STRING);
+        String structureId = BlockStructureTag.get(event.getTo().getBlock().getRelative(0, -1, 0));
         if (structureId == null) return;
 
         String finalStructureId = structureId;

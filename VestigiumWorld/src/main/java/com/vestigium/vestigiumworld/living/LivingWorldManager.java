@@ -5,7 +5,7 @@ import com.vestigium.lib.util.Keys;
 import com.vestigium.vestigiumworld.VestigiumWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.chunk.Chunk;
+import org.bukkit.Chunk;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -89,7 +89,7 @@ public class LivingWorldManager implements Listener {
         count++;
 
         if (count >= ROAD_THRESHOLD) {
-            below.setType(Material.GRASS_PATH);
+            below.setType(Material.DIRT_PATH);
             chunk.getPersistentDataContainer()
                     .set(Keys.ROAD_WALK_COUNT, PersistentDataType.INTEGER, 0);
         } else {

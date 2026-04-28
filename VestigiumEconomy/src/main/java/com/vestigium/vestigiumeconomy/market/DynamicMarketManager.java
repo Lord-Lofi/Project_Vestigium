@@ -105,7 +105,7 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
             if (!"none".equals(entry.faction())) {
                 try {
                     Faction faction = Faction.valueOf(entry.faction().toUpperCase());
-                    var state = VestigiumLib.getFactionRegistry().getFactionState(faction);
+                    var state = VestigiumLib.getFactionRegistry().getFactionState(faction.getKey());
                     if (state.isCollapsed())      price *= 2.0;
                     else if (state.canExpand())   price *= 0.8;
                 } catch (IllegalArgumentException ignored) {}

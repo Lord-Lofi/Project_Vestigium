@@ -64,7 +64,7 @@ public class VillageExpansionManager {
         UUID playerUUID = event.getPlayerUUID();
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             if (world.getEnvironment() != org.bukkit.World.Environment.NORMAL) continue;
-            for (Entity entity : world.getEntitiesByType(EntityType.VILLAGER)) {
+            for (Villager entity : world.getEntitiesByClass(Villager.class)) {
                 Villager villager = (Villager) entity;
                 if (isEligibleForExpansion(villager)) {
                     triggerExpansion(villager, playerUUID);
