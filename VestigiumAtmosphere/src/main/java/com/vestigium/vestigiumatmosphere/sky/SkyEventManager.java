@@ -43,7 +43,7 @@ public class SkyEventManager {
     public void init() {
         // Listen for omen threshold — eclipse trigger
         VestigiumLib.getEventBus().subscribe(OmenThresholdEvent.class, event -> {
-            if (event.threshold() == 700 && event.ascending()) {
+            if (event.getThreshold() == 700 && event.isAscending()) {
                 plugin.getServer().getWorlds().stream()
                         .filter(w -> w.getEnvironment() == World.Environment.NORMAL)
                         .forEach(this::triggerEclipse);
@@ -53,7 +53,7 @@ public class SkyEventManager {
         // Listen for cataclysm end events — starfall vigil
         VestigiumLib.getEventBus().subscribe(
                 com.vestigium.lib.event.CataclysmEndEvent.class, event -> {
-            if ("STARFALL_VIGIL".equals(event.type()) || "THE_LONG_EXHALE".equals(event.type())) {
+            if ("STARFALL_VIGIL".equals(event.getCataclysmType()) || "THE_LONG_EXHALE".equals(event.getCataclysmType())) {
                 plugin.getServer().getWorlds().stream()
                         .filter(w -> w.getEnvironment() == World.Environment.NORMAL)
                         .forEach(this::triggerStarfallVigil);

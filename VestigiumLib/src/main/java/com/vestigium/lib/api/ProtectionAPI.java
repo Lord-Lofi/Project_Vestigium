@@ -1,7 +1,7 @@
 package com.vestigium.lib.api;
 
-import com.vestigium.lib.util.Keys;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +20,9 @@ import org.bukkit.plugin.Plugin;
  */
 public class ProtectionAPI {
 
+    // Chunk PDC key: stores comma-delimited relative block positions as "x:y:z"
+    private final NamespacedKey placedBlocksKey;
+
     private final Plugin plugin;
     private boolean worldGuardEnabled = false;
     private boolean griefPreventionEnabled = false;
@@ -29,6 +32,7 @@ public class ProtectionAPI {
 
     public ProtectionAPI(Plugin plugin) {
         this.plugin = plugin;
+        this.placedBlocksKey = new NamespacedKey("vestigium", "player_placed_blocks");
         initSoftDependencies();
     }
 
@@ -77,8 +81,9 @@ public class ProtectionAPI {
      */
     public boolean isPlayerPlaced(Block block) {
         if (block == null) return false;
-        return block.getPersistentDataContainer()
-                .has(Keys.PLAYER_PLACED, PersistentDataType.BOOLEAN);
+        String tag = block.getChunk().getPersistentDataContainer()
+                .getOrDefault(placedBlocksKey, PersistentDataType.STRING, "");
+        return tag.contains("," + encodePos(block) + ",");
     }
 
     /**
@@ -89,8 +94,12 @@ public class ProtectionAPI {
      */
     public void tagPlayerPlaced(Block block) {
         if (block == null) return;
-        block.getPersistentDataContainer()
-                .set(Keys.PLAYER_PLACED, PersistentDataType.BOOLEAN, true);
+        var pdc = block.getChunk().getPersistentDataContainer();
+        String pos = encodePos(block);
+        String tag = pdc.getOrDefault(placedBlocksKey, PersistentDataType.STRING, ",");
+        if (!tag.contains("," + pos + ",")) {
+            pdc.set(placedBlocksKey, PersistentDataType.STRING, tag + pos + ",");
+        }
     }
 
     /**
@@ -101,7 +110,15 @@ public class ProtectionAPI {
      */
     public void untagPlayerPlaced(Block block) {
         if (block == null) return;
-        block.getPersistentDataContainer().remove(Keys.PLAYER_PLACED);
+        var pdc = block.getChunk().getPersistentDataContainer();
+        String tag = pdc.getOrDefault(placedBlocksKey, PersistentDataType.STRING, ",");
+        pdc.set(placedBlocksKey, PersistentDataType.STRING,
+                tag.replace("," + encodePos(block) + ",", ","));
+    }
+
+    // Encodes chunk-relative x/z (0–15) and absolute y as "x:y:z"
+    private static String encodePos(Block block) {
+        return (block.getX() & 15) + ":" + block.getY() + ":" + (block.getZ() & 15);
     }
 
     public boolean isWorldGuardEnabled() {

@@ -49,13 +49,13 @@ public class FactionQuestDispenser implements Listener {
 
         // Reputation threshold dispatch via EventBus
         VestigiumLib.getEventBus().subscribe(PlayerReputationChangeEvent.class, event -> {
-            int prev = event.previousReputation();
-            int next = event.newReputation();
+            int prev = event.getPreviousReputation();
+            int next = event.getNewReputation();
             // Crossed upward through a multiple of 100
             if (next > prev && (next / 100) > (prev / 100)) {
-                Player player = plugin.getServer().getPlayer(event.playerUUID());
+                Player player = plugin.getServer().getPlayer(event.getPlayerUUID());
                 if (player != null) {
-                    offerFactionQuest(player, event.faction().getKey());
+                    offerFactionQuest(player, event.getFaction().getKey());
                 }
             }
         });
