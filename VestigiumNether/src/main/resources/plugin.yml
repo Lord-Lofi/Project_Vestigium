@@ -7,3 +7,8 @@ authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+permissions:
+  vestigium.nether.admin:
+    description: Administrative access to VestigiumNether systems
+    default: op

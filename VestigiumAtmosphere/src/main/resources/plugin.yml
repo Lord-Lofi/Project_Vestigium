@@ -2,8 +2,13 @@ name: VestigiumAtmosphere
 version: '${project.version}'
 main: com.vestigium.vestigiumatmosphere.VestigiumAtmosphere
 api-version: '1.21'
-description: All atmospheric particle and sound events across all dimensions
+description: Custom weather events, biome particle atmosphere, sky events
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+permissions:
+  vestigium.atmosphere.admin:
+    description: Manage atmospheric event overrides
+    default: op
