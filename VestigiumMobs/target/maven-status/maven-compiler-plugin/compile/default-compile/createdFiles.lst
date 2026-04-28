@@ -1,7 +1,0 @@
-com\vestigium\vestigiummobs\warden\NamedWardenManager.class
-com\vestigium\vestigiummobs\minion\MinionSystem.class
-com\vestigium\vestigiummobs\passive\PassiveMobManager.class
-com\vestigium\vestigiummobs\VestigiumMobs.class
-com\vestigium\vestigiummobs\hostile\CustomHostileMobManager.class
-com\vestigium\vestigiummobs\passive\PassiveMobManager$1.class
-com\vestigium\vestigiummobs\warden\NamedWardenManager$WardenProfile.class
