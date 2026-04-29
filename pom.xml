@@ -42,7 +42,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         <vestigium.version>1.0.0-SNAPSHOT</vestigium.version>
     </properties>
 
