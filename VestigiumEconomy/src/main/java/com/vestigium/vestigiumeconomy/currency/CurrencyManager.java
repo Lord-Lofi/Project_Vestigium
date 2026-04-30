@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumeconomy.currency;
 
 import com.vestigium.vestigiumeconomy.VestigiumEconomy;
+import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -14,24 +15,18 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 
 /**
- * Vestige Shards — the custom currency of the Vestigium economy.
+ * Manages physical Vestige Shard items and the /vecurrency admin command.
  *
- * Storage: Player PDC key "vestigium:ve_shards" (INTEGER).
- * Physical item: AMETHYST_SHARD tagged with "vestigium:vestige_shard" PDC BOOLEAN.
+ * Vestige Shards are rare loot — not the server's currency. They are amethyst
+ * shards tagged with PDC so the server can distinguish them from plain amethyst.
+ * Players auto-sell them when interacting with a market (see DynamicMarketManager).
+ * Each shard is worth VaultHook.SHARD_VALUE in the Vault economy.
  *
- * Players can hold shards as physical items (auto-absorbed on interact with market)
- * or as a pure PDC balance. The two are kept in sync on player join/quit.
- *
- * Commands:
- *   /vecurrency give <player> <amount>   — admin give
- *   /vecurrency take <player> <amount>   — admin take
- *   /vecurrency check [player]           — check balance
- *   /vecurrency balance                  — self balance
+ * Actual currency is handled entirely through VaultHook (Vault soft dependency).
+ * /vecurrency wraps Vault balance checks and admin give/take.
  */
 public class CurrencyManager implements CommandExecutor {
 
-    public static final NamespacedKey BALANCE_KEY =
-            new NamespacedKey("vestigium", "ve_shards");
     public static final NamespacedKey SHARD_ITEM_KEY =
             new NamespacedKey("vestigium", "vestige_shard");
 
@@ -48,44 +43,19 @@ public class CurrencyManager implements CommandExecutor {
     }
 
     // -------------------------------------------------------------------------
-    // Public API
+    // Vestige Shard item
     // -------------------------------------------------------------------------
 
-    public int getBalance(Player player) {
-        return player.getPersistentDataContainer()
-                .getOrDefault(BALANCE_KEY, PersistentDataType.INTEGER, 0);
-    }
-
-    public void addShards(Player player, int amount) {
-        if (amount <= 0) return;
-        int current = getBalance(player);
-        player.getPersistentDataContainer()
-                .set(BALANCE_KEY, PersistentDataType.INTEGER, current + amount);
-    }
-
-    /**
-     * Attempts to spend shards. Returns false if insufficient balance.
-     */
-    public boolean spendShards(Player player, int amount) {
-        if (amount <= 0) return true;
-        int current = getBalance(player);
-        if (current < amount) return false;
-        player.getPersistentDataContainer()
-                .set(BALANCE_KEY, PersistentDataType.INTEGER, current - amount);
-        return true;
-    }
-
-    public boolean hasShards(Player player, int amount) {
-        return getBalance(player) >= amount;
-    }
-
-    /** Creates a physical Vestige Shard item. */
+    /** Creates a tagged Vestige Shard item stack. */
     public ItemStack createShardItem(int amount) {
         ItemStack item = new ItemStack(Material.AMETHYST_SHARD, amount);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName("§dVestige Shard");
-            meta.setLore(List.of("§7A fragment of something that once mattered."));
+            meta.setLore(List.of(
+                    "§7A fragment of something that once mattered.",
+                    "§8Sell at any market for §6" + (int) VaultHook.SHARD_VALUE + " §8each."
+            ));
             meta.getPersistentDataContainer()
                     .set(SHARD_ITEM_KEY, PersistentDataType.BOOLEAN, true);
             item.setItemMeta(meta);
@@ -99,70 +69,97 @@ public class CurrencyManager implements CommandExecutor {
                 .getOrDefault(SHARD_ITEM_KEY, PersistentDataType.BOOLEAN, false);
     }
 
-    /** Absorbs any physical shard items in inventory into PDC balance. */
-    public void absorbPhysicalShards(Player player) {
+    /** Counts physical Vestige Shards across the player's entire inventory. */
+    public int countShards(Player player) {
+        int count = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (isShardItem(item)) count += item.getAmount();
+        }
+        return count;
+    }
+
+    /**
+     * Removes up to {@code amount} Vestige Shards from the player's inventory.
+     * Returns the number actually removed.
+     */
+    public int removeShards(Player player, int amount) {
+        int remaining = amount;
         var inv = player.getInventory();
-        for (int i = 0; i < inv.getSize(); i++) {
+        for (int i = 0; i < inv.getSize() && remaining > 0; i++) {
             ItemStack item = inv.getItem(i);
             if (!isShardItem(item)) continue;
-            addShards(player, item.getAmount());
-            inv.setItem(i, null);
+            int take = Math.min(item.getAmount(), remaining);
+            remaining -= take;
+            if (item.getAmount() - take == 0) {
+                inv.setItem(i, null);
+            } else {
+                item.setAmount(item.getAmount() - take);
+            }
         }
+        return amount - remaining;
     }
 
     // -------------------------------------------------------------------------
-    // Command
+    // /vecurrency — wraps Vault balance + shard count display
     // -------------------------------------------------------------------------
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            if (sender instanceof Player p) {
-                sender.sendMessage("§dVestige Shards: §f" + getBalance(p));
-                return true;
-            }
-            sender.sendMessage("§7Usage: /vecurrency <give|take|check|balance>");
-            return true;
-        }
+        VaultHook vault = plugin.getVaultHook();
+        String sub = args.length > 0 ? args[0].toLowerCase() : "balance";
 
-        switch (args[0].toLowerCase()) {
+        switch (sub) {
             case "balance" -> {
-                if (!(sender instanceof Player p)) { sender.sendMessage("§cPlayer only."); return true; }
-                sender.sendMessage("§dVestige Shards: §f" + getBalance(p));
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage("§cPlayer only."); return true;
+                }
+                if (vault.isEnabled()) {
+                    sender.sendMessage("§6Balance: §f" + vault.format(vault.getBalance(player)));
+                } else {
+                    sender.sendMessage("§cNo economy provider available.");
+                }
+                int shards = countShards(player);
+                if (shards > 0)
+                    sender.sendMessage("§dVestige Shards in inventory: §f" + shards
+                            + " §7(worth §6" + vault.format(shards * VaultHook.SHARD_VALUE) + "§7)");
             }
             case "give", "take" -> {
                 if (!sender.hasPermission("vestigium.currency.admin")) {
                     sender.sendMessage("§cNo permission."); return true;
                 }
-                if (args.length < 3) { sender.sendMessage("§7Usage: /vecurrency " + args[0] + " <player> <amount>"); return true; }
+                if (args.length < 3) {
+                    sender.sendMessage("§7Usage: /vecurrency " + sub + " <player> <amount>"); return true;
+                }
                 Player target = plugin.getServer().getPlayer(args[1]);
                 if (target == null) { sender.sendMessage("§cPlayer not found."); return true; }
-                int amount;
-                try { amount = Integer.parseInt(args[2]); } catch (NumberFormatException e) {
-                    sender.sendMessage("§cInvalid amount."); return true;
-                }
-                if (args[0].equalsIgnoreCase("give")) {
-                    addShards(target, amount);
-                    sender.sendMessage("§aGave §f" + amount + " §dVestige Shards §ato §f" + target.getName() + "§a.");
-                    target.sendMessage("§aYou received §f" + amount + " §dVestige Shards§a.");
+                if (!vault.isEnabled()) { sender.sendMessage("§cNo economy provider."); return true; }
+                double amount;
+                try { amount = Double.parseDouble(args[2]); }
+                catch (NumberFormatException e) { sender.sendMessage("§cInvalid amount."); return true; }
+                if (sub.equals("give")) {
+                    vault.deposit(target, amount);
+                    sender.sendMessage("§aGave §f" + vault.format(amount) + " §ato §f" + target.getName() + "§a.");
+                    target.sendMessage("§aYou received §f" + vault.format(amount) + "§a.");
                 } else {
-                    if (!spendShards(target, amount)) {
-                        sender.sendMessage("§c" + target.getName() + " does not have enough shards.");
-                    } else {
-                        sender.sendMessage("§aRemoved §f" + amount + " §dVestige Shards §afrom §f" + target.getName() + "§a.");
-                    }
+                    vault.withdraw(target, amount);
+                    sender.sendMessage("§aRemoved §f" + vault.format(amount) + " §afrom §f" + target.getName() + "§a.");
                 }
             }
             case "check" -> {
                 if (!sender.hasPermission("vestigium.currency.admin")) {
                     sender.sendMessage("§cNo permission."); return true;
                 }
-                if (args.length < 2) { sender.sendMessage("§7Usage: /vecurrency check <player>"); return true; }
+                if (args.length < 2) {
+                    sender.sendMessage("§7Usage: /vecurrency check <player>"); return true;
+                }
                 Player target = plugin.getServer().getPlayer(args[1]);
                 if (target == null) { sender.sendMessage("§cPlayer not found."); return true; }
-                sender.sendMessage("§f" + target.getName() + "§7 has §d" + getBalance(target) + " §dVestige Shards§7.");
+                if (!vault.isEnabled()) { sender.sendMessage("§cNo economy provider."); return true; }
+                sender.sendMessage("§f" + target.getName() + " §7— §6"
+                        + vault.format(vault.getBalance(target))
+                        + " §7| §d" + countShards(target) + " Vestige Shards");
             }
-            default -> sender.sendMessage("§7Usage: /vecurrency <give|take|check|balance>");
+            default -> sender.sendMessage("§7Usage: /vecurrency <balance|give|take|check>");
         }
         return true;
     }

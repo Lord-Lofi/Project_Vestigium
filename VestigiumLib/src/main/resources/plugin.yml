@@ -8,6 +8,8 @@ load: STARTUP
 softdepend:
   - WorldGuard
   - GriefPrevention
+  - PlaceholderAPI
+  - LuckPerms
 
 permissions:
   vestigium.*:
