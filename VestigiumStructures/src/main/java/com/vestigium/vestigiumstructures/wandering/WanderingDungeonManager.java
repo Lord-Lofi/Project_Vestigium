@@ -59,6 +59,7 @@ public class WanderingDungeonManager {
     }
 
     public void save() {
+        if (persistFile == null) return;
         YamlConfiguration cfg = new YamlConfiguration();
         activeEntries.forEach((id, entry) -> {
             cfg.set(id + ".world", entry.world);
