@@ -25,6 +25,7 @@ public class VestigiumEconomy extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        saveDefaultConfig();
 
         vaultHook = new VaultHook();
         vaultHook.init(this);
@@ -64,6 +65,7 @@ public class VestigiumEconomy extends JavaPlugin {
 
     public static VestigiumEconomy getInstance()             { return instance; }
     public VaultHook getVaultHook()                          { return vaultHook; }
+    public double getShardValue()                            { return getConfig().getDouble("vestige-shard-value", 500.0); }
     public CurrencyManager getCurrencyManager()              { return currencyManager; }
     public DynamicMarketManager getDynamicMarketManager()    { return dynamicMarketManager; }
     public TreasureManager getTreasureManager()              { return treasureManager; }

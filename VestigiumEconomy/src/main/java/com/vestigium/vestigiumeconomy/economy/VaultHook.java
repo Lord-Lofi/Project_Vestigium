@@ -14,9 +14,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class VaultHook {
 
-    /** How much Vault currency one physical Vestige Shard sells for at a market. */
-    public static final double SHARD_VALUE = 500.0;
-
     private Economy economy;
     private boolean enabled = false;
 
