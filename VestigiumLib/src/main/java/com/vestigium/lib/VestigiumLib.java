@@ -39,6 +39,10 @@ public class VestigiumLib extends JavaPlugin implements Listener {
     private ParticleManager particleManager;
     private TPSMonitor tpsMonitor;
 
+    // Soft-dependency hooks (null if the plugin is absent)
+    private LuckPermsHook luckPermsHook;
+    private PlaceholderAPIHook placeholderAPIHook;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -62,6 +66,16 @@ public class VestigiumLib extends JavaPlugin implements Listener {
         // Step 5: TPS monitor + ParticleManager
         tpsMonitor = new TPSMonitor();
         particleManager = new ParticleManager(this, tpsMonitor);
+
+        // Step 5b: Soft-dependency hooks
+        if (LuckPermsHook.isAvailable(this)) {
+            luckPermsHook = new LuckPermsHook(this);
+        }
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            placeholderAPIHook = new PlaceholderAPIHook();
+            placeholderAPIHook.register();
+            getLogger().info("[PlaceholderAPIHook] %vestigium_*% expansion registered.");
+        }
 
         // Step 6: Load persisted data
         saveDefaultConfig();
@@ -173,5 +187,15 @@ public class VestigiumLib extends JavaPlugin implements Listener {
 
     public static TPSMonitor getTPSMonitor() {
         return instance.tpsMonitor;
+    }
+
+    /** Returns the LuckPerms hook, or null if LuckPerms is not installed. */
+    public static LuckPermsHook getLuckPermsHook() {
+        return instance.luckPermsHook;
+    }
+
+    /** Returns the PlaceholderAPI hook, or null if PlaceholderAPI is not installed. */
+    public static PlaceholderAPIHook getPlaceholderAPIHook() {
+        return instance.placeholderAPIHook;
     }
 }

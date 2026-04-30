@@ -15,6 +15,19 @@
     <name>VestigiumEconomy</name>
     <description>Crafting depth systems, special items, market systems</description>
 
+    <repositories>
+        <!-- Vault -->
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <!-- PlaceholderAPI -->
+        <repository>
+            <id>extendedclip-releases</id>
+            <url>https://repo.extendedclip.com/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -23,6 +36,24 @@
         <dependency>
             <groupId>com.vestigium</groupId>
             <artifactId>VestigiumLib</artifactId>
+        </dependency>
+
+        <!-- Vault — soft dependency -->
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7.1</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- PlaceholderAPI — needed to resolve PlaceholderAPIHook superclass at compile time -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
