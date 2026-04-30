@@ -5,6 +5,7 @@ import com.vestigium.lib.event.FactionCollapseEvent;
 import com.vestigium.lib.model.Faction;
 import com.vestigium.vestigiumeconomy.VestigiumEconomy;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
+import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -141,8 +142,19 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
-        // Absorb any physical shards first
-        plugin.getCurrencyManager().absorbPhysicalShards(player);
+        CurrencyManager cm = plugin.getCurrencyManager();
+        VaultHook vault = plugin.getVaultHook();
+
+        // Auto-sell any physical Vestige Shards in inventory
+        int shardCount = cm.countShards(player);
+        if (shardCount > 0) {
+            double sellTotal = shardCount * VaultHook.SHARD_VALUE;
+            cm.removeShards(player, shardCount);
+            if (vault.isEnabled()) vault.deposit(player, sellTotal);
+            player.sendMessage("§dSold §f" + shardCount + " Vestige Shard"
+                    + (shardCount != 1 ? "s" : "") + " §dfor §6"
+                    + vault.format(sellTotal) + "§d.");
+        }
 
         // Remember last market type for /vebuy
         lastMarketType.put(player.getUniqueId(), marketType);
@@ -152,13 +164,16 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
                 .filter(e -> e.faction().equals(marketType) || "none".equals(e.faction()))
                 .toList();
 
-        player.sendMessage("§d=== Market (" + marketType + ") ===");
-        player.sendMessage("§7Balance: §d" + plugin.getCurrencyManager().getBalance(player) + " shards");
+        player.sendMessage("§6=== Market (" + marketType + ") ===");
+        String balDisplay = vault.isEnabled()
+                ? vault.format(vault.getBalance(player))
+                : "§cNo economy provider";
+        player.sendMessage("§7Balance: §6" + balDisplay);
         for (int i = 0; i < available.size(); i++) {
             MarketEntry entry = available.get(i);
             int price = getPrice(entry.material());
             player.sendMessage("§e[" + (i + 1) + "] §f"
-                    + formatMat(entry.material()) + " §7— §d" + price + " shards");
+                    + formatMat(entry.material()) + " §7— §6" + vault.format(price));
         }
         player.sendMessage("§7Type §e/vebuy <number> §7to purchase.");
     }
@@ -176,17 +191,24 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
         MarketEntry entry = available.get(index - 1);
         int price = getPrice(entry.material());
 
-        CurrencyManager cm = plugin.getCurrencyManager();
-        if (!cm.hasShards(player, price)) {
-            player.sendMessage("§cNot enough shards. Need §d" + price + "§c, have §d" + cm.getBalance(player) + "§c.");
+        VaultHook vault = plugin.getVaultHook();
+        if (!vault.isEnabled()) {
+            player.sendMessage("§cMarket unavailable — no economy provider configured.");
             return;
         }
-        cm.spendShards(player, price);
+        if (!vault.has(player, price)) {
+            player.sendMessage("§cNot enough " + vault.currencyNamePlural()
+                    + "§c. Need §6" + vault.format(price)
+                    + "§c, have §6" + vault.format(vault.getBalance(player)) + "§c.");
+            return;
+        }
+        vault.withdraw(player, price);
         Map<Integer, org.bukkit.inventory.ItemStack> overflow =
                 player.getInventory().addItem(new org.bukkit.inventory.ItemStack(entry.material()));
         overflow.values().forEach(i -> player.getWorld().dropItemNaturally(player.getLocation(), i));
         player.sendMessage("§aPurchased §f" + formatMat(entry.material())
-                + " §afor §d" + price + " shards§a. Remaining: §d" + cm.getBalance(player));
+                + " §afor §6" + vault.format(price)
+                + "§a. Remaining: §6" + vault.format(vault.getBalance(player)));
     }
 
     // -------------------------------------------------------------------------
