@@ -148,7 +148,7 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
         // Auto-sell any physical Vestige Shards in inventory
         int shardCount = cm.countShards(player);
         if (shardCount > 0) {
-            double sellTotal = shardCount * VaultHook.SHARD_VALUE;
+            double sellTotal = shardCount * plugin.getShardValue();
             cm.removeShards(player, shardCount);
             if (vault.isEnabled()) vault.deposit(player, sellTotal);
             player.sendMessage("§dSold §f" + shardCount + " Vestige Shard"

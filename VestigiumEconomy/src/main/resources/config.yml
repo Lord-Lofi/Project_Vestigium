@@ -1,0 +1,18 @@
+# VestigiumEconomy Configuration
+
+# How much Vault currency one physical Vestige Shard is worth when sold at a market.
+vestige-shard-value: 500.0
+
+# Base catalogue prices (in Vault currency).
+# These are the starting prices before faction health / omen / season modifiers apply.
+# Matching is by material name (case-insensitive).
+# If a material is not listed here the hardcoded default from DynamicMarketManager is used.
+catalogue-prices:
+  BREAD: 5
+  IRON_INGOT: 10
+  EMERALD: 20
+  CROSSBOW: 40
+  IRON_SWORD: 25
+  COAL: 3
+  GUNPOWDER: 8
+  ECHO_SHARD: 60
