@@ -54,7 +54,7 @@ public class CurrencyManager implements CommandExecutor {
             meta.setDisplayName("§dVestige Shard");
             meta.setLore(List.of(
                     "§7A fragment of something that once mattered.",
-                    "§8Sell at any market for §6" + (int) VaultHook.SHARD_VALUE + " §8each."
+                    "§8Sell at any market for §6" + (int) plugin.getShardValue() + " §8each."
             ));
             meta.getPersistentDataContainer()
                     .set(SHARD_ITEM_KEY, PersistentDataType.BOOLEAN, true);
@@ -121,7 +121,7 @@ public class CurrencyManager implements CommandExecutor {
                 int shards = countShards(player);
                 if (shards > 0)
                     sender.sendMessage("§dVestige Shards in inventory: §f" + shards
-                            + " §7(worth §6" + vault.format(shards * VaultHook.SHARD_VALUE) + "§7)");
+                            + " §7(worth §6" + vault.format(shards * plugin.getShardValue()) + "§7)");
             }
             case "give", "take" -> {
                 if (!sender.hasPermission("vestigium.currency.admin")) {
