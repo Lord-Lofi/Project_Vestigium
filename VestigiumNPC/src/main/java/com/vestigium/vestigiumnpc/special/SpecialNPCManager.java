@@ -152,14 +152,17 @@ public class SpecialNPCManager implements Listener {
 
         activeFerrymen.add(ferryman.getUniqueId());
 
-        // Despawn if player recovers (checked every 5 seconds)
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if (!ferryman.isValid()) return;
-            if (player.getHealth() > FERRYMAN_HEALTH_THRESHOLD + 4) {
-                ferryman.remove();
-                activeFerrymen.remove(ferryman.getUniqueId());
+        // Despawn if player recovers (checked every 5 seconds); task self-cancels
+        new BukkitRunnable() {
+            @Override public void run() {
+                if (!ferryman.isValid()) { cancel(); return; }
+                if (player.getHealth() > FERRYMAN_HEALTH_THRESHOLD + 4) {
+                    ferryman.remove();
+                    activeFerrymen.remove(ferryman.getUniqueId());
+                    cancel();
+                }
             }
-        }, 100L, 100L);
+        }.runTaskTimer(plugin, 100L, 100L);
     }
 
     private boolean hasFerrymanNearby(Player player) {

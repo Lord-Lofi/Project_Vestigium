@@ -38,6 +38,7 @@ public class VestigiumMagic extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (spellCaster != null) spellCaster.shutdown();
         getLogger().info("VestigiumMagic disabled.");
     }
 

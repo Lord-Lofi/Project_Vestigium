@@ -60,6 +60,7 @@ public class VestigiumEconomy extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (dynamicMarketManager != null) dynamicMarketManager.shutdown();
         getLogger().info("VestigiumEconomy disabled.");
     }
 

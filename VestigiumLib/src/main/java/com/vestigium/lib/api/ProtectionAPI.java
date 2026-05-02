@@ -26,17 +26,19 @@ public class ProtectionAPI {
     private final Plugin plugin;
     private boolean worldGuardEnabled = false;
     private boolean griefPreventionEnabled = false;
-
-    // WorldGuard handle — held as Object to avoid hard class linkage at load time
-    private Object worldGuardRegionContainer = null;
+    private boolean depsChecked = false;
 
     public ProtectionAPI(Plugin plugin) {
         this.plugin = plugin;
         this.placedBlocksKey = new NamespacedKey("vestigium", "player_placed_blocks");
-        initSoftDependencies();
     }
 
-    private void initSoftDependencies() {
+    // Deferred until first actual use so WorldGuard/GP are guaranteed to be enabled
+    // (VestigiumLib loads at STARTUP; protection plugins enable at POSTWORLD)
+    private void ensureInitialized() {
+        if (depsChecked) return;
+        depsChecked = true;
+
         Plugin wg = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
         if (wg != null && wg.isEnabled()) {
             worldGuardEnabled = true;
@@ -64,6 +66,7 @@ public class ProtectionAPI {
      */
     public boolean isProtected(Location location) {
         if (location == null || location.getWorld() == null) return true; // fail safe
+        ensureInitialized();
 
         if (worldGuardEnabled && isWorldGuardProtected(location)) return true;
         if (griefPreventionEnabled && isGriefPreventionProtected(location)) return true;
@@ -122,10 +125,12 @@ public class ProtectionAPI {
     }
 
     public boolean isWorldGuardEnabled() {
+        ensureInitialized();
         return worldGuardEnabled;
     }
 
     public boolean isGriefPreventionEnabled() {
+        ensureInitialized();
         return griefPreventionEnabled;
     }
 
