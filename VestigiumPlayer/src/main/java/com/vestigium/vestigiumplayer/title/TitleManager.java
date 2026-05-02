@@ -1,5 +1,6 @@
 package com.vestigium.vestigiumplayer.title;
 
+import com.vestigium.lib.VestigiumLib;
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import org.bukkit.command.Command;
@@ -41,7 +42,8 @@ public class TitleManager implements CommandExecutor {
             new TitleDefinition("warden_bane",   "§c[Warden's Bane]", 0, 0, 5, 0),
             new TitleDefinition("lore_seeker",   "§b[Lore Seeker]",   0, 0, 0, 25),
             new TitleDefinition("archivist",     "§d[Archivist]",     0, 0, 0, 100),
-            new TitleDefinition("deep_walker",   "§8[Deep Walker]",   25, 0, 0, 0)
+            new TitleDefinition("deep_walker",   "§8[Deep Walker]",   25, 0, 0, 0),
+            new TitleDefinition("the_terminus",  "§5[The Terminus]",   0, 0, 0, Integer.MAX_VALUE)
     );
 
     private final VestigiumPlayer plugin;
@@ -93,6 +95,17 @@ public class TitleManager implements CommandExecutor {
         // Always grant wanderer
         if (!dataStore.getUnlockedTitles(player).contains("wanderer")) {
             dataStore.unlockTitle(player, "wanderer");
+        }
+
+        // the_terminus: fragment-based unlock, not stat-based
+        if (!dataStore.getUnlockedTitles(player).contains("the_terminus")
+                && VestigiumLib.getLoreRegistry().hasFragment(
+                        player.getUniqueId(), "cartographer_terminus_main")) {
+            dataStore.unlockTitle(player, "the_terminus");
+            player.sendMessage("§6[Title Unlocked] §5[The Terminus] §6— §7/vptitle set the_terminus");
+            if (dataStore.getActiveTitle(player).isBlank()) {
+                dataStore.setActiveTitle(player, "the_terminus");
+            }
         }
     }
 

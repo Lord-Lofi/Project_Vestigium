@@ -2,6 +2,7 @@ package com.vestigium.vestigiumplayer.stats;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.event.CataclysmEndEvent;
+import com.vestigium.lib.event.LoreFragmentGrantedEvent;
 import com.vestigium.lib.event.WorldBossSpawnEvent;
 import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
@@ -65,6 +66,14 @@ public class PlayerStatTracker implements Listener {
             cataclysmSurvivors.clear();
             plugin.getTitleManager().checkAllOnline();
         });
+
+        VestigiumLib.getEventBus().subscribe(LoreFragmentGrantedEvent.class, event -> {
+            Player p = plugin.getServer().getPlayer(event.getPlayerUUID());
+            if (p == null) return;
+            dataStore.addInt(p, PlayerDataStore.KEY_LORE_FRAGS, 1);
+            plugin.getTitleManager().checkTitles(p);
+        });
+
 
         plugin.getLogger().info("[PlayerStatTracker] Initialized.");
     }

@@ -1,6 +1,9 @@
 package com.vestigium.vestigiumquests.tracker;
 
 import com.vestigium.lib.VestigiumLib;
+import com.vestigium.lib.event.LoreFragmentGrantedEvent;
+import com.vestigium.lib.event.OmenThresholdEvent;
+import com.vestigium.lib.model.Season;
 import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumquests.VestigiumQuests;
 import com.vestigium.vestigiumquests.registry.QuestDefinition;
@@ -12,12 +15,15 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
@@ -55,6 +61,28 @@ public class QuestTracker implements Listener {
 
     public void init() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
+        // SURVIVE quests: target is "omen_<threshold>" — advance when omen crosses that value
+        VestigiumLib.getEventBus().subscribe(OmenThresholdEvent.class, event -> {
+            if (!event.isAscending()) return;
+            String targetKey = "omen_" + event.getThreshold();
+            plugin.getServer().getOnlinePlayers().forEach(p ->
+                questRegistry.getAll().stream()
+                    .filter(q -> q.type() == QuestType.SURVIVE
+                            && targetKey.equalsIgnoreCase(q.target()))
+                    .forEach(q -> advanceProgress(p, q.id(), 1)));
+        });
+
+        // LORE quests: target is a chain prefix — advance when a matching fragment is granted
+        VestigiumLib.getEventBus().subscribe(LoreFragmentGrantedEvent.class, event -> {
+            Player p = plugin.getServer().getPlayer(event.getPlayerUUID());
+            if (p == null) return;
+            questRegistry.getAll().stream()
+                .filter(q -> q.type() == QuestType.LORE
+                        && event.getFragmentId().startsWith(q.target()))
+                .forEach(q -> advanceProgress(p, q.id(), 1));
+        });
+
         plugin.getLogger().info("[QuestTracker] Initialized.");
     }
 
@@ -91,6 +119,13 @@ public class QuestTracker implements Listener {
 
         if (!def.repeatable() && isComplete(player, questId)) return false;
         if (isActive(player, questId)) return false;
+
+        if (!def.prerequisite().isBlank() && !isComplete(player, def.prerequisite())) return false;
+
+        if (!def.season().isBlank()) {
+            Season current = VestigiumLib.getSeasonAPI().getCurrentSeason();
+            if (!def.season().equalsIgnoreCase(current.name())) return false;
+        }
 
         int omen = (int) VestigiumLib.getOmenAPI().getEffectiveOmenScore();
         if (omen < def.minOmen() || omen > def.maxOmen()) return false;
@@ -174,6 +209,55 @@ public class QuestTracker implements Listener {
                 .filter(q -> q.type() == QuestType.EXPLORE
                         && finalStructureId.equalsIgnoreCase(q.target()))
                 .forEach(q -> advanceProgress(player, q.id(), 1));
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onDeliver(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof Villager)) return;
+        Player player = event.getPlayer();
+
+        for (QuestDefinition q : questRegistry.getAll()) {
+            if (q.type() != QuestType.DELIVER || !isActive(player, q.id())) continue;
+            Material mat;
+            try { mat = Material.valueOf(q.target().toUpperCase()); }
+            catch (IllegalArgumentException e) { continue; }
+
+            int alreadyDelivered = getProgress(player, q.id());
+            int stillNeeded = q.count() - alreadyDelivered;
+            int inInventory = countMaterial(player, mat);
+            if (inInventory <= 0) continue;
+
+            int toDeliver = Math.min(inInventory, stillNeeded);
+            removeMaterial(player, mat, toDeliver);
+            advanceProgress(player, q.id(), toDeliver);
+            player.sendMessage("§6[Quest] §7Delivered §e" + toDeliver + "x " + mat.name().toLowerCase()
+                    + "§7 for §e" + q.title() + "§7.");
+        }
+    }
+
+    private int countMaterial(Player player, Material mat) {
+        int total = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.getType() == mat) total += item.getAmount();
+        }
+        return total;
+    }
+
+    private void removeMaterial(Player player, Material mat, int amount) {
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            ItemStack item = contents[i];
+            if (item == null || item.getType() != mat) continue;
+            if (item.getAmount() <= remaining) {
+                remaining -= item.getAmount();
+                player.getInventory().setItem(i, null);
+            } else {
+                item.setAmount(item.getAmount() - remaining);
+                remaining = 0;
+            }
+        }
+        player.updateInventory();
     }
 
     // -------------------------------------------------------------------------

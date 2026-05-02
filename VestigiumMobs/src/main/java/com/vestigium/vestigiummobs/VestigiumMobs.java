@@ -39,7 +39,9 @@ public class VestigiumMobs extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (minionSystem != null) minionSystem.saveAll();
+        if (passiveMobManager  != null) passiveMobManager.shutdown();
+        if (namedWardenManager != null) namedWardenManager.shutdown();
+        if (minionSystem       != null) minionSystem.saveAll();
         getLogger().info("VestigiumMobs disabled.");
     }
 

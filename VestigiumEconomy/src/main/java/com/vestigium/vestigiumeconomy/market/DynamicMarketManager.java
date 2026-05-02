@@ -69,6 +69,7 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
     private final Map<Material, Integer> effectivePrices = new LinkedHashMap<>();
     // Last market type each player interacted with — used by /vebuy
     private final Map<UUID, String> lastMarketType = new HashMap<>();
+    private BukkitRunnable refreshTask;
 
     public DynamicMarketManager(VestigiumEconomy plugin) {
         this.plugin = plugin;
@@ -78,14 +79,19 @@ public class DynamicMarketManager implements Listener, CommandExecutor {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         refreshPrices();
 
-        new BukkitRunnable() {
+        refreshTask = new BukkitRunnable() {
             @Override public void run() { refreshPrices(); }
-        }.runTaskTimer(plugin, PRICE_REFRESH_TICKS, PRICE_REFRESH_TICKS);
+        };
+        refreshTask.runTaskTimer(plugin, PRICE_REFRESH_TICKS, PRICE_REFRESH_TICKS);
 
         VestigiumLib.getEventBus().subscribe(FactionCollapseEvent.class,
                 e -> refreshPrices());
 
         plugin.getLogger().info("[DynamicMarketManager] Initialized.");
+    }
+
+    public void shutdown() {
+        if (refreshTask != null) refreshTask.cancel();
     }
 
     // -------------------------------------------------------------------------

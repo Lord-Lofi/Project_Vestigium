@@ -1,5 +1,7 @@
 package com.vestigium.lib.api;
 
+import com.vestigium.lib.VestigiumLib;
+import com.vestigium.lib.event.LoreFragmentGrantedEvent;
 import com.vestigium.lib.util.Keys;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -36,13 +38,23 @@ public class LoreRegistry {
         this.plugin = plugin;
     }
 
+    private static final String[] BUNDLED_LORE = {
+        "cartographer_waystone_1", "cartographer_terminus",
+        "ancient_guardian_chamber", "antecedent_vault", "deep_archive_alpha"
+    };
+
     /** Loads all lore YAML files from the lore/ data directory. */
     public void loadAll() {
         File loreDir = new File(plugin.getDataFolder(), "lore");
         if (!loreDir.exists()) {
             loreDir.mkdirs();
-            plugin.getLogger().info("[LoreRegistry] Created lore/ directory. Add lore YAML files to populate.");
-            return;
+            for (String name : BUNDLED_LORE) {
+                try {
+                    plugin.saveResource("lore/" + name + ".yml", false);
+                } catch (Exception e) {
+                    plugin.getLogger().warning("[LoreRegistry] Could not extract default: " + name + ".yml");
+                }
+            }
         }
 
         File[] files = loreDir.listFiles((dir, name) -> name.endsWith(".yml"));
@@ -102,8 +114,13 @@ public class LoreRegistry {
             plugin.getLogger().warning("[LoreRegistry] grantFragment called for offline player " + playerUUID);
             return;
         }
+        boolean alreadyHad = player.getPersistentDataContainer()
+                .has(Keys.loreFragmentKey(plugin, fragmentId), PersistentDataType.BOOLEAN);
         player.getPersistentDataContainer()
                 .set(Keys.loreFragmentKey(plugin, fragmentId), PersistentDataType.BOOLEAN, true);
+        if (!alreadyHad) {
+            VestigiumLib.getEventBus().fire(new LoreFragmentGrantedEvent(playerUUID, fragmentId));
+        }
     }
 
     /**

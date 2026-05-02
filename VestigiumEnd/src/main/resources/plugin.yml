@@ -8,6 +8,12 @@ load: POSTWORLD
 depend:
   - VestigiumLib
 
+commands:
+  veend:
+    description: VestigiumEnd admin commands
+    usage: /veend corruption <clear|status> <player>
+    permission: vestigium.end.admin
+
 permissions:
   vestigium.end.admin:
     description: Administrative access to VestigiumEnd systems
