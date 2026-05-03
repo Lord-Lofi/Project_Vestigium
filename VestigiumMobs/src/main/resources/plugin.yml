@@ -14,8 +14,16 @@ commands:
     usage: /vcwarden spawn <the_harbinger|echo_sovereign|deep_architect|pale_listener|final_chorus>
     permission: vestigium.warden.admin
     permission-message: §cYou do not have permission to spawn named Wardens.
+  minion:
+    description: Summon, dismiss, or list your personal minions
+    usage: /minion <summon <role>|dismiss <role|all>|list>
+    permission: vestigium.minion
+    permission-message: §cYou do not have permission to use minions.
 
 permissions:
   vestigium.warden.admin:
     description: Spawn and manage named Warden encounters
     default: op
+  vestigium.minion:
+    description: Summon personal minions (Shade, Golem, Wisp, Hexblade, Harvester, Scout)
+    default: true
