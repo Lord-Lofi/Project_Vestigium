@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/glass",
+  "overrides": [
+    { "predicate": { "custom_model_data": 10001 }, "model": "vestigium:item/soul_mirror" }
+  ]
+}

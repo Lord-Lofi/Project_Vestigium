@@ -58,27 +58,27 @@ public class ArtifactManager implements Listener, CommandExecutor {
             new ArtifactDef("SOUL_MIRROR", Material.GLASS, "§fSoul Mirror",
                     List.of("§7Reflects the truth of what stands before you.",
                             "§8Right-click: read the nearest entity's health.",
-                            "§8Passive: +1 armor while sculk is within 8 blocks."), 0),
+                            "§8Passive: +1 armor while sculk is within 8 blocks."), 0, 10001),
             new ArtifactDef("HOLLOW_CROWN", Material.GOLDEN_HELMET, "§6Hollow Crown",
                     List.of("§7Power has a price. You feel it immediately.",
                             "§8Right-click: 2 seconds of Resistance V.",
                             "§8Passive: Night Vision while omen exceeds 400.",
-                            "§860 second cooldown."), 60_000),
+                            "§860 second cooldown."), 60_000, 10002),
             new ArtifactDef("WAYFARER_ORB", Material.ENDER_EYE, "§aWayfarer's Orb",
                     List.of("§7The road remembers where it has been.",
                             "§8Right-click: pulse reveals the nearest structure anchor.",
                             "§8Glowing particles mark it for 30 seconds.",
-                            "§8120 second cooldown."), 120_000),
+                            "§8120 second cooldown."), 120_000, 10003),
             new ArtifactDef("ANTECEDENT_KEY", Material.TRIAL_KEY, "§dAntecedent Key",
                     List.of("§7Some locks were meant to be found, not forced.",
                             "§8Right-click near any lectern or archive:",
                             "§8unlocks the antecedent cipher fragment.",
-                            "§8Usable once — the key remembers."), 0),
+                            "§8Usable once — the key remembers."), 0, 10004),
             new ArtifactDef("TIDAL_LENS", Material.SPYGLASS, "§3Tidal Lens",
                     List.of("§7The deep has a shape. This shows you its edges.",
                             "§8Right-click: cast Deep Reveal.",
                             "§8Marks nearby underwater structures with particles.",
-                            "§890 second cooldown."), 90_000)
+                            "§890 second cooldown."), 90_000, 10005)
     );
 
     private final VestigiumMagic plugin;
@@ -109,6 +109,7 @@ public class ArtifactManager implements Listener, CommandExecutor {
         if (meta == null) return item;
         meta.setDisplayName(def.displayName());
         meta.setLore(def.lore());
+        meta.setCustomModelData(def.customModelData());
         meta.getPersistentDataContainer()
                 .set(ARTIFACT_KEY, PersistentDataType.STRING, type);
         item.setItemMeta(meta);
@@ -240,5 +241,5 @@ public class ArtifactManager implements Listener, CommandExecutor {
     }
 
     private record ArtifactDef(String type, Material material, String displayName,
-                                List<String> lore, long cooldownMs) {}
+                                List<String> lore, long cooldownMs, int customModelData) {}
 }
