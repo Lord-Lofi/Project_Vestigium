@@ -36,13 +36,14 @@ public class AmbientParticleEngine {
     private static final double PARTICLE_SPREAD = 5.0;
 
     private final VestigiumAtmosphere plugin;
+    private BukkitRunnable task;
 
     public AmbientParticleEngine(VestigiumAtmosphere plugin) {
         this.plugin = plugin;
     }
 
     public void init() {
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 plugin.getServer().getWorlds().forEach(world -> {
@@ -50,7 +51,8 @@ public class AmbientParticleEngine {
                     world.getPlayers().forEach(player -> emitForPlayer(player, world));
                 });
             }
-        }.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
+        };
+        task.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
 
         plugin.getLogger().info("[AmbientParticleEngine] Initialized.");
     }
@@ -130,6 +132,10 @@ public class AmbientParticleEngine {
     private static final java.util.Set<String> SPORY_BIOMES = java.util.Set.of(
             "swamp", "mangrove_swamp", "jungle", "bamboo_jungle", "sparse_jungle",
             "mushroom_fields", "lush_caves");
+
+    public void shutdown() {
+        if (task != null) task.cancel();
+    }
 
     private static boolean isWarmBiome(Biome b)   { return WARM_BIOMES.contains(b.getKey().getKey()); }
     private static boolean isForestBiome(Biome b) { return FOREST_BIOMES.contains(b.getKey().getKey()); }

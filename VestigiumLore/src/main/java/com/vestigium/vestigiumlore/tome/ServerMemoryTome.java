@@ -205,7 +205,8 @@ public class ServerMemoryTome implements CommandExecutor {
                       score >= 600 ? "SEVERE"   :
                       score >= 400 ? "HIGH"      :
                       score >= 200 ? "ELEVATED"  : "LOW";
-        return new OomenData(score, tier, false);
+        boolean ascending = VestigiumLib.getOmenAPI().isAscending();
+        return new OomenData(score, tier, ascending);
     }
 
     private static String capitalize(String s) {

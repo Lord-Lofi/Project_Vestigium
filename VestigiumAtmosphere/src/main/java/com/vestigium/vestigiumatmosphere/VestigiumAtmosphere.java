@@ -35,6 +35,9 @@ public class VestigiumAtmosphere extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (weatherEventManager  != null) weatherEventManager.shutdown();
+        if (ambientParticleEngine != null) ambientParticleEngine.shutdown();
+        if (skyEventManager       != null) skyEventManager.shutdown();
         getLogger().info("VestigiumAtmosphere disabled.");
     }
 
