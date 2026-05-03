@@ -7,6 +7,7 @@ import com.vestigium.vestigiummobs.hostile.HollowKnightManager;
 import com.vestigium.vestigiummobs.hostile.ThornbackManager;
 import com.vestigium.vestigiummobs.hostile.TideLurkerManager;
 import com.vestigium.vestigiummobs.minion.MinionSystem;
+import com.vestigium.vestigiummobs.minion.PlayerMinionManager;
 import com.vestigium.vestigiummobs.passive.PassiveMobManager;
 import com.vestigium.vestigiummobs.warden.NamedWardenManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +29,7 @@ public class VestigiumMobs extends JavaPlugin {
     private ThornbackManager        thornbackManager;
     private PassiveMobManager       passiveMobManager;
     private MinionSystem            minionSystem;
+    private PlayerMinionManager     playerMinionManager;
     private NamedWardenManager      namedWardenManager;
 
     @Override
@@ -41,8 +43,9 @@ public class VestigiumMobs extends JavaPlugin {
         tideLurkerManager  = new TideLurkerManager(this);
         thornbackManager   = new ThornbackManager(this);
         passiveMobManager  = new PassiveMobManager(this);
-        minionSystem       = new MinionSystem(this);
-        namedWardenManager = new NamedWardenManager(this);
+        minionSystem        = new MinionSystem(this);
+        playerMinionManager = new PlayerMinionManager(this);
+        namedWardenManager  = new NamedWardenManager(this);
 
         hostileMobManager.init();
         hollowKnightManager.init();
@@ -52,6 +55,7 @@ public class VestigiumMobs extends JavaPlugin {
         thornbackManager.init();
         passiveMobManager.init();
         minionSystem.init();
+        playerMinionManager.init();
         namedWardenManager.init();
 
         getLogger().info("VestigiumMobs enabled.");
@@ -63,7 +67,8 @@ public class VestigiumMobs extends JavaPlugin {
         if (tideLurkerManager  != null) tideLurkerManager.shutdown();
         if (passiveMobManager  != null) passiveMobManager.shutdown();
         if (namedWardenManager != null) namedWardenManager.shutdown();
-        if (minionSystem       != null) minionSystem.saveAll();
+        if (playerMinionManager != null) playerMinionManager.shutdown();
+        if (minionSystem        != null) minionSystem.saveAll();
         getLogger().info("VestigiumMobs disabled.");
     }
 
