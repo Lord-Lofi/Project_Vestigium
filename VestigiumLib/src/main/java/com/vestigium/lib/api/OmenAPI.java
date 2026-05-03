@@ -37,6 +37,7 @@ public class OmenAPI {
     private final TreeMap<Integer, Boolean> thresholdState = new TreeMap<>();
 
     private long lastActivityMillis = System.currentTimeMillis();
+    private boolean lastChangeWasIncrease = false;
     private BukkitRunnable decayTask;
 
     public OmenAPI(Plugin plugin, EventBus eventBus) {
@@ -79,6 +80,7 @@ public class OmenAPI {
         int previous = getOmenScore();
         int updated = Math.min(MAX_OMEN, previous + amount);
         setScore(updated);
+        lastChangeWasIncrease = updated > previous;
         checkThresholds(previous, updated);
     }
 
@@ -88,7 +90,13 @@ public class OmenAPI {
         int previous = getOmenScore();
         int updated = Math.max(MIN_OMEN, previous - amount);
         setScore(updated);
+        lastChangeWasIncrease = false;
         checkThresholds(previous, updated);
+    }
+
+    /** Returns true if the most recent omen change was an increase. */
+    public boolean isAscending() {
+        return lastChangeWasIncrease;
     }
 
     /**

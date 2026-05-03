@@ -30,6 +30,3 @@ permissions:
     description: Give Server Memory Tomes to other players
     default: op
 
-  vestigium.lore.bypass:
-    description: Bypass cipher requirements when reading terminals
-    default: op

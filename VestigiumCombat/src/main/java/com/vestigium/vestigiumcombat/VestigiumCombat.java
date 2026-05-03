@@ -34,6 +34,8 @@ public class VestigiumCombat extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (combatTracker       != null) combatTracker.shutdown();
+        if (statusEffectManager != null) statusEffectManager.shutdown();
         getLogger().info("VestigiumCombat disabled.");
     }
 

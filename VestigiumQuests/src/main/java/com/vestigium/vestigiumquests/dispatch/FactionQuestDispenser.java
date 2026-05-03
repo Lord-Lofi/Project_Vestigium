@@ -107,7 +107,8 @@ public class FactionQuestDispenser implements Listener {
             case "mercenary_captain", "sellsword"       -> "mercenaries";
             case "cult_acolyte", "dark_priest"          -> "cultists";
             case "drowned_speaker"                      -> "drowned";
-            case "archivist", "scholar", "delver"       -> null; // generic/no faction
+            case "remnant_watcher", "void_herald"       -> "end_remnants";
+            case "archivist", "scholar", "delver"       -> "conclave";
             default -> null;
         };
     }

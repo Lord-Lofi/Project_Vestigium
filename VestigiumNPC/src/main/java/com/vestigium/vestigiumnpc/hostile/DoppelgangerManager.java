@@ -32,10 +32,9 @@ import java.util.concurrent.ThreadLocalRandom;
  *   - Drops Soul Mirror or Hollow Crown on death.
  *   - Despawns immediately if target player logs in.
  *
- * Implementation note: true skin spoofing requires NMS / ProtocolLib, which is
- * intentionally out of scope for this phase. This class manages the game logic,
- * state machine, and lifecycle. The visual layer (tab list injection, skin packet)
- * is left as a TODO hook for when ProtocolLib integration is added.
+ * Visual layer: DoppelgangerVisuals applies a player-skull helmet (always) and,
+ * when ProtocolLib is present, injects a tab-list entry so the doppelganger
+ * appears as a real player in the player list.
  */
 public class DoppelgangerManager implements Listener {
 
@@ -102,7 +101,10 @@ public class DoppelgangerManager implements Listener {
         UUID entityUUID = zombie.getUniqueId();
         if (!activeDoppelgangers.containsKey(entityUUID)) return;
 
-        activeDoppelgangers.remove(entityUUID);
+        UUID targetUUID = activeDoppelgangers.remove(entityUUID);
+        if (targetUUID != null) {
+            DoppelgangerVisuals.removeTabEntry(plugin, targetUUID, zombie.getWorld());
+        }
 
         // Drop Soul Mirror or Hollow Crown (50/50)
         org.bukkit.inventory.ItemStack drop;
@@ -175,7 +177,8 @@ public class DoppelgangerManager implements Listener {
 
         activeDoppelgangers.put(zombie.getUniqueId(), target.getUniqueId());
 
-        // TODO: inject tab list entry and skin packet when ProtocolLib is available
+        DoppelgangerVisuals.applySkullHelmet(zombie, target);
+        DoppelgangerVisuals.injectTabEntry(plugin, zombie, target);
 
         plugin.getLogger().info("[DoppelgangerManager] Spawned doppelganger of: " + target.getName());
     }
@@ -202,10 +205,17 @@ public class DoppelgangerManager implements Listener {
     }
 
     private void despawnDoppelganger(UUID entityUUID) {
-        plugin.getServer().getWorlds().forEach(world ->
-                world.getEntitiesByClass(Zombie.class).stream()
-                        .filter(z -> z.getUniqueId().equals(entityUUID))
-                        .forEach(org.bukkit.entity.Entity::remove));
+        UUID targetUUID = activeDoppelgangers.get(entityUUID);
+        plugin.getServer().getWorlds().forEach(world -> {
+            world.getEntitiesByClass(Zombie.class).stream()
+                    .filter(z -> z.getUniqueId().equals(entityUUID))
+                    .forEach(z -> {
+                        if (targetUUID != null) {
+                            DoppelgangerVisuals.removeTabEntry(plugin, targetUUID, world);
+                        }
+                        z.remove();
+                    });
+        });
     }
 
     private List<org.bukkit.OfflinePlayer> getOfflineCandidates() {

@@ -76,6 +76,11 @@ public class LoreDeliveryManager implements Listener {
         plugin.getLogger().info("[LoreDeliveryManager] Initialized.");
     }
 
+    public void shutdown() {
+        if (campfireTask != null) campfireTask.cancel();
+        if (bottleTask   != null) bottleTask.cancel();
+    }
+
     // -------------------------------------------------------------------------
     // Lore Tablets and Resonant Terminals — right-click on lectern/chest
     // -------------------------------------------------------------------------

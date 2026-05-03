@@ -35,6 +35,7 @@ public class CombatTracker implements Listener {
 
     private final VestigiumCombat plugin;
     private final Map<UUID, CombatState> states = new HashMap<>();
+    private BukkitRunnable decayTask;
 
     public CombatTracker(VestigiumCombat plugin) {
         this.plugin = plugin;
@@ -44,14 +45,19 @@ public class CombatTracker implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Decay stale states every 10 seconds
-        new BukkitRunnable() {
+        decayTask = new BukkitRunnable() {
             @Override public void run() {
                 long now = System.currentTimeMillis();
                 states.entrySet().removeIf(e -> now - e.getValue().lastActivityMillis() > COMBAT_TIMEOUT_MS * 2);
             }
-        }.runTaskTimer(plugin, 200L, 200L);
+        };
+        decayTask.runTaskTimer(plugin, 200L, 200L);
 
         plugin.getLogger().info("[CombatTracker] Initialized.");
+    }
+
+    public void shutdown() {
+        if (decayTask != null) decayTask.cancel();
     }
 
     // -------------------------------------------------------------------------

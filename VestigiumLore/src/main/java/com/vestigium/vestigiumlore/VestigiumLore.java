@@ -39,7 +39,8 @@ public class VestigiumLore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (serverMemoryTome != null) serverMemoryTome.save();
+        if (loreDeliveryManager != null) loreDeliveryManager.shutdown();
+        if (serverMemoryTome    != null) serverMemoryTome.save();
         getLogger().info("VestigiumLore disabled.");
     }
 
