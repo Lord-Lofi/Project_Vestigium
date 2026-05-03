@@ -1,0 +1,19 @@
+The following 16x16 PNG textures are needed here:
+
+  soul_mirror.png      — Soul Mirror (CMD 10001, base: glass)
+                         Suggested: mirror/glass motif, white/silver tones
+
+  hollow_crown.png     — Hollow Crown (CMD 10002, base: golden_helmet)
+                         Suggested: dark gold crown with void-black hollow eye
+
+  wayfarer_orb.png     — Wayfarer's Orb (CMD 10003, base: ender_eye)
+                         Suggested: glowing green/teal orb with a map fragment inside
+
+  antecedent_key.png   — Antecedent Key (CMD 10004, base: trial_key)
+                         Suggested: ornate ancient key, purple/dark motif
+
+  tidal_lens.png       — Tidal Lens (CMD 10005, base: spyglass)
+                         Suggested: spyglass lens with teal/blue ocean tones
+
+All textures should be 16x16 pixels, saved as RGBA PNG.
+Place each file in this directory alongside this note, then delete this file.

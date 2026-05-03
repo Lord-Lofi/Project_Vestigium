@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/helmet_gold",
+  "overrides": [
+    { "predicate": { "custom_model_data": 10002 }, "model": "vestigium:item/hollow_crown" }
+  ]
+}
