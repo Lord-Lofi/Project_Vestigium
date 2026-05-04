@@ -1,19 +1,44 @@
 The following 16x16 PNG textures are needed here:
 
-  soul_mirror.png      — Soul Mirror (CMD 10001, base: glass)
-                         Suggested: mirror/glass motif, white/silver tones
+--- Artifact Items (CMD 10001–10005) ---
 
-  hollow_crown.png     — Hollow Crown (CMD 10002, base: golden_helmet)
-                         Suggested: dark gold crown with void-black hollow eye
+  soul_mirror.png          — Soul Mirror (CMD 10001, base: glass)
+                             Suggested: mirror/glass motif, white/silver tones
 
-  wayfarer_orb.png     — Wayfarer's Orb (CMD 10003, base: ender_eye)
-                         Suggested: glowing green/teal orb with a map fragment inside
+  hollow_crown.png         — Hollow Crown (CMD 10002, base: golden_helmet)
+                             Suggested: dark gold crown with void-black hollow eye
 
-  antecedent_key.png   — Antecedent Key (CMD 10004, base: trial_key)
-                         Suggested: ornate ancient key, purple/dark motif
+  wayfarer_orb.png         — Wayfarer's Orb (CMD 10003, base: ender_eye)
+                             Suggested: glowing green/teal orb with a map fragment inside
 
-  tidal_lens.png       — Tidal Lens (CMD 10005, base: spyglass)
-                         Suggested: spyglass lens with teal/blue ocean tones
+  antecedent_key.png       — Antecedent Key (CMD 10004, base: trial_key)
+                             Suggested: ornate ancient key, purple/dark motif
+
+  tidal_lens.png           — Tidal Lens (CMD 10005, base: spyglass)
+                             Suggested: spyglass lens with teal/blue ocean tones
+
+--- Utility Items (CMD 20001–20007) ---
+
+  soulbound_compass.png    — Soulbound Compass (CMD 20001, base: compass)
+                             Suggested: compass with a ghostly blue needle and soul flame motif
+
+  headlamp.png             — Headlamp (CMD 20002, base: leather_helmet)
+                             Suggested: miner's helmet with a front-mounted lantern, warm yellow glow
+
+  spelunkers_lantern.png   — Spelunker's Lantern (CMD 20003, base: torch)
+                             Suggested: ornate hand lantern, glowing amber, with a handle
+
+  cartographers_lens.png   — Cartographer's Lens (CMD 20004, base: filled_map)
+                             Suggested: magnifying lens over a map grid, blue/teal tones
+
+  depth_charts.png         — Depth Charts (CMD 20005, base: paper)
+                             Suggested: rolled parchment with depth grid lines and Y-axis markings
+
+  resonant_dowsing_rod.png — Resonant Dowsing Rod (CMD 20006, base: blaze_rod)
+                             Suggested: forked rod with purple resonant crystals at the tips
+
+  smoke_bomb.png           — Smoke Bomb (CMD 20007, base: egg)
+                             Suggested: dark ceramic sphere with a short fuse, grey smoke wisp
 
 All textures should be 16x16 pixels, saved as RGBA PNG.
 Place each file in this directory alongside this note, then delete this file.
