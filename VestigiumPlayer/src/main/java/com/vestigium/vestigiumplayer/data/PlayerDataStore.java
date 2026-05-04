@@ -41,6 +41,7 @@ public class PlayerDataStore implements Listener {
     public static final NamespacedKey KEY_STRUCTURES = new NamespacedKey("vestigium", "vp_structures");
     public static final NamespacedKey KEY_BOSS_KILLS = new NamespacedKey("vestigium", "vp_boss_kills");
     public static final NamespacedKey KEY_LORE_FRAGS = new NamespacedKey("vestigium", "vp_lore_frags");
+    public static final NamespacedKey KEY_NOTORIETY  = new NamespacedKey("vestigium", "notoriety");
 
     private final VestigiumPlayer plugin;
     private final Map<UUID, Long> joinTimes = new HashMap<>();
@@ -134,6 +135,7 @@ public class PlayerDataStore implements Listener {
         cfg.set("structures",        getInt(player, KEY_STRUCTURES));
         cfg.set("boss_kills",        getInt(player, KEY_BOSS_KILLS));
         cfg.set("lore_frags",        getInt(player, KEY_LORE_FRAGS));
+        cfg.set("notoriety",         getInt(player, KEY_NOTORIETY));
         try {
             cfg.save(new File(dir, player.getUniqueId() + ".yml"));
         } catch (IOException e) {
@@ -162,6 +164,7 @@ public class PlayerDataStore implements Listener {
         restoreInt(player, KEY_STRUCTURES, cfg, "structures");
         restoreInt(player, KEY_BOSS_KILLS, cfg, "boss_kills");
         restoreInt(player, KEY_LORE_FRAGS, cfg, "lore_frags");
+        restoreInt(player, KEY_NOTORIETY,  cfg, "notoriety");
     }
 
     private void restoreInt(Player player, NamespacedKey key, YamlConfiguration cfg, String cfgKey) {

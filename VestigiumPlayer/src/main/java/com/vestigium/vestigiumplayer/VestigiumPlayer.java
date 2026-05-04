@@ -2,6 +2,7 @@ package com.vestigium.vestigiumplayer;
 
 import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
+import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
 import com.vestigium.vestigiumplayer.title.TitleManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +19,7 @@ public class VestigiumPlayer extends JavaPlugin {
     private PlayerDataStore   playerDataStore;
     private PlayerStatTracker playerStatTracker;
     private TitleManager      titleManager;
+    private NotorietyManager  notorietyManager;
 
     @Override
     public void onEnable() {
@@ -26,10 +28,12 @@ public class VestigiumPlayer extends JavaPlugin {
         playerDataStore   = new PlayerDataStore(this);
         playerStatTracker = new PlayerStatTracker(this, playerDataStore);
         titleManager      = new TitleManager(this, playerDataStore);
+        notorietyManager  = new NotorietyManager(this, playerDataStore);
 
         playerDataStore.init();
         playerStatTracker.init();
         titleManager.init();
+        notorietyManager.init();
 
         registerPlaceholders();
 
@@ -38,7 +42,8 @@ public class VestigiumPlayer extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (playerDataStore != null) playerDataStore.saveAll();
+        if (notorietyManager != null) notorietyManager.shutdown();
+        if (playerDataStore  != null) playerDataStore.saveAll();
         getLogger().info("VestigiumPlayer disabled.");
     }
 
@@ -46,6 +51,7 @@ public class VestigiumPlayer extends JavaPlugin {
     public PlayerDataStore getPlayerDataStore()          { return playerDataStore; }
     public PlayerStatTracker getPlayerStatTracker()      { return playerStatTracker; }
     public TitleManager getTitleManager()                { return titleManager; }
+    public NotorietyManager getNotorietyManager()        { return notorietyManager; }
 
     private void registerPlaceholders() {
         // %vestigium_title%        — active title display string (e.g. §e[Cartographer])
