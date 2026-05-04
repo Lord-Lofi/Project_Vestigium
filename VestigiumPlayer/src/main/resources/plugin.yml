@@ -14,6 +14,11 @@ commands:
     usage: /vptitle [list | set <title>]
     permission: vestigium.title.use
     permission-message: §cYou do not have permission to use titles.
+  vpnotoriety:
+    description: Check or manage notoriety
+    usage: /vpnotoriety [check|clear|add] [player] [amount]
+    permission: vestigium.notoriety.use
+    permission-message: §cYou do not have permission to use this command.
 
 permissions:
   vestigium.title.use:
@@ -22,4 +27,12 @@ permissions:
 
   vestigium.title.admin:
     description: Grant titles to other players
+    default: op
+
+  vestigium.notoriety.use:
+    description: Check your own notoriety score
+    default: true
+
+  vestigium.notoriety.admin:
+    description: Check, clear, and modify any player's notoriety
     default: op
