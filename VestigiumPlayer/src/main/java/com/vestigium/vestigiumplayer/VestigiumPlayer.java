@@ -5,6 +5,7 @@ import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
 import com.vestigium.vestigiumplayer.title.TitleManager;
+import com.vestigium.vestigiumplayer.utility.UtilityItemManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -16,10 +17,11 @@ public class VestigiumPlayer extends JavaPlugin {
 
     private static VestigiumPlayer instance;
 
-    private PlayerDataStore   playerDataStore;
-    private PlayerStatTracker playerStatTracker;
-    private TitleManager      titleManager;
-    private NotorietyManager  notorietyManager;
+    private PlayerDataStore    playerDataStore;
+    private PlayerStatTracker  playerStatTracker;
+    private TitleManager       titleManager;
+    private NotorietyManager   notorietyManager;
+    private UtilityItemManager utilityItemManager;
 
     @Override
     public void onEnable() {
@@ -28,12 +30,14 @@ public class VestigiumPlayer extends JavaPlugin {
         playerDataStore   = new PlayerDataStore(this);
         playerStatTracker = new PlayerStatTracker(this, playerDataStore);
         titleManager      = new TitleManager(this, playerDataStore);
-        notorietyManager  = new NotorietyManager(this, playerDataStore);
+        notorietyManager   = new NotorietyManager(this, playerDataStore);
+        utilityItemManager = new UtilityItemManager(this);
 
         playerDataStore.init();
         playerStatTracker.init();
         titleManager.init();
         notorietyManager.init();
+        utilityItemManager.init();
 
         registerPlaceholders();
 
@@ -42,8 +46,9 @@ public class VestigiumPlayer extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (notorietyManager != null) notorietyManager.shutdown();
-        if (playerDataStore  != null) playerDataStore.saveAll();
+        if (utilityItemManager != null) utilityItemManager.shutdown();
+        if (notorietyManager   != null) notorietyManager.shutdown();
+        if (playerDataStore    != null) playerDataStore.saveAll();
         getLogger().info("VestigiumPlayer disabled.");
     }
 
@@ -51,7 +56,8 @@ public class VestigiumPlayer extends JavaPlugin {
     public PlayerDataStore getPlayerDataStore()          { return playerDataStore; }
     public PlayerStatTracker getPlayerStatTracker()      { return playerStatTracker; }
     public TitleManager getTitleManager()                { return titleManager; }
-    public NotorietyManager getNotorietyManager()        { return notorietyManager; }
+    public NotorietyManager getNotorietyManager()          { return notorietyManager; }
+    public UtilityItemManager getUtilityItemManager()      { return utilityItemManager; }
 
     private void registerPlaceholders() {
         // %vestigium_title%        — active title display string (e.g. §e[Cartographer])

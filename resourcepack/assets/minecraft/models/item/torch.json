@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:block/torch"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 20003 }, "model": "vestigium:item/spelunkers_lantern" }
+  ]
+}

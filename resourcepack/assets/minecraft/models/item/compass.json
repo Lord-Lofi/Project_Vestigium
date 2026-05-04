@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/compass",
+  "overrides": [
+    { "predicate": { "custom_model_data": 20001 }, "model": "vestigium:item/soulbound_compass" }
+  ]
+}

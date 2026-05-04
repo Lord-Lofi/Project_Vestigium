@@ -19,6 +19,11 @@ commands:
     usage: /vpnotoriety [check|clear|add] [player] [amount]
     permission: vestigium.notoriety.use
     permission-message: §cYou do not have permission to use this command.
+  vpitem:
+    description: Give utility items to yourself or another player
+    usage: /vpitem give <item> [player]
+    permission: vestigium.item.admin
+    permission-message: §cYou do not have permission to give utility items.
 
 permissions:
   vestigium.title.use:
@@ -35,4 +40,8 @@ permissions:
 
   vestigium.notoriety.admin:
     description: Check, clear, and modify any player's notoriety
+    default: op
+
+  vestigium.item.admin:
+    description: Give utility items to players
     default: op
