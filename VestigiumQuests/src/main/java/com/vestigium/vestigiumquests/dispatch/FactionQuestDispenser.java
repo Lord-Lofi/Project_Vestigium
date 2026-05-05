@@ -109,6 +109,7 @@ public class FactionQuestDispenser implements Listener {
             case "drowned_speaker"                      -> "drowned";
             case "remnant_watcher", "void_herald"       -> "end_remnants";
             case "archivist", "scholar", "delver"       -> "conclave";
+            case "piglin_lord", "piglin_overlord"       -> "piglins";
             default -> null;
         };
     }
