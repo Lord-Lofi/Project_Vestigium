@@ -35,7 +35,10 @@ public class VestigiumStructures extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (wanderingDungeonManager != null) wanderingDungeonManager.save();
+        if (wanderingDungeonManager != null) {
+            wanderingDungeonManager.shutdown();
+            wanderingDungeonManager.save();
+        }
         getLogger().info("VestigiumStructures disabled.");
     }
 
