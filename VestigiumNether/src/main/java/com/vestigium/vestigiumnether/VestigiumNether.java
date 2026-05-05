@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumnether;
 
 import com.vestigium.vestigiumnether.atmosphere.NetherAtmosphereManager;
+import com.vestigium.vestigiumnether.mob.BastionPoliticsManager;
 import com.vestigium.vestigiumnether.mob.NetherMobManager;
 import com.vestigium.vestigiumnether.mob.WitherSkeletonBehaviorManager;
 import com.vestigium.vestigiumnether.storm.SoulStormManager;
@@ -18,26 +19,30 @@ public class VestigiumNether extends JavaPlugin {
     private NetherAtmosphereManager       netherAtmosphereManager;
     private SoulStormManager              soulStormManager;
     private WitherSkeletonBehaviorManager witherBehaviorManager;
+    private BastionPoliticsManager        bastionPoliticsManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        netherMobManager       = new NetherMobManager(this);
+        netherMobManager        = new NetherMobManager(this);
         netherAtmosphereManager = new NetherAtmosphereManager(this);
         soulStormManager        = new SoulStormManager(this);
         witherBehaviorManager   = new WitherSkeletonBehaviorManager(this);
+        bastionPoliticsManager  = new BastionPoliticsManager(this);
 
         netherMobManager.init();
         netherAtmosphereManager.init();
         soulStormManager.init();
         witherBehaviorManager.init();
+        bastionPoliticsManager.init();
 
         getLogger().info("VestigiumNether enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (bastionPoliticsManager  != null) bastionPoliticsManager.save();
         if (witherBehaviorManager   != null) witherBehaviorManager.shutdown();
         if (netherAtmosphereManager != null) netherAtmosphereManager.shutdown();
         if (soulStormManager        != null) soulStormManager.shutdown();
