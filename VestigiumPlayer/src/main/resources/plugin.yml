@@ -9,6 +9,11 @@ depend:
   - VestigiumLib
 
 commands:
+  vpstats:
+    description: View your player stats summary
+    usage: /vpstats [player]
+    permission: vestigium.stats
+    permission-message: §cYou do not have permission to view stats.
   vptitle:
     description: View and set your Vestigium title
     usage: /vptitle [list | set <title>]
@@ -26,6 +31,14 @@ commands:
     permission-message: §cYou do not have permission to give utility items.
 
 permissions:
+  vestigium.stats:
+    description: View your own stat summary
+    default: true
+
+  vestigium.stats.admin:
+    description: View another player's stat summary
+    default: op
+
   vestigium.title.use:
     description: View and equip unlocked titles
     default: true
