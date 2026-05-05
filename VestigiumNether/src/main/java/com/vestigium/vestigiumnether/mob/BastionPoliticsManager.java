@@ -1,5 +1,7 @@
 package com.vestigium.vestigiumnether.mob;
 
+import com.vestigium.lib.VestigiumLib;
+import com.vestigium.lib.model.Faction;
 import com.vestigium.vestigiumnether.VestigiumNether;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
@@ -133,6 +135,9 @@ public class BastionPoliticsManager implements Listener {
         int count = barterCounts.getOrDefault(countKey, 0) + 1;
         barterCounts.put(countKey, count);
 
+        VestigiumLib.getReputationAPI().modifyReputation(
+                player.getUniqueId(), Faction.PIGLINS, 30);
+
         if (count < BARTERS_REQUIRED) {
             player.sendActionBar(Component.text("§6" + event.getEntity().getCustomName()
                     + " §7regards you. §8(" + count + "/" + BARTERS_REQUIRED + " trades)"));
@@ -250,8 +255,10 @@ public class BastionPoliticsManager implements Listener {
         player.getPersistentDataContainer()
                 .set(HISTORIAN_KEY, PersistentDataType.INTEGER, current + 1);
 
-        // Piglin Historian achievement stub — first token only
+        // First token: grant expedition log lore fragment + achievement stub
         if (current == 0) {
+            VestigiumLib.getLoreRegistry().grantFragment(
+                    player.getUniqueId(), "piglin_expedition_log_main");
             player.sendMessage("§8[§6Piglin Historian§8] §7You have earned the trust of the ancient traders.");
         }
     }
