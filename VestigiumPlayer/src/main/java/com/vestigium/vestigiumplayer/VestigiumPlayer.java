@@ -5,6 +5,7 @@ import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
 import com.vestigium.vestigiumplayer.title.TitleManager;
+import com.vestigium.vestigiumplayer.utility.ToolMemoryManager;
 import com.vestigium.vestigiumplayer.utility.UtilityItemManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +23,7 @@ public class VestigiumPlayer extends JavaPlugin {
     private TitleManager       titleManager;
     private NotorietyManager   notorietyManager;
     private UtilityItemManager utilityItemManager;
+    private ToolMemoryManager  toolMemoryManager;
 
     @Override
     public void onEnable() {
@@ -32,12 +34,14 @@ public class VestigiumPlayer extends JavaPlugin {
         titleManager      = new TitleManager(this, playerDataStore);
         notorietyManager   = new NotorietyManager(this, playerDataStore);
         utilityItemManager = new UtilityItemManager(this);
+        toolMemoryManager  = new ToolMemoryManager(this);
 
         playerDataStore.init();
         playerStatTracker.init();
         titleManager.init();
         notorietyManager.init();
         utilityItemManager.init();
+        toolMemoryManager.init();
 
         registerPlaceholders();
 
