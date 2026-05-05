@@ -8,6 +8,13 @@ load: POSTWORLD
 depend:
   - VestigiumLib
 
+commands:
+  vnnether:
+    description: VestigiumNether administrative commands
+    usage: /vnnether terminal <set|remove|list>
+    permission: vestigium.nether.admin
+    permission-message: §cYou do not have permission to use this command.
+
 permissions:
   vestigium.nether.admin:
     description: Administrative access to VestigiumNether systems
