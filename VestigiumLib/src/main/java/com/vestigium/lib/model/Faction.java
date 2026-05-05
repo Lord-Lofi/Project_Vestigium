@@ -7,7 +7,8 @@ public enum Faction {
     CULTISTS,
     DROWNED,
     END_REMNANTS,
-    CONCLAVE;
+    CONCLAVE,
+    PIGLINS;
 
     public String getKey() {
         return name().toLowerCase();

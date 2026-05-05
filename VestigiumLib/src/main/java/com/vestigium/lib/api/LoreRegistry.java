@@ -40,7 +40,8 @@ public class LoreRegistry {
 
     private static final String[] BUNDLED_LORE = {
         "cartographer_waystone_1", "cartographer_terminus",
-        "ancient_guardian_chamber", "antecedent_vault", "deep_archive_alpha"
+        "ancient_guardian_chamber", "antecedent_vault", "deep_archive_alpha",
+        "piglin_expedition_log", "piglin_golden_directive"
     };
 
     /** Loads all lore YAML files from the lore/ data directory. */
