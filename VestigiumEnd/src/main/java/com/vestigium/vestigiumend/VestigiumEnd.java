@@ -2,6 +2,7 @@ package com.vestigium.vestigiumend;
 
 import com.vestigium.vestigiumend.corruption.VoidCorruptionManager;
 import com.vestigium.vestigiumend.echo.DragonEchoManager;
+import com.vestigium.vestigiumend.lore.EndLoreManager;
 import com.vestigium.vestigiumend.mob.EndMobManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +17,7 @@ public class VestigiumEnd extends JavaPlugin {
     private EndMobManager          endMobManager;
     private VoidCorruptionManager  voidCorruptionManager;
     private DragonEchoManager      dragonEchoManager;
+    private EndLoreManager         endLoreManager;
 
     @Override
     public void onEnable() {
@@ -24,16 +26,19 @@ public class VestigiumEnd extends JavaPlugin {
         endMobManager         = new EndMobManager(this);
         voidCorruptionManager = new VoidCorruptionManager(this);
         dragonEchoManager     = new DragonEchoManager(this);
+        endLoreManager        = new EndLoreManager(this);
 
         endMobManager.init();
         voidCorruptionManager.init();
         dragonEchoManager.init();
+        endLoreManager.init();
 
         getLogger().info("VestigiumEnd enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (endLoreManager        != null) endLoreManager.shutdown();
         if (voidCorruptionManager != null) voidCorruptionManager.shutdown();
         if (dragonEchoManager     != null) dragonEchoManager.shutdown();
         getLogger().info("VestigiumEnd disabled.");
