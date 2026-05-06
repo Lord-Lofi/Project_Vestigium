@@ -183,6 +183,18 @@ public class QuestRegistry {
                 "SURVIVE", "omen_500", 1,
                 "Stand in the End when the omen exceeds 500. The Remnants say the dragon's echo can be heard at that threshold.",
                 300, 9999, "", false, 100, 0, "cartographer_terminus_main", List.of(), "end_remnant_path"),
+            new DefaultQuest("end_seal_collection", "The Five Deaths", "end_remnants",
+                "LORE", "dragon_seal_", 5,
+                "Collect all five dragon seal fragments. The End Remnants say the dragon counts its own deaths. So should you.",
+                0, 9999, "", false, 250, 0, "", List.of(), "end_remnant_path"),
+            new DefaultQuest("end_witness_chain", "The Witness", "end_remnants",
+                "LORE", "enderman_witness_", 6,
+                "Complete all six steps of the Enderman Witness chain. The Remnants say the Endermen remember every observer. Become one they remember.",
+                0, 9999, "", false, 300, -10, "", List.of(), "end_remnant_path"),
+            new DefaultQuest("conclave_convergence", "The Convergence Record", "conclave",
+                "LORE", "convergence_point_", 1,
+                "Stand at the End world spawn long enough to witness the Convergence Point. The Conclave wants the record.",
+                0, 9999, "", false, 150, -5, "", List.of(), "end_remnant_path"),
 
             // ---- CONCLAVE ----
             new DefaultQuest("conclave_fragment_1", "The First Cartographer Fragment", "conclave",
