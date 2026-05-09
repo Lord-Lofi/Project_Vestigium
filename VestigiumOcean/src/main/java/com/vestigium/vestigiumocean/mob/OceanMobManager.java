@@ -65,6 +65,14 @@ public class OceanMobManager implements Listener {
         Entity entity = event.getEntity();
         if (!isOceanContext(entity)) return;
 
+        var tidalEvents = plugin.getTidalEventManager();
+
+        // LOW TIDE: suppress 20% of ocean mob spawns
+        if (tidalEvents.isLowTideActive() && ThreadLocalRandom.current().nextInt(5) == 0) {
+            event.setCancelled(true);
+            return;
+        }
+
         ThreadLocalRandom rng = ThreadLocalRandom.current();
 
         if (entity instanceof Guardian && !(entity instanceof ElderGuardian)
@@ -79,6 +87,12 @@ public class OceanMobManager implements Listener {
             applyVariant((Mob) entity, "phantom_squid");
         } else if (entity instanceof Dolphin && rng.nextInt(10) < 1) {
             applyVariant((Mob) entity, "dolphin_pod_leader");
+        }
+
+        // HIGH TIDE: 25% chance to spawn a second mob of the same type at the same location
+        if (tidalEvents.isHighTideActive() && rng.nextInt(4) == 0) {
+            plugin.getServer().getScheduler().runTask(plugin,
+                    () -> entity.getWorld().spawnEntity(entity.getLocation(), entity.getType()));
         }
     }
 
