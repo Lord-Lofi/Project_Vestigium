@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumatmosphere;
 
 import com.vestigium.vestigiumatmosphere.ambient.AmbientParticleEngine;
+import com.vestigium.vestigiumatmosphere.city.AncientCityEventManager;
 import com.vestigium.vestigiumatmosphere.sky.SkyEventManager;
 import com.vestigium.vestigiumatmosphere.weather.WeatherEventManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,30 +15,34 @@ public class VestigiumAtmosphere extends JavaPlugin {
 
     private static VestigiumAtmosphere instance;
 
-    private WeatherEventManager  weatherEventManager;
+    private WeatherEventManager   weatherEventManager;
     private AmbientParticleEngine ambientParticleEngine;
     private SkyEventManager       skyEventManager;
+    private AncientCityEventManager ancientCityEventManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        weatherEventManager  = new WeatherEventManager(this);
-        ambientParticleEngine = new AmbientParticleEngine(this);
-        skyEventManager       = new SkyEventManager(this);
+        weatherEventManager     = new WeatherEventManager(this);
+        ambientParticleEngine   = new AmbientParticleEngine(this);
+        skyEventManager         = new SkyEventManager(this);
+        ancientCityEventManager = new AncientCityEventManager(this);
 
         weatherEventManager.init();
         ambientParticleEngine.init();
         skyEventManager.init();
+        ancientCityEventManager.init();
 
         getLogger().info("VestigiumAtmosphere enabled.");
     }
 
     @Override
     public void onDisable() {
-        if (weatherEventManager  != null) weatherEventManager.shutdown();
-        if (ambientParticleEngine != null) ambientParticleEngine.shutdown();
-        if (skyEventManager       != null) skyEventManager.shutdown();
+        if (weatherEventManager     != null) weatherEventManager.shutdown();
+        if (ambientParticleEngine   != null) ambientParticleEngine.shutdown();
+        if (skyEventManager         != null) skyEventManager.shutdown();
+        if (ancientCityEventManager != null) ancientCityEventManager.shutdown();
         getLogger().info("VestigiumAtmosphere disabled.");
     }
 
