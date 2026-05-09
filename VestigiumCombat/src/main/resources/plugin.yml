@@ -8,6 +8,13 @@ load: POSTWORLD
 depend:
   - VestigiumLib
 
+commands:
+  vcombat:
+    description: View your current combat stats
+    usage: /vcombat stats
+    permission: vestigium.combat.use
+    permission-message: §cYou do not have permission to view combat stats.
+
 permissions:
   vestigium.combat.use:
     description: Benefit from the combo and custom status effect systems
