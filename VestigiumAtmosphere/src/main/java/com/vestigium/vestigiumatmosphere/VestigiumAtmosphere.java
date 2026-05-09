@@ -2,6 +2,7 @@ package com.vestigium.vestigiumatmosphere;
 
 import com.vestigium.vestigiumatmosphere.ambient.AmbientParticleEngine;
 import com.vestigium.vestigiumatmosphere.city.AncientCityEventManager;
+import com.vestigium.vestigiumatmosphere.night.NightEventManager;
 import com.vestigium.vestigiumatmosphere.sky.SkyEventManager;
 import com.vestigium.vestigiumatmosphere.weather.WeatherEventManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +20,7 @@ public class VestigiumAtmosphere extends JavaPlugin {
     private AmbientParticleEngine ambientParticleEngine;
     private SkyEventManager       skyEventManager;
     private AncientCityEventManager ancientCityEventManager;
+    private NightEventManager       nightEventManager;
 
     @Override
     public void onEnable() {
@@ -28,11 +30,13 @@ public class VestigiumAtmosphere extends JavaPlugin {
         ambientParticleEngine   = new AmbientParticleEngine(this);
         skyEventManager         = new SkyEventManager(this);
         ancientCityEventManager = new AncientCityEventManager(this);
+        nightEventManager       = new NightEventManager(this);
 
         weatherEventManager.init();
         ambientParticleEngine.init();
         skyEventManager.init();
         ancientCityEventManager.init();
+        nightEventManager.init();
 
         getLogger().info("VestigiumAtmosphere enabled.");
     }
@@ -43,6 +47,7 @@ public class VestigiumAtmosphere extends JavaPlugin {
         if (ambientParticleEngine   != null) ambientParticleEngine.shutdown();
         if (skyEventManager         != null) skyEventManager.shutdown();
         if (ancientCityEventManager != null) ancientCityEventManager.shutdown();
+        if (nightEventManager       != null) nightEventManager.shutdown();
         getLogger().info("VestigiumAtmosphere disabled.");
     }
 
