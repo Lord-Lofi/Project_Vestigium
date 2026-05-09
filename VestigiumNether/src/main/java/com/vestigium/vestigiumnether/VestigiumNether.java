@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumnether;
 
 import com.vestigium.vestigiumnether.atmosphere.NetherAtmosphereManager;
+import com.vestigium.vestigiumnether.event.NetherEventManager;
 import com.vestigium.vestigiumnether.mob.BastionPoliticsManager;
 import com.vestigium.vestigiumnether.mob.NetherMobManager;
 import com.vestigium.vestigiumnether.mob.WitherSkeletonBehaviorManager;
@@ -17,6 +18,7 @@ public class VestigiumNether extends JavaPlugin {
 
     private NetherMobManager              netherMobManager;
     private NetherAtmosphereManager       netherAtmosphereManager;
+    private NetherEventManager            netherEventManager;
     private SoulStormManager              soulStormManager;
     private WitherSkeletonBehaviorManager witherBehaviorManager;
     private BastionPoliticsManager        bastionPoliticsManager;
@@ -27,12 +29,14 @@ public class VestigiumNether extends JavaPlugin {
 
         netherMobManager        = new NetherMobManager(this);
         netherAtmosphereManager = new NetherAtmosphereManager(this);
+        netherEventManager      = new NetherEventManager(this);
         soulStormManager        = new SoulStormManager(this);
         witherBehaviorManager   = new WitherSkeletonBehaviorManager(this);
         bastionPoliticsManager  = new BastionPoliticsManager(this);
 
         netherMobManager.init();
         netherAtmosphereManager.init();
+        netherEventManager.init();
         soulStormManager.init();
         witherBehaviorManager.init();
         bastionPoliticsManager.init();
@@ -44,6 +48,7 @@ public class VestigiumNether extends JavaPlugin {
     public void onDisable() {
         if (bastionPoliticsManager  != null) bastionPoliticsManager.save();
         if (witherBehaviorManager   != null) witherBehaviorManager.shutdown();
+        if (netherEventManager      != null) netherEventManager.shutdown();
         if (netherAtmosphereManager != null) netherAtmosphereManager.shutdown();
         if (soulStormManager        != null) soulStormManager.shutdown();
         getLogger().info("VestigiumNether disabled.");
