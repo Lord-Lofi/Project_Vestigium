@@ -10,6 +10,7 @@ import com.vestigium.vestigiummobs.minion.MinionSystem;
 import com.vestigium.vestigiummobs.minion.PlayerMinionManager;
 import com.vestigium.vestigiummobs.passive.PassiveMobManager;
 import com.vestigium.vestigiummobs.warden.NamedWardenManager;
+import com.vestigium.vestigiummobs.wildlife.TerritorialWildlifeManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -21,16 +22,17 @@ public class VestigiumMobs extends JavaPlugin {
 
     private static VestigiumMobs instance;
 
-    private CustomHostileMobManager hostileMobManager;
-    private HollowKnightManager     hollowKnightManager;
-    private FenWitchManager         fenWitchManager;
-    private EchoBeastManager        echoBeastManager;
-    private TideLurkerManager       tideLurkerManager;
-    private ThornbackManager        thornbackManager;
-    private PassiveMobManager       passiveMobManager;
-    private MinionSystem            minionSystem;
-    private PlayerMinionManager     playerMinionManager;
-    private NamedWardenManager      namedWardenManager;
+    private CustomHostileMobManager    hostileMobManager;
+    private HollowKnightManager        hollowKnightManager;
+    private FenWitchManager            fenWitchManager;
+    private EchoBeastManager           echoBeastManager;
+    private TideLurkerManager          tideLurkerManager;
+    private ThornbackManager           thornbackManager;
+    private PassiveMobManager          passiveMobManager;
+    private TerritorialWildlifeManager wildlifeManager;
+    private MinionSystem               minionSystem;
+    private PlayerMinionManager        playerMinionManager;
+    private NamedWardenManager         namedWardenManager;
 
     @Override
     public void onEnable() {
@@ -43,6 +45,7 @@ public class VestigiumMobs extends JavaPlugin {
         tideLurkerManager  = new TideLurkerManager(this);
         thornbackManager   = new ThornbackManager(this);
         passiveMobManager  = new PassiveMobManager(this);
+        wildlifeManager    = new TerritorialWildlifeManager(this);
         minionSystem        = new MinionSystem(this);
         playerMinionManager = new PlayerMinionManager(this);
         namedWardenManager  = new NamedWardenManager(this);
@@ -54,6 +57,7 @@ public class VestigiumMobs extends JavaPlugin {
         tideLurkerManager.init();
         thornbackManager.init();
         passiveMobManager.init();
+        wildlifeManager.init();
         minionSystem.init();
         playerMinionManager.init();
         namedWardenManager.init();
@@ -66,6 +70,7 @@ public class VestigiumMobs extends JavaPlugin {
         if (echoBeastManager   != null) echoBeastManager.shutdown();
         if (tideLurkerManager  != null) tideLurkerManager.shutdown();
         if (passiveMobManager  != null) passiveMobManager.shutdown();
+        if (wildlifeManager    != null) wildlifeManager.shutdown();
         if (namedWardenManager != null) namedWardenManager.shutdown();
         if (playerMinionManager != null) playerMinionManager.shutdown();
         if (minionSystem        != null) minionSystem.saveAll();
