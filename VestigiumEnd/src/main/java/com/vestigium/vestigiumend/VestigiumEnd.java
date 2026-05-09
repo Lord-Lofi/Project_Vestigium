@@ -1,5 +1,6 @@
 package com.vestigium.vestigiumend;
 
+import com.vestigium.vestigiumend.atmosphere.EndAtmosphereManager;
 import com.vestigium.vestigiumend.corruption.VoidCorruptionManager;
 import com.vestigium.vestigiumend.echo.DragonEchoManager;
 import com.vestigium.vestigiumend.lore.EndLoreManager;
@@ -18,6 +19,7 @@ public class VestigiumEnd extends JavaPlugin {
     private VoidCorruptionManager  voidCorruptionManager;
     private DragonEchoManager      dragonEchoManager;
     private EndLoreManager         endLoreManager;
+    private EndAtmosphereManager   endAtmosphereManager;
 
     @Override
     public void onEnable() {
@@ -27,17 +29,20 @@ public class VestigiumEnd extends JavaPlugin {
         voidCorruptionManager = new VoidCorruptionManager(this);
         dragonEchoManager     = new DragonEchoManager(this);
         endLoreManager        = new EndLoreManager(this);
+        endAtmosphereManager  = new EndAtmosphereManager(this);
 
         endMobManager.init();
         voidCorruptionManager.init();
         dragonEchoManager.init();
         endLoreManager.init();
+        endAtmosphereManager.init();
 
         getLogger().info("VestigiumEnd enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (endAtmosphereManager  != null) endAtmosphereManager.shutdown();
         if (endLoreManager        != null) endLoreManager.shutdown();
         if (voidCorruptionManager != null) voidCorruptionManager.shutdown();
         if (dragonEchoManager     != null) dragonEchoManager.shutdown();
