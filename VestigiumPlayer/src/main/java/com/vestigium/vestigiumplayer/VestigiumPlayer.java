@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumplayer;
 
 import com.vestigium.lib.api.PlaceholderAPIHook;
+import com.vestigium.vestigiumplayer.achievement.AchievementManager;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
@@ -22,6 +23,7 @@ public class VestigiumPlayer extends JavaPlugin {
     private PlayerStatTracker  playerStatTracker;
     private TitleManager       titleManager;
     private NotorietyManager   notorietyManager;
+    private AchievementManager  achievementManager;
     private UtilityItemManager utilityItemManager;
     private ToolMemoryManager  toolMemoryManager;
 
@@ -29,10 +31,11 @@ public class VestigiumPlayer extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        playerDataStore   = new PlayerDataStore(this);
-        playerStatTracker = new PlayerStatTracker(this, playerDataStore);
-        titleManager      = new TitleManager(this, playerDataStore);
+        playerDataStore    = new PlayerDataStore(this);
+        playerStatTracker  = new PlayerStatTracker(this, playerDataStore);
+        titleManager       = new TitleManager(this, playerDataStore);
         notorietyManager   = new NotorietyManager(this, playerDataStore);
+        achievementManager = new AchievementManager(this, playerDataStore);
         utilityItemManager = new UtilityItemManager(this);
         toolMemoryManager  = new ToolMemoryManager(this);
 
@@ -40,6 +43,7 @@ public class VestigiumPlayer extends JavaPlugin {
         playerStatTracker.init();
         titleManager.init();
         notorietyManager.init();
+        achievementManager.init();
         utilityItemManager.init();
         toolMemoryManager.init();
 
@@ -61,7 +65,8 @@ public class VestigiumPlayer extends JavaPlugin {
     public PlayerStatTracker getPlayerStatTracker()      { return playerStatTracker; }
     public TitleManager getTitleManager()                { return titleManager; }
     public NotorietyManager getNotorietyManager()          { return notorietyManager; }
-    public UtilityItemManager getUtilityItemManager()      { return utilityItemManager; }
+    public AchievementManager getAchievementManager()        { return achievementManager; }
+    public UtilityItemManager getUtilityItemManager()        { return utilityItemManager; }
 
     private void registerPlaceholders() {
         // %vestigium_title%        — active title display string (e.g. §e[Cartographer])
