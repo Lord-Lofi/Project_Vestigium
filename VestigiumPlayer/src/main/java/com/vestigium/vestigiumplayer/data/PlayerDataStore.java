@@ -34,14 +34,15 @@ import java.util.*;
  */
 public class PlayerDataStore implements Listener {
 
-    public static final NamespacedKey KEY_PLAYTIME   = new NamespacedKey("vestigium", "vp_playtime");
-    public static final NamespacedKey KEY_TITLE      = new NamespacedKey("vestigium", "vp_active_title");
-    public static final NamespacedKey KEY_TITLES     = new NamespacedKey("vestigium", "vp_unlocked_titles");
-    public static final NamespacedKey KEY_CATACLYSMS = new NamespacedKey("vestigium", "vp_cataclysms");
-    public static final NamespacedKey KEY_STRUCTURES = new NamespacedKey("vestigium", "vp_structures");
-    public static final NamespacedKey KEY_BOSS_KILLS = new NamespacedKey("vestigium", "vp_boss_kills");
-    public static final NamespacedKey KEY_LORE_FRAGS = new NamespacedKey("vestigium", "vp_lore_frags");
-    public static final NamespacedKey KEY_NOTORIETY  = new NamespacedKey("vestigium", "notoriety");
+    public static final NamespacedKey KEY_PLAYTIME     = new NamespacedKey("vestigium", "vp_playtime");
+    public static final NamespacedKey KEY_TITLE        = new NamespacedKey("vestigium", "vp_active_title");
+    public static final NamespacedKey KEY_TITLES       = new NamespacedKey("vestigium", "vp_unlocked_titles");
+    public static final NamespacedKey KEY_ACHIEVEMENTS = new NamespacedKey("vestigium", "vp_achievements");
+    public static final NamespacedKey KEY_CATACLYSMS   = new NamespacedKey("vestigium", "vp_cataclysms");
+    public static final NamespacedKey KEY_STRUCTURES   = new NamespacedKey("vestigium", "vp_structures");
+    public static final NamespacedKey KEY_BOSS_KILLS   = new NamespacedKey("vestigium", "vp_boss_kills");
+    public static final NamespacedKey KEY_LORE_FRAGS   = new NamespacedKey("vestigium", "vp_lore_frags");
+    public static final NamespacedKey KEY_NOTORIETY    = new NamespacedKey("vestigium", "notoriety");
 
     private final VestigiumPlayer plugin;
     private final Map<UUID, Long> joinTimes = new HashMap<>();
@@ -91,6 +92,22 @@ public class PlayerDataStore implements Listener {
         }
     }
 
+    public List<String> getUnlockedAchievements(Player player) {
+        String raw = player.getPersistentDataContainer()
+                .getOrDefault(KEY_ACHIEVEMENTS, PersistentDataType.STRING, "");
+        if (raw.isBlank()) return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(raw.split(",")));
+    }
+
+    public void unlockAchievement(Player player, String key) {
+        List<String> achievements = getUnlockedAchievements(player);
+        if (!achievements.contains(key)) {
+            achievements.add(key);
+            player.getPersistentDataContainer()
+                    .set(KEY_ACHIEVEMENTS, PersistentDataType.STRING, String.join(",", achievements));
+        }
+    }
+
     public int getInt(Player player, NamespacedKey key) {
         return player.getPersistentDataContainer()
                 .getOrDefault(key, PersistentDataType.INTEGER, 0);
@@ -130,6 +147,7 @@ public class PlayerDataStore implements Listener {
         YamlConfiguration cfg = new YamlConfiguration();
         cfg.set("active_title",      getActiveTitle(player));
         cfg.set("unlocked_titles",   getUnlockedTitles(player));
+        cfg.set("achievements",      getUnlockedAchievements(player));
         cfg.set("playtime_minutes",  getPlaytimeMinutes(player));
         cfg.set("cataclysms",        getInt(player, KEY_CATACLYSMS));
         cfg.set("structures",        getInt(player, KEY_STRUCTURES));
@@ -159,6 +177,12 @@ public class PlayerDataStore implements Listener {
             if (!titles.isEmpty())
                 player.getPersistentDataContainer()
                         .set(KEY_TITLES, PersistentDataType.STRING, String.join(",", titles));
+        }
+        if (!player.getPersistentDataContainer().has(KEY_ACHIEVEMENTS, PersistentDataType.STRING)) {
+            List<String> achievements = cfg.getStringList("achievements");
+            if (!achievements.isEmpty())
+                player.getPersistentDataContainer()
+                        .set(KEY_ACHIEVEMENTS, PersistentDataType.STRING, String.join(",", achievements));
         }
         restoreInt(player, KEY_CATACLYSMS, cfg, "cataclysms");
         restoreInt(player, KEY_STRUCTURES, cfg, "structures");

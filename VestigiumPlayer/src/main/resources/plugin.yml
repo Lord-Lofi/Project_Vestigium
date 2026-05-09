@@ -29,6 +29,11 @@ commands:
     usage: /vpitem give <item> [player]
     permission: vestigium.item.admin
     permission-message: §cYou do not have permission to give utility items.
+  vpachievements:
+    description: View unlocked achievements and their details
+    usage: /vpachievements [list | info <key>]
+    permission: vestigium.achievements.use
+    permission-message: §cYou do not have permission to view achievements.
 
 permissions:
   vestigium.stats:
@@ -57,4 +62,12 @@ permissions:
 
   vestigium.item.admin:
     description: Give utility items to players
+    default: op
+
+  vestigium.achievements.use:
+    description: View your own achievement progress
+    default: true
+
+  vestigium.achievements.admin:
+    description: Grant achievements to other players
     default: op
