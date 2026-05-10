@@ -5,6 +5,7 @@ import com.vestigium.vestigiumlore.campfire.CampfireStoriesManager;
 import com.vestigium.vestigiumlore.chain.FinalCartographerChain;
 import com.vestigium.vestigiumlore.cipher.CipherManager;
 import com.vestigium.vestigiumlore.delivery.LoreDeliveryManager;
+import com.vestigium.vestigiumlore.terminal.TerminalAutoSpawner;
 import com.vestigium.vestigiumlore.terminal.TerminalManager;
 import com.vestigium.vestigiumlore.tome.ServerMemoryTome;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +23,7 @@ public class VestigiumLore extends JavaPlugin {
     private FinalCartographerChain  finalCartographerChain;
     private CipherManager           cipherManager;
     private TerminalManager         terminalManager;
+    private TerminalAutoSpawner     terminalAutoSpawner;
     private ServerMemoryTome        serverMemoryTome;
     private CampfireStoriesManager  campfireStoriesManager;
     private MessageInABottleManager messageInABottleManager;
@@ -34,6 +36,7 @@ public class VestigiumLore extends JavaPlugin {
         finalCartographerChain  = new FinalCartographerChain(this);
         cipherManager           = new CipherManager(this);
         terminalManager         = new TerminalManager(this);
+        terminalAutoSpawner     = new TerminalAutoSpawner(this);
         serverMemoryTome        = new ServerMemoryTome(this);
         campfireStoriesManager  = new CampfireStoriesManager(this);
         messageInABottleManager = new MessageInABottleManager(this);
@@ -42,6 +45,7 @@ public class VestigiumLore extends JavaPlugin {
         finalCartographerChain.init();
         cipherManager.init();
         terminalManager.init();
+        terminalAutoSpawner.init();
         serverMemoryTome.init();
         campfireStoriesManager.init();
         messageInABottleManager.init();
@@ -62,6 +66,7 @@ public class VestigiumLore extends JavaPlugin {
     public FinalCartographerChain getFinalCartographerChain()      { return finalCartographerChain; }
     public CipherManager getCipherManager()                        { return cipherManager; }
     public TerminalManager getTerminalManager()                    { return terminalManager; }
+    public TerminalAutoSpawner getTerminalAutoSpawner()            { return terminalAutoSpawner; }
     public ServerMemoryTome getServerMemoryTome()                   { return serverMemoryTome; }
     public CampfireStoriesManager getCampfireStoriesManager()       { return campfireStoriesManager; }
     public MessageInABottleManager getMessageInABottleManager()     { return messageInABottleManager; }
