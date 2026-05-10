@@ -2,6 +2,9 @@ package com.vestigium.vestigiummobs;
 
 import com.vestigium.vestigiummobs.boss.LeviathanManager;
 import com.vestigium.vestigiummobs.boss.SunkenGodManager;
+import com.vestigium.vestigiummobs.passive.MythicBeastManager;
+import com.vestigium.vestigiummobs.passive.ShadowFaunaManager;
+import com.vestigium.vestigiummobs.passive.TheWormManager;
 import com.vestigium.vestigiummobs.hostile.CustomHostileMobManager;
 import com.vestigium.vestigiummobs.hostile.EchoBeastManager;
 import com.vestigium.vestigiummobs.hostile.FenWitchManager;
@@ -38,6 +41,9 @@ public class VestigiumMobs extends JavaPlugin {
     private NamedWardenManager         namedWardenManager;
     private LeviathanManager           leviathanManager;
     private SunkenGodManager           sunkenGodManager;
+    private TheWormManager             theWormManager;
+    private ShadowFaunaManager         shadowFaunaManager;
+    private MythicBeastManager         mythicBeastManager;
 
     @Override
     public void onEnable() {
@@ -56,6 +62,9 @@ public class VestigiumMobs extends JavaPlugin {
         namedWardenManager  = new NamedWardenManager(this);
         leviathanManager    = new LeviathanManager(this);
         sunkenGodManager    = new SunkenGodManager(this);
+        theWormManager      = new TheWormManager(this);
+        shadowFaunaManager  = new ShadowFaunaManager(this);
+        mythicBeastManager  = new MythicBeastManager(this);
 
         hostileMobManager.init();
         hollowKnightManager.init();
@@ -70,6 +79,9 @@ public class VestigiumMobs extends JavaPlugin {
         namedWardenManager.init();
         leviathanManager.init();
         sunkenGodManager.init();
+        theWormManager.init();
+        shadowFaunaManager.init();
+        mythicBeastManager.init();
 
         var bossCmd = getCommand("vcboss");
         if (bossCmd != null) bossCmd.setExecutor((sender, command, label, args) -> {
@@ -106,6 +118,8 @@ public class VestigiumMobs extends JavaPlugin {
         if (minionSystem        != null) minionSystem.saveAll();
         if (leviathanManager    != null) leviathanManager.shutdown();
         if (sunkenGodManager    != null) sunkenGodManager.shutdown();
+        if (theWormManager      != null) theWormManager.shutdown();
+        if (shadowFaunaManager  != null) shadowFaunaManager.shutdown();
         getLogger().info("VestigiumMobs disabled.");
     }
 
