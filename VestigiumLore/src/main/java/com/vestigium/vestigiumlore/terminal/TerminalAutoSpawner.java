@@ -4,36 +4,35 @@ import com.vestigium.vestigiumlore.VestigiumLore;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lectern;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.generator.structure.GeneratedStructure;
 import org.bukkit.generator.structure.Structure;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.BoundingBox;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Auto-spawns Resonant and End Archive terminals the first time a player
- * enters an Ancient City or End City respectively.
+ * Auto-spawns Resonant and End Archive terminals whenever a chunk containing
+ * an Ancient City or End City loads for the first time this session.
  *
- * Per structure (keyed by world + bounding box min-X/Z) — fires once per
- * server session. On first entry the spawner:
- *   1. Scans within ±16 blocks of the structure centre for an existing lectern.
- *   2. Tags the nearest untagged lectern it finds (preserves vanilla generation).
- *   3. If no lectern exists, places a new one on the first solid surface at centre.
+ * Uses ChunkLoadEvent — no polling, no periodic task. Cost per event is one
+ * world.getStructures() call (only in NORMAL/THE_END), which is trivial
+ * alongside the chunk load itself. The processedKeys gate ensures the actual
+ * block scan and placement run at most once per structure per session.
  *
- * Lore key assigned:
- *   Ancient City → "resonant_archive"   (TerminalType.RESONANT)
- *   End City     → "end_archive"        (TerminalType.END_ARCHIVE)
+ * Per unique structure (world + BB min-X/Z):
+ *   1. Scan ±16 blocks of centre for an already-tagged terminal — done.
+ *   2. Tag the nearest untagged vanilla lectern in range — done.
+ *   3. No lectern: find the highest solid surface at centre and place one.
  *
- * Nether camp terminals are tied to custom VestigiumStructures schematics and
- * are not auto-spawned here.
+ * Lore keys:
+ *   Ancient City → RESONANT,     "resonant_archive"
+ *   End City     → END_ARCHIVE,  "end_archive"
  */
 public class TerminalAutoSpawner implements Listener {
 
@@ -44,9 +43,7 @@ public class TerminalAutoSpawner implements Listener {
 
     private static final int SCAN_RADIUS = 16;
 
-    // Prevents re-processing the same structure across the session
     private final Set<String> processedKeys = new HashSet<>();
-
     private final VestigiumLore plugin;
 
     public TerminalAutoSpawner(VestigiumLore plugin) {
@@ -58,53 +55,52 @@ public class TerminalAutoSpawner implements Listener {
         plugin.getLogger().info("[TerminalAutoSpawner] Initialized.");
     }
 
-    // -------------------------------------------------------------------------
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX()
-                && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
-
-        Player player = event.getPlayer();
-        Location loc  = player.getLocation();
-        World world   = player.getWorld();
-
-        Collection<GeneratedStructure> structures = world.getStructures(loc.getBlockX(), loc.getBlockZ());
-        for (GeneratedStructure gs : structures) {
-            Structure type = gs.getStructure();
-            if (type == Structure.ANCIENT_CITY) {
-                maybeEnsureTerminal(world, gs,
-                        TerminalManager.TerminalType.RESONANT, "resonant_archive");
-            } else if (type == Structure.END_CITY) {
-                maybeEnsureTerminal(world, gs,
-                        TerminalManager.TerminalType.END_ARCHIVE, "end_archive");
-            }
-        }
+    public void shutdown() {
+        // Bukkit unregisters all listeners automatically on plugin disable.
     }
 
     // -------------------------------------------------------------------------
 
-    private void maybeEnsureTerminal(World world, GeneratedStructure gs,
-                                     TerminalManager.TerminalType type, String loreKey) {
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        World world = event.getWorld();
+        World.Environment env = world.getEnvironment();
+        if (env != World.Environment.NORMAL && env != World.Environment.THE_END) return;
+
+        Chunk chunk = event.getChunk();
+        int cx = chunk.getX() * 16 + 8;
+        int cz = chunk.getZ() * 16 + 8;
+
+        Collection<GeneratedStructure> structures = world.getStructures(cx, cz);
+        for (GeneratedStructure gs : structures) {
+            Structure type = gs.getStructure();
+            if (env == World.Environment.NORMAL && type == Structure.ANCIENT_CITY) {
+                maybeEnsure(world, gs, TerminalManager.TerminalType.RESONANT, "resonant_archive");
+            } else if (env == World.Environment.THE_END && type == Structure.END_CITY) {
+                maybeEnsure(world, gs, TerminalManager.TerminalType.END_ARCHIVE, "end_archive");
+            }
+        }
+    }
+
+    private void maybeEnsure(World world, GeneratedStructure gs,
+                              TerminalManager.TerminalType type, String loreKey) {
         BoundingBox bb = gs.getBoundingBox();
         String key = world.getName()
                 + ":" + (int) bb.getMinX()
                 + ":" + (int) bb.getMinZ();
         if (!processedKeys.add(key)) return;
 
-        // Schedule one tick later so the move event isn't held up
-        plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                ensureTerminal(world, bb, type, loreKey), 1L);
+        ensureTerminal(world, bb, type, loreKey);
     }
 
     private void ensureTerminal(World world, BoundingBox bb,
                                  TerminalManager.TerminalType type, String loreKey) {
-        int cx = (int) bb.getCenterX();
-        int cz = (int) bb.getCenterZ();
+        int cx   = (int) bb.getCenterX();
+        int cz   = (int) bb.getCenterZ();
         int minY = Math.max((int) bb.getMinY(), world.getMinHeight());
         int maxY = Math.min((int) bb.getMaxY(), world.getMaxHeight() - 1);
 
-        // 1. Check for an already-tagged terminal in scan radius
+        // 1. Already-tagged terminal present?
         for (int dx = -SCAN_RADIUS; dx <= SCAN_RADIUS; dx += 4) {
             for (int dz = -SCAN_RADIUS; dz <= SCAN_RADIUS; dz += 4) {
                 for (int y = minY; y <= maxY; y++) {
@@ -113,14 +109,14 @@ public class TerminalAutoSpawner implements Listener {
                         Lectern ls = (Lectern) b.getState();
                         if (ls.getPersistentDataContainer()
                                 .has(TERMINAL_TYPE_KEY, PersistentDataType.STRING)) {
-                            return; // terminal already present — nothing to do
+                            return;
                         }
                     }
                 }
             }
         }
 
-        // 2. Find nearest untagged vanilla lectern and tag it
+        // 2. Tag the nearest untagged vanilla lectern
         Block nearest = findNearestLectern(world, cx, cz, minY, maxY);
         if (nearest != null) {
             tagBlock(nearest, type, loreKey);
@@ -130,16 +126,15 @@ public class TerminalAutoSpawner implements Listener {
             return;
         }
 
-        // 3. Place a new lectern on the first solid surface at centre
+        // 3. Place a new lectern on the highest solid surface at centre
         Block placed = placeAtCentre(world, cx, cz, minY, maxY);
         if (placed != null) {
             tagBlock(placed, type, loreKey);
             plugin.getLogger().info("[TerminalAutoSpawner] Placed " + type.displayName()
                     + " at " + placed.getLocation().toVector() + " (lore: " + loreKey + ")");
         } else {
-            plugin.getLogger().warning("[TerminalAutoSpawner] Could not place "
-                    + type.displayName() + " near " + cx + "," + cz
-                    + " — no suitable surface found.");
+            plugin.getLogger().warning("[TerminalAutoSpawner] No surface found for "
+                    + type.displayName() + " near " + cx + "," + cz);
         }
     }
 
