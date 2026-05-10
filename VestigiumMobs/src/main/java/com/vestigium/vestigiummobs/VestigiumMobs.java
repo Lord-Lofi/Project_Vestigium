@@ -1,5 +1,7 @@
 package com.vestigium.vestigiummobs;
 
+import com.vestigium.vestigiummobs.boss.LeviathanManager;
+import com.vestigium.vestigiummobs.boss.SunkenGodManager;
 import com.vestigium.vestigiummobs.hostile.CustomHostileMobManager;
 import com.vestigium.vestigiummobs.hostile.EchoBeastManager;
 import com.vestigium.vestigiummobs.hostile.FenWitchManager;
@@ -11,6 +13,7 @@ import com.vestigium.vestigiummobs.minion.PlayerMinionManager;
 import com.vestigium.vestigiummobs.passive.PassiveMobManager;
 import com.vestigium.vestigiummobs.warden.NamedWardenManager;
 import com.vestigium.vestigiummobs.wildlife.TerritorialWildlifeManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -33,6 +36,8 @@ public class VestigiumMobs extends JavaPlugin {
     private MinionSystem               minionSystem;
     private PlayerMinionManager        playerMinionManager;
     private NamedWardenManager         namedWardenManager;
+    private LeviathanManager           leviathanManager;
+    private SunkenGodManager           sunkenGodManager;
 
     @Override
     public void onEnable() {
@@ -49,6 +54,8 @@ public class VestigiumMobs extends JavaPlugin {
         minionSystem        = new MinionSystem(this);
         playerMinionManager = new PlayerMinionManager(this);
         namedWardenManager  = new NamedWardenManager(this);
+        leviathanManager    = new LeviathanManager(this);
+        sunkenGodManager    = new SunkenGodManager(this);
 
         hostileMobManager.init();
         hollowKnightManager.init();
@@ -61,6 +68,29 @@ public class VestigiumMobs extends JavaPlugin {
         minionSystem.init();
         playerMinionManager.init();
         namedWardenManager.init();
+        leviathanManager.init();
+        sunkenGodManager.init();
+
+        var bossCmd = getCommand("vcboss");
+        if (bossCmd != null) bossCmd.setExecutor((sender, command, label, args) -> {
+            if (!sender.hasPermission("vestigium.boss.admin")) {
+                sender.sendMessage("§cNo permission.");
+                return true;
+            }
+            if (args.length < 2 || !args[0].equalsIgnoreCase("spawn")
+                    || !(sender instanceof Player p)) {
+                sender.sendMessage("§7Usage: /vcboss spawn <leviathan|sunken_god>");
+                return true;
+            }
+            switch (args[1].toLowerCase()) {
+                case "leviathan"  -> { leviathanManager.spawn(p.getLocation());
+                                       sender.sendMessage("§3Leviathan spawned."); }
+                case "sunken_god" -> { sunkenGodManager.spawn(p.getLocation());
+                                       sender.sendMessage("§5Sunken God spawned."); }
+                default           -> sender.sendMessage("§cUnknown boss. Use leviathan or sunken_god.");
+            }
+            return true;
+        });
 
         getLogger().info("VestigiumMobs enabled.");
     }
@@ -74,6 +104,8 @@ public class VestigiumMobs extends JavaPlugin {
         if (namedWardenManager != null) namedWardenManager.shutdown();
         if (playerMinionManager != null) playerMinionManager.shutdown();
         if (minionSystem        != null) minionSystem.saveAll();
+        if (leviathanManager    != null) leviathanManager.shutdown();
+        if (sunkenGodManager    != null) sunkenGodManager.shutdown();
         getLogger().info("VestigiumMobs disabled.");
     }
 
@@ -82,4 +114,6 @@ public class VestigiumMobs extends JavaPlugin {
     public PassiveMobManager getPassiveMobManager()            { return passiveMobManager; }
     public MinionSystem getMinionSystem()                      { return minionSystem; }
     public NamedWardenManager getNamedWardenManager()          { return namedWardenManager; }
+    public LeviathanManager getLeviathanManager()              { return leviathanManager; }
+    public SunkenGodManager getSunkenGodManager()              { return sunkenGodManager; }
 }
