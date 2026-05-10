@@ -19,6 +19,11 @@ commands:
     usage: /minion <summon <role>|dismiss <role|all>|list>
     permission: vestigium.minion
     permission-message: §cYou do not have permission to use minions.
+  vcboss:
+    description: Force-spawn a world boss at your location
+    usage: /vcboss spawn <leviathan|sunken_god>
+    permission: vestigium.boss.admin
+    permission-message: §cYou do not have permission to spawn world bosses.
 
 permissions:
   vestigium.warden.admin:
@@ -27,3 +32,6 @@ permissions:
   vestigium.minion:
     description: Summon personal minions (Shade, Golem, Wisp, Hexblade, Harvester, Scout)
     default: true
+  vestigium.boss.admin:
+    description: Force-spawn world bosses (Leviathan, Sunken God)
+    default: op
