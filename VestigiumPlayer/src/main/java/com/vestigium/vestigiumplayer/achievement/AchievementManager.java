@@ -7,6 +7,7 @@ import com.vestigium.lib.event.PlayerReputationChangeEvent;
 import com.vestigium.lib.model.Faction;
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
+import com.vestigium.vestigiumplayer.epitaph.LegacyMarkerManager;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,6 +61,9 @@ public class AchievementManager implements Listener, CommandExecutor {
     private final List<AchievementDefinition> ALL_ACHIEVEMENTS;
     private final VestigiumPlayer plugin;
     private final PlayerDataStore dataStore;
+    private LegacyMarkerManager legacyMarkerManager;
+
+    public void setLegacyMarkerManager(LegacyMarkerManager m) { this.legacyMarkerManager = m; }
 
     public AchievementManager(VestigiumPlayer plugin, PlayerDataStore dataStore) {
         this.plugin    = plugin;
@@ -155,6 +159,9 @@ public class AchievementManager implements Listener, CommandExecutor {
             String broadcast = "§5§l[Vestigium] §r§d" + player.getName()
                     + " §7has achieved §5§l" + def.displayName() + "§r§7.";
             plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(broadcast));
+            if (legacyMarkerManager != null) {
+                legacyMarkerManager.notifyLegendary(player, def.key(), def.displayName());
+            }
         }
     }
 

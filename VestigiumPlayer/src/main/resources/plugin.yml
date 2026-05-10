@@ -34,6 +34,11 @@ commands:
     usage: /vpachievements [list | info <key>]
     permission: vestigium.achievements.use
     permission-message: §cYou do not have permission to view achievements.
+  vplegacy:
+    description: View all server-first legacy achievement records
+    usage: /vplegacy
+    permission: vestigium.use
+    permission-message: §cYou do not have permission.
 
 permissions:
   vestigium.stats:
@@ -70,4 +75,8 @@ permissions:
 
   vestigium.achievements.admin:
     description: Grant achievements to other players
+    default: op
+
+  vestigium.epitaph.admin:
+    description: Remove any player's epitaph gravestone
     default: op
