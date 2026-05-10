@@ -57,6 +57,7 @@ public class VestigiumLore extends JavaPlugin {
     public void onDisable() {
         if (loreDeliveryManager     != null) loreDeliveryManager.shutdown();
         if (campfireStoriesManager  != null) campfireStoriesManager.shutdown();
+        if (terminalAutoSpawner     != null) terminalAutoSpawner.shutdown();
         if (serverMemoryTome        != null) serverMemoryTome.save();
         getLogger().info("VestigiumLore disabled.");
     }
