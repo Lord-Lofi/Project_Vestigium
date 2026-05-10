@@ -5,6 +5,7 @@ import com.vestigium.vestigiumlore.campfire.CampfireStoriesManager;
 import com.vestigium.vestigiumlore.chain.FinalCartographerChain;
 import com.vestigium.vestigiumlore.cipher.CipherManager;
 import com.vestigium.vestigiumlore.delivery.LoreDeliveryManager;
+import com.vestigium.vestigiumlore.terminal.TerminalManager;
 import com.vestigium.vestigiumlore.tome.ServerMemoryTome;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,11 +18,12 @@ public class VestigiumLore extends JavaPlugin {
 
     private static VestigiumLore instance;
 
-    private LoreDeliveryManager    loreDeliveryManager;
-    private FinalCartographerChain finalCartographerChain;
-    private CipherManager          cipherManager;
-    private ServerMemoryTome       serverMemoryTome;
-    private CampfireStoriesManager campfireStoriesManager;
+    private LoreDeliveryManager     loreDeliveryManager;
+    private FinalCartographerChain  finalCartographerChain;
+    private CipherManager           cipherManager;
+    private TerminalManager         terminalManager;
+    private ServerMemoryTome        serverMemoryTome;
+    private CampfireStoriesManager  campfireStoriesManager;
     private MessageInABottleManager messageInABottleManager;
 
     @Override
@@ -31,6 +33,7 @@ public class VestigiumLore extends JavaPlugin {
         loreDeliveryManager     = new LoreDeliveryManager(this);
         finalCartographerChain  = new FinalCartographerChain(this);
         cipherManager           = new CipherManager(this);
+        terminalManager         = new TerminalManager(this);
         serverMemoryTome        = new ServerMemoryTome(this);
         campfireStoriesManager  = new CampfireStoriesManager(this);
         messageInABottleManager = new MessageInABottleManager(this);
@@ -38,6 +41,7 @@ public class VestigiumLore extends JavaPlugin {
         loreDeliveryManager.init();
         finalCartographerChain.init();
         cipherManager.init();
+        terminalManager.init();
         serverMemoryTome.init();
         campfireStoriesManager.init();
         messageInABottleManager.init();
@@ -57,6 +61,7 @@ public class VestigiumLore extends JavaPlugin {
     public LoreDeliveryManager getLoreDeliveryManager()            { return loreDeliveryManager; }
     public FinalCartographerChain getFinalCartographerChain()      { return finalCartographerChain; }
     public CipherManager getCipherManager()                        { return cipherManager; }
+    public TerminalManager getTerminalManager()                    { return terminalManager; }
     public ServerMemoryTome getServerMemoryTome()                   { return serverMemoryTome; }
     public CampfireStoriesManager getCampfireStoriesManager()       { return campfireStoriesManager; }
     public MessageInABottleManager getMessageInABottleManager()     { return messageInABottleManager; }
