@@ -1,7 +1,10 @@
 package com.vestigium.vestigiumplayer.epitaph;
 
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
+import com.vestigium.vestigiumplayer.heraldry.HeraldryManager;
 import org.bukkit.*;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -93,6 +96,7 @@ public class PlayerEpitaphManager implements Listener {
         stand.getPersistentDataContainer()
                 .set(EPITAPH_KEY, PersistentDataType.STRING, dead.getUniqueId().toString());
         playerToGrave.put(dead.getUniqueId(), stand.getUniqueId());
+        applyHeraldryGlow(dead, stand);
 
         List<Location> snapshot = new ArrayList<>(
                 locationBuffer.getOrDefault(dead.getUniqueId(), new ArrayDeque<>()));
@@ -130,6 +134,23 @@ public class PlayerEpitaphManager implements Listener {
     }
 
     // -------------------------------------------------------------------------
+
+    private void applyHeraldryGlow(Player player, org.bukkit.entity.ArmorStand stand) {
+        HeraldryManager hm = plugin.getHeraldryManager();
+        if (hm == null || !hm.hasHeraldry(player)) return;
+
+        DyeColor dye  = hm.getColor(player);
+        ChatColor glow = hm.getGlowColor(dye);
+
+        Scoreboard sb = plugin.getServer().getScoreboardManager().getMainScoreboard();
+        String teamName = "vep_" + dye.name().toLowerCase();
+        Team team = sb.getTeam(teamName);
+        if (team == null) {
+            team = sb.registerNewTeam(teamName);
+            team.setColor(glow);
+        }
+        team.addEntry(stand.getUniqueId().toString());
+    }
 
     private void removeGrave(Player player) {
         UUID graveId = playerToGrave.remove(player.getUniqueId());

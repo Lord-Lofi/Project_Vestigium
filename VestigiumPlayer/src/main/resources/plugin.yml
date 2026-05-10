@@ -39,6 +39,11 @@ commands:
     usage: /vplegacy
     permission: vestigium.use
     permission-message: §cYou do not have permission.
+  vpheraldry:
+    description: Design your personal heraldry sigil or get a heraldry banner
+    usage: /vpheraldry [banner]
+    permission: vestigium.use
+    permission-message: §cYou do not have permission.
 
 permissions:
   vestigium.stats:
