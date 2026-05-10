@@ -1,5 +1,6 @@
 package com.vestigium.vestigiumnpc;
 
+import com.vestigium.vestigiumnpc.bounty.BountyBoardManager;
 import com.vestigium.vestigiumnpc.hostile.DoppelgangerManager;
 import com.vestigium.vestigiumnpc.special.SpecialNPCManager;
 import com.vestigium.vestigiumnpc.traveling.TravelingNPCManager;
@@ -18,6 +19,7 @@ public class VestigiumNPC extends JavaPlugin {
     private TravelingNPCManager   travelingNPCManager;
     private DoppelgangerManager   doppelgangerManager;
     private SpecialNPCManager     specialNPCManager;
+    private BountyBoardManager    bountyBoardManager;
 
     @Override
     public void onEnable() {
@@ -27,11 +29,13 @@ public class VestigiumNPC extends JavaPlugin {
         travelingNPCManager   = new TravelingNPCManager(this);
         doppelgangerManager   = new DoppelgangerManager(this);
         specialNPCManager     = new SpecialNPCManager(this);
+        bountyBoardManager    = new BountyBoardManager(this);
 
         villagerMemoryManager.init();
         travelingNPCManager.init();
         doppelgangerManager.init();
         specialNPCManager.init();
+        bountyBoardManager.init();
 
         getLogger().info("VestigiumNPC enabled.");
     }
@@ -41,6 +45,7 @@ public class VestigiumNPC extends JavaPlugin {
         if (travelingNPCManager != null) travelingNPCManager.shutdown();
         if (doppelgangerManager != null) doppelgangerManager.shutdown();
         if (specialNPCManager   != null) specialNPCManager.shutdown();
+        if (bountyBoardManager  != null) bountyBoardManager.shutdown();
         getLogger().info("VestigiumNPC disabled.");
     }
 
@@ -49,4 +54,5 @@ public class VestigiumNPC extends JavaPlugin {
     public TravelingNPCManager getTravelingNPCManager()        { return travelingNPCManager; }
     public DoppelgangerManager getDoppelgangerManager()        { return doppelgangerManager; }
     public SpecialNPCManager getSpecialNPCManager()            { return specialNPCManager; }
+    public BountyBoardManager getBountyBoardManager()          { return bountyBoardManager; }
 }
