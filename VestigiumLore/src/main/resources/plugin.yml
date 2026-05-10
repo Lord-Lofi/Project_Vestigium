@@ -21,6 +21,12 @@ commands:
     permission: vestigium.use
     permission-message: §cYou do not have permission to use this command.
 
+  vcterminal:
+    description: Register or inspect Resonant/End/Nether terminals on lectern blocks
+    usage: /vcterminal <set <resonant|end|nether> <lore_key> | clear | info>
+    permission: vestigium.terminal.admin
+    permission-message: §cYou do not have permission to manage terminals.
+
 permissions:
   vestigium.cipher.admin:
     description: Give and manage Vestigium cipher items
@@ -28,5 +34,9 @@ permissions:
 
   vestigium.tome.admin:
     description: Give Server Memory Tomes to other players
+    default: op
+
+  vestigium.terminal.admin:
+    description: Register and inspect in-world lore terminals
     default: op
 

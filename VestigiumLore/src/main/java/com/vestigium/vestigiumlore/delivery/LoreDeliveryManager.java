@@ -5,41 +5,24 @@ import com.vestigium.vestigiumlore.VestigiumLore;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Handles all in-world lore delivery mechanisms:
- *
- *  Lore Tablets      — written books in structures, non-duplicable, pulled from LoreRegistry
- *                      by vestigium:structure_id PDC on the container block.
- *
- *  Resonant Terminals — sculk-covered lecterns in ancient cities; lore on right-click;
- *                       requires the player to have the Resonant Cipher item to read.
- *
- *  Campfire Stories  — multiple players near a campfire at night auto-display a random
- *                      lore fragment in chat.
- *
- *  Message in a Bottle — procedurally generated; washes up on random shores periodically.
+ * Legacy campfire + bottle delivery stubs. Terminal interaction is handled by TerminalManager.
+ * Campfire stories are handled by CampfireStoriesManager.
+ * Messages in a Bottle are handled by MessageInABottleManager.
  */
 public class LoreDeliveryManager implements Listener {
-
-    private static final NamespacedKey TERMINAL_STRUCTURE_ID =
-            new NamespacedKey("vestigium", "structure_id");
-    private static final NamespacedKey TABLET_READ_KEY =
-            new NamespacedKey("vestigium", "tablet_read");
 
     // Campfire story check: every 2 minutes during server night
     private static final long CAMPFIRE_CHECK_TICKS = 2_400L;
@@ -79,76 +62,6 @@ public class LoreDeliveryManager implements Listener {
     public void shutdown() {
         if (campfireTask != null) campfireTask.cancel();
         if (bottleTask   != null) bottleTask.cancel();
-    }
-
-    // -------------------------------------------------------------------------
-    // Lore Tablets and Resonant Terminals — right-click on lectern/chest
-    // -------------------------------------------------------------------------
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onInteract(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) return;
-        Block block = event.getClickedBlock();
-        Player player = event.getPlayer();
-
-        if (block.getType() == Material.LECTERN) {
-            handleTerminalInteraction(player, block);
-        }
-    }
-
-    private void handleTerminalInteraction(Player player, Block lectern) {
-        String structureId = ((org.bukkit.block.Lectern) lectern.getState()).getPersistentDataContainer()
-                .get(TERMINAL_STRUCTURE_ID, PersistentDataType.STRING);
-        if (structureId == null) return;
-
-        // Determine if Resonant Terminal (requires cipher) or plain tablet
-        boolean isSculk = lectern.getRelative(0, -1, 0).getType() == Material.SCULK;
-        if (isSculk && !playerHasCipher(player, "resonant")) {
-            player.sendMessage("§8The symbols on the terminal mean nothing to you. "
-                    + "§7You need the Resonant Cipher to read this.");
-            return;
-        }
-
-        String content = VestigiumLib.getLoreRegistry().getLoreContent(structureId, "main");
-        if (content.isEmpty()) return;
-
-        deliverLoreBook(player, structureId, content);
-        VestigiumLib.getLoreRegistry().grantFragment(player.getUniqueId(), structureId + "_main");
-    }
-
-    private void deliverLoreBook(Player player, String tabletId, String content) {
-        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-        BookMeta meta = (BookMeta) book.getItemMeta();
-        if (meta == null) return;
-
-        meta.setTitle("Fragment");
-        meta.setAuthor("Unknown");
-        meta.addPage(content);
-        book.setItemMeta(meta);
-
-        // Non-duplicable: tag the book with the tablet ID
-        book.getItemMeta(); // refresh
-        BookMeta finalMeta = (BookMeta) book.getItemMeta();
-        if (finalMeta != null) {
-            finalMeta.getPersistentDataContainer()
-                    .set(TABLET_READ_KEY, PersistentDataType.STRING, tabletId);
-            book.setItemMeta(finalMeta);
-        }
-
-        player.getInventory().addItem(book);
-        player.sendMessage("§7You carefully read the tablet and transcribe its contents.");
-    }
-
-    private boolean playerHasCipher(Player player, String cipherType) {
-        return Arrays.stream(player.getInventory().getContents())
-                .filter(Objects::nonNull)
-                .anyMatch(item -> {
-                    if (item.getItemMeta() == null) return false;
-                    String stored = item.getItemMeta().getPersistentDataContainer()
-                            .get(new NamespacedKey("vestigium", "cipher_type"),
-                                    PersistentDataType.STRING);
-                    return cipherType.equals(stored);
-                });
     }
 
     // -------------------------------------------------------------------------
