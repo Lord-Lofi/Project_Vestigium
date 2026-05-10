@@ -5,6 +5,7 @@ import com.vestigium.vestigiumplayer.achievement.AchievementManager;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
 import com.vestigium.vestigiumplayer.epitaph.LegacyMarkerManager;
 import com.vestigium.vestigiumplayer.epitaph.PlayerEpitaphManager;
+import com.vestigium.vestigiumplayer.heraldry.HeraldryManager;
 import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
 import com.vestigium.vestigiumplayer.title.TitleManager;
@@ -30,6 +31,7 @@ public class VestigiumPlayer extends JavaPlugin {
     private ToolMemoryManager   toolMemoryManager;
     private PlayerEpitaphManager epitaphManager;
     private LegacyMarkerManager  legacyMarkerManager;
+    private HeraldryManager      heraldryManager;
 
     @Override
     public void onEnable() {
@@ -42,6 +44,7 @@ public class VestigiumPlayer extends JavaPlugin {
         achievementManager  = new AchievementManager(this, playerDataStore);
         utilityItemManager  = new UtilityItemManager(this);
         toolMemoryManager   = new ToolMemoryManager(this);
+        heraldryManager     = new HeraldryManager(this);
         epitaphManager      = new PlayerEpitaphManager(this);
         legacyMarkerManager = new LegacyMarkerManager(this);
         achievementManager.setLegacyMarkerManager(legacyMarkerManager);
@@ -53,6 +56,7 @@ public class VestigiumPlayer extends JavaPlugin {
         achievementManager.init();
         utilityItemManager.init();
         toolMemoryManager.init();
+        heraldryManager.init();
         epitaphManager.init();
         legacyMarkerManager.init();
 
@@ -77,6 +81,7 @@ public class VestigiumPlayer extends JavaPlugin {
     public NotorietyManager getNotorietyManager()          { return notorietyManager; }
     public AchievementManager getAchievementManager()        { return achievementManager; }
     public UtilityItemManager getUtilityItemManager()        { return utilityItemManager; }
+    public HeraldryManager getHeraldryManager()              { return heraldryManager; }
     public PlayerEpitaphManager getEpitaphManager()          { return epitaphManager; }
     public LegacyMarkerManager getLegacyMarkerManager()      { return legacyMarkerManager; }
 
