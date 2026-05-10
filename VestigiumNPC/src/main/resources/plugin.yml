@@ -10,9 +10,17 @@ depend:
 softdepend:
   - ProtocolLib
 
+commands:
+  vcbounty:
+    description: Bounty Board interaction and administration
+    usage: /vcbounty <take <n>|abandon|status|board <place <type>|remove>>
+
 permissions:
   vestigium.npc.admin:
     description: Access to VestigiumNPC administrative functions
     default: op
     children:
       vestigium.admin: true
+  vestigium.bounty.admin:
+    description: Administer bounty boards (place/remove)
+    default: op
