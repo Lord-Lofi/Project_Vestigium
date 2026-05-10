@@ -3,6 +3,8 @@ package com.vestigium.vestigiumplayer;
 import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumplayer.achievement.AchievementManager;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
+import com.vestigium.vestigiumplayer.epitaph.LegacyMarkerManager;
+import com.vestigium.vestigiumplayer.epitaph.PlayerEpitaphManager;
 import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
 import com.vestigium.vestigiumplayer.stats.PlayerStatTracker;
 import com.vestigium.vestigiumplayer.title.TitleManager;
@@ -19,25 +21,30 @@ public class VestigiumPlayer extends JavaPlugin {
 
     private static VestigiumPlayer instance;
 
-    private PlayerDataStore    playerDataStore;
-    private PlayerStatTracker  playerStatTracker;
-    private TitleManager       titleManager;
-    private NotorietyManager   notorietyManager;
+    private PlayerDataStore     playerDataStore;
+    private PlayerStatTracker   playerStatTracker;
+    private TitleManager        titleManager;
+    private NotorietyManager    notorietyManager;
     private AchievementManager  achievementManager;
-    private UtilityItemManager utilityItemManager;
-    private ToolMemoryManager  toolMemoryManager;
+    private UtilityItemManager  utilityItemManager;
+    private ToolMemoryManager   toolMemoryManager;
+    private PlayerEpitaphManager epitaphManager;
+    private LegacyMarkerManager  legacyMarkerManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        playerDataStore    = new PlayerDataStore(this);
-        playerStatTracker  = new PlayerStatTracker(this, playerDataStore);
-        titleManager       = new TitleManager(this, playerDataStore);
-        notorietyManager   = new NotorietyManager(this, playerDataStore);
-        achievementManager = new AchievementManager(this, playerDataStore);
-        utilityItemManager = new UtilityItemManager(this);
-        toolMemoryManager  = new ToolMemoryManager(this);
+        playerDataStore     = new PlayerDataStore(this);
+        playerStatTracker   = new PlayerStatTracker(this, playerDataStore);
+        titleManager        = new TitleManager(this, playerDataStore);
+        notorietyManager    = new NotorietyManager(this, playerDataStore);
+        achievementManager  = new AchievementManager(this, playerDataStore);
+        utilityItemManager  = new UtilityItemManager(this);
+        toolMemoryManager   = new ToolMemoryManager(this);
+        epitaphManager      = new PlayerEpitaphManager(this);
+        legacyMarkerManager = new LegacyMarkerManager(this);
+        achievementManager.setLegacyMarkerManager(legacyMarkerManager);
 
         playerDataStore.init();
         playerStatTracker.init();
@@ -46,6 +53,8 @@ public class VestigiumPlayer extends JavaPlugin {
         achievementManager.init();
         utilityItemManager.init();
         toolMemoryManager.init();
+        epitaphManager.init();
+        legacyMarkerManager.init();
 
         registerPlaceholders();
 
@@ -54,6 +63,7 @@ public class VestigiumPlayer extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (epitaphManager     != null) epitaphManager.shutdown();
         if (utilityItemManager != null) utilityItemManager.shutdown();
         if (notorietyManager   != null) notorietyManager.shutdown();
         if (playerDataStore    != null) playerDataStore.saveAll();
@@ -67,6 +77,8 @@ public class VestigiumPlayer extends JavaPlugin {
     public NotorietyManager getNotorietyManager()          { return notorietyManager; }
     public AchievementManager getAchievementManager()        { return achievementManager; }
     public UtilityItemManager getUtilityItemManager()        { return utilityItemManager; }
+    public PlayerEpitaphManager getEpitaphManager()          { return epitaphManager; }
+    public LegacyMarkerManager getLegacyMarkerManager()      { return legacyMarkerManager; }
 
     private void registerPlaceholders() {
         // %vestigium_title%        — active title display string (e.g. §e[Cartographer])
