@@ -20,6 +20,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Resonant Terminals, End Archive Terminals, and Antecedent Nether Terminals.
@@ -196,16 +198,76 @@ public class TerminalManager implements Listener, CommandExecutor {
                 20, 0.4, 0.5, 0.4, 0.02);
         loc.getWorld().playSound(loc, type.sound(), 0.7f, 1.0f);
 
-        // Lore delivery in chat
         player.sendMessage(" ");
         player.sendMessage(type.header());
-        player.sendMessage("§7§o" + content);
+
+        // Check if this lore key has any multi-script cipher sections
+        boolean hasMultiScript = false;
+        for (CipherManager.CipherType ct : CipherManager.CipherType.values()) {
+            if (!VestigiumLib.getLoreRegistry().getLoreContent(loreKey, ct.key()).isEmpty()) {
+                hasMultiScript = true;
+                break;
+            }
+        }
+
+        if (hasMultiScript) {
+            Set<CipherManager.CipherType> held = plugin.getCipherManager().getHeldCiphers(player);
+            deliverMultiScript(player, loreKey, held);
+        } else {
+            player.sendMessage("§7§o" + content);
+        }
+
         player.sendMessage(" ");
 
-        // Fragment grant
         String fragmentId = loreKey + "_terminal";
         VestigiumLib.getLoreRegistry().grantFragment(player.getUniqueId(), fragmentId);
         player.sendMessage("§8[Fragment catalogued: " + fragmentId + "]");
+    }
+
+    private void deliverMultiScript(Player player, String loreKey,
+                                    Set<CipherManager.CipherType> held) {
+        // If player holds all three ciphers and a combined section exists, show that
+        if (held.size() == CipherManager.CipherType.values().length) {
+            String combined = VestigiumLib.getLoreRegistry().getLoreContent(loreKey, "combined");
+            if (!combined.isEmpty()) {
+                player.sendMessage("§f§l[All scripts decoded — unified record]");
+                player.sendMessage("§7§o" + combined);
+                return;
+            }
+        }
+
+        int encryptedSections = 0;
+        for (CipherManager.CipherType ct : CipherManager.CipherType.values()) {
+            String sectionText = VestigiumLib.getLoreRegistry().getLoreContent(loreKey, ct.key());
+            if (sectionText.isEmpty()) continue;
+
+            if (held.contains(ct)) {
+                player.sendMessage(ct.glyphHeader());
+                player.sendMessage("§7§o" + sectionText);
+            } else {
+                player.sendMessage(ct.encryptedHeader());
+                player.sendMessage(generateGlyphs(ct, sectionText.length(), loreKey.hashCode()));
+                encryptedSections++;
+            }
+        }
+
+        if (encryptedSections > 0) {
+            player.sendMessage("§8§o" + encryptedSections
+                    + " script section(s) remain unreadable — acquire the corresponding cipher.");
+        }
+    }
+
+    private static String generateGlyphs(CipherManager.CipherType type, int textLength, long seed) {
+        char[] chars = type.glyphChars();
+        Random rng = new Random(seed ^ (long) type.key().hashCode());
+        // Scale glyph count loosely to text length; cap so chat isn't flooded
+        int count = Math.min(Math.max(textLength / 5, 12), 48);
+        StringBuilder sb = new StringBuilder("§8§o");
+        for (int i = 0; i < count; i++) {
+            if (i > 0 && i % 9 == 0) sb.append(' ');
+            sb.append(chars[rng.nextInt(chars.length)]);
+        }
+        return sb.toString();
     }
 
     private static String locKey(Location loc) {
