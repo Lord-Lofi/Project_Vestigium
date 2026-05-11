@@ -4,6 +4,7 @@ import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
+import com.vestigium.vestigiumeconomy.runic.RuneManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,7 @@ public class VestigiumEconomy extends JavaPlugin {
     private CurrencyManager      currencyManager;
     private DynamicMarketManager dynamicMarketManager;
     private TreasureManager      treasureManager;
+    private RuneManager          runeManager;
 
     @Override
     public void onEnable() {
@@ -34,9 +36,12 @@ public class VestigiumEconomy extends JavaPlugin {
         dynamicMarketManager = new DynamicMarketManager(this);
         treasureManager      = new TreasureManager(this);
 
+        runeManager          = new RuneManager(this);
+
         currencyManager.init();
         dynamicMarketManager.init();
         treasureManager.init();
+        runeManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -61,6 +66,7 @@ public class VestigiumEconomy extends JavaPlugin {
     @Override
     public void onDisable() {
         if (dynamicMarketManager != null) dynamicMarketManager.shutdown();
+        if (runeManager          != null) runeManager.shutdown();
         getLogger().info("VestigiumEconomy disabled.");
     }
 
@@ -70,4 +76,5 @@ public class VestigiumEconomy extends JavaPlugin {
     public CurrencyManager getCurrencyManager()              { return currencyManager; }
     public DynamicMarketManager getDynamicMarketManager()    { return dynamicMarketManager; }
     public TreasureManager getTreasureManager()              { return treasureManager; }
+    public RuneManager getRuneManager()                      { return runeManager; }
 }
