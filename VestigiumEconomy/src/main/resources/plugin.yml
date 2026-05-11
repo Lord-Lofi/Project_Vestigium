@@ -27,6 +27,10 @@ commands:
     description: Runic Crafting — list runes, inspect gear, admin give/remove
     usage: /verunic <list | give <rune> [player] | inspect | remove <1|2>>
 
+  veritual:
+    description: Ritual Crafting — list recipes, manage stations, admin give
+    usage: /veritual <recipes | station <set <id> | remove | list> | give <recipe> [player]>
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -42,4 +46,8 @@ permissions:
 
   vestigium.runic.admin:
     description: Give runes to players and remove runes from gear
+    default: op
+
+  vestigium.ritual.admin:
+    description: Manage ritual stations and give ritual items to players
     default: op
