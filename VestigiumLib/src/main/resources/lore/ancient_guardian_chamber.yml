@@ -1,6 +1,11 @@
 # Ancient Guardian Chamber — lore about the Named Wardens and the deep dark.
+# Written in Resonant script; readable only with the Resonant Cipher.
 
 main: |
+  CHAMBER RECORD — Conclave Deep Survey
+  [Resonant script covers every surface. Acquire the Resonant Cipher to read it.]
+
+resonant: |
   CHAMBER RECORD — Conclave Deep Survey
 
   We do not know how old the Wardens are. The sculk around them predates

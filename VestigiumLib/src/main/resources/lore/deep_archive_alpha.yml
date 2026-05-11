@@ -1,19 +1,64 @@
 # Deep Archive Alpha — founding history of the world's factions.
+# Contains text in all three scripts. The main section is a brief stub
+# shown when no cipher is held; the full record requires all three.
 
 main: |
   ARCHIVE ENTRY 001 — The Founding Record
+  [Multiple scripts detected. Acquire the appropriate ciphers to read each section.]
 
-  Before the factions formalized, there were only survivors. The villagers
-  rebuilt first. The bandits organized second — someone had to move what
-  the villagers could not defend. The mercenaries came third, practical
-  in the way violence becomes practical when nothing else works.
+resonant: |
+  RESONANT SURVEY ADDENDUM — Deep Archive, Year 3
 
-  The Cultists were already there. They say the omen is not a problem
-  to be solved. They say it is a message to be read. We have asked them
-  what it says for three generations.
-  They smile and say we are not ready.
+  The sculk did not grow here. It arrived.
+  Fourteen days after the second omen threshold crossed,
+  the deep dark expanded to fill every cavity below the ridge.
+  The Wardens came with it. We do not know if they followed the sculk
+  or the sculk followed them.
 
-  The Drowned came up from the water during the second flood. They do not
-  speak of what they saw below.
+  The Pale Listener was present at the founding of this archive.
+  It has not moved. We catalogued it as a structural feature.
+  — Resonant Survey Team, Survey Year 3
+
+tidal: |
+  CONCLAVE COASTAL RECORD — Deep Archive, Year 12
+
+  The Drowned came up from the water during the second flood.
+  We asked them what they saw below. They showed us a sketch:
+  a structure that should not fit at that depth.
+  A door. Still sealed. We noted the coordinates.
+
+  We have not sent anyone down to confirm.
+  We are not ready to know what sealed it, or why it opened enough
+  to let them through.
+  — Conclave Coastal Survey
+
+antecedent: |
+  CONCLAVE INTERNAL NOTATION — Deep Archive, Year 44
+
   The End Remnants do not discuss their origin. We have stopped asking.
-  The Conclave catalogues all of this. We do not know if that helps.
+  But they left a notation in our archive — one line, unsigned,
+  written in their script on the founding plaque:
+
+  "The omen is not new. You have simply learned to measure it."
+
+  We have debated the meaning for forty years. The Cultists say it is
+  a warning. The Mercenaries say it is a boast. We say it is both
+  and neither, which is the most honest answer we have.
+  — Conclave Internal Notation
+
+combined: |
+  UNIFIED TRANSCRIPTION — All Three Scripts, Deep Archive Year 44
+
+  The sculk arrived fourteen days after the second omen threshold.
+  The Drowned surfaced the same week, carrying their sketch of the
+  sealed door. The End Remnants were already watching. None of the
+  three groups acknowledged each other's arrival.
+
+  In the forty years since, we have found no record of them ever
+  sharing information directly. They did not need to.
+  The world is the message. Each of them was reading a different
+  part of it — and each part, taken alone, looks like coincidence.
+
+  Taken together, it looks like preparation.
+  We do not know whose.
+  — Conclave Unified Archive, Year 44
