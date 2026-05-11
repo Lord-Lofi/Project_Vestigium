@@ -23,6 +23,10 @@ commands:
     permission: vestigium.market.use
     permission-message: §cYou do not have permission to buy from markets.
 
+  verunic:
+    description: Runic Crafting — list runes, inspect gear, admin give/remove
+    usage: /verunic <list | give <rune> [player] | inspect | remove <1|2>>
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -35,3 +39,7 @@ permissions:
   vestigium.market.use:
     description: Purchase items from Vestigium markets
     default: true
+
+  vestigium.runic.admin:
+    description: Give runes to players and remove runes from gear
+    default: op
