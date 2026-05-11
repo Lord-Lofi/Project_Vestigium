@@ -4,6 +4,7 @@ import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
+import com.vestigium.vestigiumeconomy.ritual.RitualManager;
 import com.vestigium.vestigiumeconomy.runic.RuneManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ public class VestigiumEconomy extends JavaPlugin {
     private DynamicMarketManager dynamicMarketManager;
     private TreasureManager      treasureManager;
     private RuneManager          runeManager;
+    private RitualManager        ritualManager;
 
     @Override
     public void onEnable() {
@@ -37,11 +39,13 @@ public class VestigiumEconomy extends JavaPlugin {
         treasureManager      = new TreasureManager(this);
 
         runeManager          = new RuneManager(this);
+        ritualManager        = new RitualManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
         treasureManager.init();
         runeManager.init();
+        ritualManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -67,6 +71,7 @@ public class VestigiumEconomy extends JavaPlugin {
     public void onDisable() {
         if (dynamicMarketManager != null) dynamicMarketManager.shutdown();
         if (runeManager          != null) runeManager.shutdown();
+        if (ritualManager        != null) ritualManager.shutdown();
         getLogger().info("VestigiumEconomy disabled.");
     }
 
@@ -77,4 +82,5 @@ public class VestigiumEconomy extends JavaPlugin {
     public DynamicMarketManager getDynamicMarketManager()    { return dynamicMarketManager; }
     public TreasureManager getTreasureManager()              { return treasureManager; }
     public RuneManager getRuneManager()                      { return runeManager; }
+    public RitualManager getRitualManager()                  { return ritualManager; }
 }
