@@ -16,9 +16,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -50,6 +53,12 @@ public class TerminalManager implements Listener, CommandExecutor {
     private static final NamespacedKey TERMINAL_LORE_KEY =
             new NamespacedKey("vestigium", "terminal_lore");
 
+    // PDC keys written onto the designator item
+    private static final NamespacedKey DESIGNATOR_TYPE_KEY =
+            new NamespacedKey("vestigium", "terminal_designator_type");
+    private static final NamespacedKey DESIGNATOR_LORE_KEY =
+            new NamespacedKey("vestigium", "terminal_designator_lore");
+
     private static final long COOLDOWN_MS = 10 * 60 * 1000L;
 
     // key: playerUUID + ":" + world:x:y:z
@@ -79,6 +88,31 @@ public class TerminalManager implements Listener, CommandExecutor {
         Block block = event.getClickedBlock();
         if (block == null || block.getType() != Material.LECTERN) return;
 
+        Player player = event.getPlayer();
+
+        // Designator item: admin right-clicks lectern to register it as a terminal
+        ItemStack held = player.getInventory().getItemInMainHand();
+        if (held != null && held.hasItemMeta()) {
+            var heldPdc = held.getItemMeta().getPersistentDataContainer();
+            String designatorType = heldPdc.get(DESIGNATOR_TYPE_KEY, PersistentDataType.STRING);
+            String designatorLore = heldPdc.get(DESIGNATOR_LORE_KEY, PersistentDataType.STRING);
+            if (designatorType != null && designatorLore != null) {
+                event.setCancelled(true);
+                Lectern lecternState = (Lectern) block.getState();
+                lecternState.getPersistentDataContainer()
+                        .set(TERMINAL_TYPE_KEY, PersistentDataType.STRING, designatorType);
+                lecternState.getPersistentDataContainer()
+                        .set(TERMINAL_LORE_KEY, PersistentDataType.STRING, designatorLore);
+                lecternState.update();
+                TerminalType type = TerminalType.fromKey(designatorType);
+                String typeName = type != null ? type.displayName() : designatorType;
+                player.sendMessage("§aTerminal set: §f" + typeName + " §a→ §f" + designatorLore);
+                block.getWorld().playSound(block.getLocation(),
+                        Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 1.2f);
+                return;
+            }
+        }
+
         Lectern lecternState = (Lectern) block.getState();
         String typeKey = lecternState.getPersistentDataContainer()
                 .get(TERMINAL_TYPE_KEY, PersistentDataType.STRING);
@@ -88,7 +122,6 @@ public class TerminalManager implements Listener, CommandExecutor {
         TerminalType type = TerminalType.fromKey(typeKey);
         if (type == null) return;
 
-        Player player = event.getPlayer();
         String loreKey = lecternState.getPersistentDataContainer()
                 .get(TERMINAL_LORE_KEY, PersistentDataType.STRING);
         if (loreKey == null) {
@@ -136,7 +169,7 @@ public class TerminalManager implements Listener, CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage("§7Usage: /vcterminal <set <type> <lore_key> | clear | info>");
+            sender.sendMessage("§7Usage: /vcterminal <set <type> <lore_key> | clear | info | give <type> <lore_key> [player]>");
             return true;
         }
 
@@ -184,9 +217,51 @@ public class TerminalManager implements Listener, CommandExecutor {
                     sender.sendMessage("§7Type: §f" + typeKey + "  §7Lore key: §f" + loreKey);
                 }
             }
-            default -> sender.sendMessage("§7Usage: /vcterminal <set <type> <lore_key> | clear | info>");
+            case "give" -> {
+                if (args.length < 3) {
+                    sender.sendMessage("§7/vcterminal give <type> <lore_key> [player]"); return true;
+                }
+                TerminalType giveType = TerminalType.fromKey(args[1]);
+                if (giveType == null) {
+                    sender.sendMessage("§cUnknown type. Use: resonant, end, nether"); return true;
+                }
+                String giveLoreKey = args[2];
+                Player giveTarget = args.length >= 4
+                        ? plugin.getServer().getPlayer(args[3])
+                        : (sender instanceof Player p ? p : null);
+                if (giveTarget == null) {
+                    sender.sendMessage("§cPlayer not found."); return true;
+                }
+                giveTarget.getInventory().addItem(createDesignator(giveType, giveLoreKey));
+                sender.sendMessage("§aGave §f" + giveType.displayName() + " §adesignator (→ §f"
+                        + giveLoreKey + "§a) to §f" + giveTarget.getName() + "§a.");
+            }
+
+            default -> sender.sendMessage(
+                    "§7Usage: /vcterminal <set <type> <lore_key> | clear | info | give <type> <lore_key> [player]>");
         }
         return true;
+    }
+
+    // -------------------------------------------------------------------------
+    // Designator item factory
+    // -------------------------------------------------------------------------
+
+    public ItemStack createDesignator(TerminalType type, String loreKey) {
+        ItemStack item = new ItemStack(type.designatorMaterial());
+        ItemMeta  meta = item.getItemMeta();
+        if (meta == null) return item;
+        meta.setDisplayName(type.designatorColor() + "§l" + type.displayName() + " §8[Terminal Stamp]");
+        meta.setLore(List.of(
+                "§7Right-click a §fLectern §7to register it as a §f" + type.displayName() + "§7.",
+                "§8Lore key: §7" + loreKey,
+                "§8Admin use only."));
+        meta.setCustomModelData(type.designatorCmd());
+        var pdc = meta.getPersistentDataContainer();
+        pdc.set(DESIGNATOR_TYPE_KEY, PersistentDataType.STRING, type.key());
+        pdc.set(DESIGNATOR_LORE_KEY, PersistentDataType.STRING, loreKey);
+        item.setItemMeta(meta);
+        return item;
     }
 
     // -------------------------------------------------------------------------
@@ -287,21 +362,24 @@ public class TerminalManager implements Listener, CommandExecutor {
                 "§8[§bResonant Archive §8— Ancient City Terminal]",
                 "§8The symbols pulse with sculk frequency. You need the §bResonant Cipher §8to read this.",
                 Particle.SCULK_SOUL,
-                Sound.BLOCK_SCULK_SENSOR_CLICKING),
+                Sound.BLOCK_SCULK_SENSOR_CLICKING,
+                Material.ECHO_SHARD, 40001, "§b"),
 
         END_ARCHIVE("end",
                 CipherManager.CipherType.ANTECEDENT,
                 "§8[§dEnd Archive §8— Antecedent Observatory Terminal]",
                 "§8Antecedent script is carved into every surface. You need the §dAntecedent Cipher §8to decode it.",
                 Particle.END_ROD,
-                Sound.BLOCK_ENDER_CHEST_OPEN),
+                Sound.BLOCK_ENDER_CHEST_OPEN,
+                Material.AMETHYST_SHARD, 40002, "§d"),
 
         NETHER_CAMP("nether",
                 CipherManager.CipherType.TIDAL,
                 "§8[§3Expedition Log §8— Antecedent Nether Camp Terminal]",
                 "§8Expedition notes glow with soul light. You need the §3Tidal Cipher §8to interpret them.",
                 Particle.SOUL_FIRE_FLAME,
-                Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD);
+                Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD,
+                Material.NAUTILUS_SHELL, 40003, "§3");
 
         private final String key;
         private final CipherManager.CipherType cipherType;
@@ -309,28 +387,38 @@ public class TerminalManager implements Listener, CommandExecutor {
         private final String noCipherMessage;
         private final Particle particle;
         private final Sound sound;
+        private final Material designatorMaterial;
+        private final int designatorCmd;
+        private final String designatorColor;
 
         TerminalType(String key, CipherManager.CipherType cipherType,
                      String header, String noCipherMessage,
-                     Particle particle, Sound sound) {
-            this.key            = key;
-            this.cipherType     = cipherType;
-            this.header         = header;
-            this.noCipherMessage = noCipherMessage;
-            this.particle       = particle;
-            this.sound          = sound;
+                     Particle particle, Sound sound,
+                     Material designatorMaterial, int designatorCmd, String designatorColor) {
+            this.key               = key;
+            this.cipherType        = cipherType;
+            this.header            = header;
+            this.noCipherMessage   = noCipherMessage;
+            this.particle          = particle;
+            this.sound             = sound;
+            this.designatorMaterial = designatorMaterial;
+            this.designatorCmd     = designatorCmd;
+            this.designatorColor   = designatorColor;
         }
 
-        public String key()                        { return key; }
+        public String key()                          { return key; }
         public CipherManager.CipherType cipherType() { return cipherType; }
-        public String header()                     { return header; }
-        public String noCipherMessage()            { return noCipherMessage; }
-        public Particle particle()                 { return particle; }
-        public Sound sound()                       { return sound; }
+        public String header()                       { return header; }
+        public String noCipherMessage()              { return noCipherMessage; }
+        public Particle particle()                   { return particle; }
+        public Sound sound()                         { return sound; }
+        public Material designatorMaterial()         { return designatorMaterial; }
+        public int designatorCmd()                   { return designatorCmd; }
+        public String designatorColor()              { return designatorColor; }
 
         public String displayName() {
             return switch (this) {
-                case RESONANT   -> "Resonant Terminal";
+                case RESONANT    -> "Resonant Terminal";
                 case END_ARCHIVE -> "End Archive Terminal";
                 case NETHER_CAMP -> "Nether Camp Terminal";
             };
