@@ -90,7 +90,7 @@ public class TerminalManager implements Listener, CommandExecutor {
 
         Player player = event.getPlayer();
 
-        // Designator item: admin right-clicks lectern to register it as a terminal
+        // Stamp interaction: admin right-clicks lectern while holding a designator item
         ItemStack held = player.getInventory().getItemInMainHand();
         if (held != null && held.hasItemMeta()) {
             var heldPdc = held.getItemMeta().getPersistentDataContainer();
@@ -98,15 +98,16 @@ public class TerminalManager implements Listener, CommandExecutor {
             String designatorLore = heldPdc.get(DESIGNATOR_LORE_KEY, PersistentDataType.STRING);
             if (designatorType != null && designatorLore != null) {
                 event.setCancelled(true);
-                Lectern lecternState = (Lectern) block.getState();
-                lecternState.getPersistentDataContainer()
+                Lectern ls = (Lectern) block.getState();
+                ls.getPersistentDataContainer()
                         .set(TERMINAL_TYPE_KEY, PersistentDataType.STRING, designatorType);
-                lecternState.getPersistentDataContainer()
+                ls.getPersistentDataContainer()
                         .set(TERMINAL_LORE_KEY, PersistentDataType.STRING, designatorLore);
-                lecternState.update();
+                ls.update();
                 TerminalType type = TerminalType.fromKey(designatorType);
-                String typeName = type != null ? type.displayName() : designatorType;
-                player.sendMessage("§aTerminal set: §f" + typeName + " §a→ §f" + designatorLore);
+                player.sendMessage("§aTerminal registered: §f"
+                        + (type != null ? type.displayName() : designatorType)
+                        + " §a→ §f" + designatorLore);
                 block.getWorld().playSound(block.getLocation(),
                         Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 1.2f);
                 return;
@@ -363,7 +364,7 @@ public class TerminalManager implements Listener, CommandExecutor {
                 "§8The symbols pulse with sculk frequency. You need the §bResonant Cipher §8to read this.",
                 Particle.SCULK_SOUL,
                 Sound.BLOCK_SCULK_SENSOR_CLICKING,
-                Material.ECHO_SHARD, 40001, "§b"),
+                Material.LECTERN, 40001, "§b"),
 
         END_ARCHIVE("end",
                 CipherManager.CipherType.ANTECEDENT,
@@ -371,7 +372,7 @@ public class TerminalManager implements Listener, CommandExecutor {
                 "§8Antecedent script is carved into every surface. You need the §dAntecedent Cipher §8to decode it.",
                 Particle.END_ROD,
                 Sound.BLOCK_ENDER_CHEST_OPEN,
-                Material.AMETHYST_SHARD, 40002, "§d"),
+                Material.LECTERN, 40002, "§d"),
 
         NETHER_CAMP("nether",
                 CipherManager.CipherType.TIDAL,
@@ -379,7 +380,7 @@ public class TerminalManager implements Listener, CommandExecutor {
                 "§8Expedition notes glow with soul light. You need the §3Tidal Cipher §8to interpret them.",
                 Particle.SOUL_FIRE_FLAME,
                 Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD,
-                Material.NAUTILUS_SHELL, 40003, "§3");
+                Material.LECTERN, 40003, "§3");
 
         private final String key;
         private final CipherManager.CipherType cipherType;
