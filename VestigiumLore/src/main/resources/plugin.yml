@@ -23,7 +23,7 @@ commands:
 
   vcterminal:
     description: Register or inspect Resonant/End/Nether terminals on lectern blocks
-    usage: /vcterminal <set <resonant|end|nether> <lore_key> | clear | info>
+    usage: /vcterminal <set <type> <lore_key> | clear | info | give <type> <lore_key> [player]>
     permission: vestigium.terminal.admin
     permission-message: §cYou do not have permission to manage terminals.
 
