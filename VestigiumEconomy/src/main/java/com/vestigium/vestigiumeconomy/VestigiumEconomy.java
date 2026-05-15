@@ -5,8 +5,11 @@ import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
 import com.vestigium.vestigiumeconomy.alchemy.AlchemyManager;
+import com.vestigium.vestigiumeconomy.component.ComponentWeaponManager;
 import com.vestigium.vestigiumeconomy.ritual.RitualManager;
 import com.vestigium.vestigiumeconomy.runic.RuneManager;
+import com.vestigium.vestigiumeconomy.salvage.SalvageManager;
+import com.vestigium.vestigiumeconomy.temper.TemperManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,8 +28,11 @@ public class VestigiumEconomy extends JavaPlugin {
     private DynamicMarketManager dynamicMarketManager;
     private TreasureManager      treasureManager;
     private RuneManager          runeManager;
-    private AlchemyManager       alchemyManager;
-    private RitualManager        ritualManager;
+    private AlchemyManager          alchemyManager;
+    private RitualManager           ritualManager;
+    private TemperManager           temperManager;
+    private ComponentWeaponManager  componentWeaponManager;
+    private SalvageManager          salvageManager;
 
     @Override
     public void onEnable() {
@@ -40,9 +46,12 @@ public class VestigiumEconomy extends JavaPlugin {
         dynamicMarketManager = new DynamicMarketManager(this);
         treasureManager      = new TreasureManager(this);
 
-        runeManager          = new RuneManager(this);
-        ritualManager        = new RitualManager(this);
-        alchemyManager       = new AlchemyManager(this);
+        runeManager             = new RuneManager(this);
+        ritualManager           = new RitualManager(this);
+        alchemyManager          = new AlchemyManager(this);
+        temperManager           = new TemperManager(this);
+        componentWeaponManager  = new ComponentWeaponManager(this);
+        salvageManager          = new SalvageManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
@@ -50,6 +59,9 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager.init();
         ritualManager.init();
         alchemyManager.init();
+        temperManager.init();
+        componentWeaponManager.init();
+        salvageManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -86,7 +98,10 @@ public class VestigiumEconomy extends JavaPlugin {
     public CurrencyManager getCurrencyManager()              { return currencyManager; }
     public DynamicMarketManager getDynamicMarketManager()    { return dynamicMarketManager; }
     public TreasureManager getTreasureManager()              { return treasureManager; }
-    public RuneManager getRuneManager()                      { return runeManager; }
-    public RitualManager getRitualManager()                  { return ritualManager; }
-    public AlchemyManager getAlchemyManager()                { return alchemyManager; }
+    public RuneManager getRuneManager()                              { return runeManager; }
+    public RitualManager getRitualManager()                          { return ritualManager; }
+    public AlchemyManager getAlchemyManager()                        { return alchemyManager; }
+    public TemperManager getTemperManager()                          { return temperManager; }
+    public ComponentWeaponManager getComponentWeaponManager()        { return componentWeaponManager; }
+    public SalvageManager getSalvageManager()                        { return salvageManager; }
 }

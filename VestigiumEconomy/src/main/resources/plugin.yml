@@ -35,6 +35,14 @@ commands:
     description: Alchemy Expansion — brew multi-ingredient flasks at Alembic stations
     usage: /vealchemy <recipes | brew <id> | station <give [player] | remove | list>>
 
+  vetemper:
+    description: Tempered Gear — apply elemental tempers to weapons and armor
+    usage: /vetemper <list | give <type> [player] | inspect>
+
+  vecomponent:
+    description: Component Weapons — assemble custom blades from parts at an Anvil
+    usage: /vecomponent <list | give <type> [player]>
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -58,4 +66,12 @@ permissions:
 
   vestigium.alchemy.admin:
     description: Register alchemy stations and give station designator items
+    default: op
+
+  vestigium.temper.admin:
+    description: Give temper shards to players
+    default: op
+
+  vestigium.component.admin:
+    description: Give component weapon parts to players
     default: op
