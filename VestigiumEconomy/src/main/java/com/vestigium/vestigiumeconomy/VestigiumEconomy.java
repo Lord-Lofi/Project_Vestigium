@@ -4,6 +4,7 @@ import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
+import com.vestigium.vestigiumeconomy.alchemy.AlchemyManager;
 import com.vestigium.vestigiumeconomy.ritual.RitualManager;
 import com.vestigium.vestigiumeconomy.runic.RuneManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
@@ -24,6 +25,7 @@ public class VestigiumEconomy extends JavaPlugin {
     private DynamicMarketManager dynamicMarketManager;
     private TreasureManager      treasureManager;
     private RuneManager          runeManager;
+    private AlchemyManager       alchemyManager;
     private RitualManager        ritualManager;
 
     @Override
@@ -40,12 +42,14 @@ public class VestigiumEconomy extends JavaPlugin {
 
         runeManager          = new RuneManager(this);
         ritualManager        = new RitualManager(this);
+        alchemyManager       = new AlchemyManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
         treasureManager.init();
         runeManager.init();
         ritualManager.init();
+        alchemyManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -72,6 +76,7 @@ public class VestigiumEconomy extends JavaPlugin {
         if (dynamicMarketManager != null) dynamicMarketManager.shutdown();
         if (runeManager          != null) runeManager.shutdown();
         if (ritualManager        != null) ritualManager.shutdown();
+        if (alchemyManager       != null) alchemyManager.shutdown();
         getLogger().info("VestigiumEconomy disabled.");
     }
 
@@ -83,4 +88,5 @@ public class VestigiumEconomy extends JavaPlugin {
     public TreasureManager getTreasureManager()              { return treasureManager; }
     public RuneManager getRuneManager()                      { return runeManager; }
     public RitualManager getRitualManager()                  { return ritualManager; }
+    public AlchemyManager getAlchemyManager()                { return alchemyManager; }
 }
