@@ -31,6 +31,10 @@ commands:
     description: Ritual Crafting — list recipes, manage stations, admin give
     usage: /veritual <recipes | station <set <id> | remove | list> | give <recipe> [player]>
 
+  vealchemy:
+    description: Alchemy Expansion — brew multi-ingredient flasks at Alembic stations
+    usage: /vealchemy <recipes | brew <id> | station <give [player] | remove | list>>
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -50,4 +54,8 @@ permissions:
 
   vestigium.ritual.admin:
     description: Manage ritual stations and give ritual items to players
+    default: op
+
+  vestigium.alchemy.admin:
+    description: Register alchemy stations and give station designator items
     default: op
