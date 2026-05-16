@@ -189,8 +189,9 @@ public class SpecialNPCManager implements Listener {
                 20 + ThreadLocalRandom.current().nextInt(30));
 
         Villager wanderer = (Villager) near.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
-        wanderer.setCustomName("???");
-        wanderer.setCustomNameVisible(false); // name only shows when very close
+        // Name is "Pale Wanderer" (not shown in-game) so OptiFine CEM can key on it.
+        wanderer.setCustomName("Pale Wanderer");
+        wanderer.setCustomNameVisible(false);
         wanderer.setAI(true);
         wanderer.setInvulnerable(true); // never takes damage — always leads, never fights
         wanderer.getPersistentDataContainer()
