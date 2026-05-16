@@ -35,6 +35,26 @@ commands:
     description: Alchemy Expansion — brew multi-ingredient flasks at Alembic stations
     usage: /vealchemy <recipes | brew <id> | station <give [player] | remove | list>>
 
+  verelic:
+    description: Relic binding — bind items to players so they persist through death
+    usage: /verelic <bind [player] | unbind | info>
+
+  veshrine:
+    description: Shrine Blessings — register shrine blocks and view blessing types
+    usage: /veshrine <set <type> | remove | list | types>
+
+  vetitanbone:
+    description: Titan Bone Materials — list and give biome-specific crafting components
+    usage: /vetitanbone <list | give <type> [player]>
+
+  vedivine:
+    description: Divine Artifacts — list and give powerful passive artifact items
+    usage: /vedivine <list | give <type> [player]>
+
+  veresonant:
+    description: Resonant Artifact — give sculk-bloom amplifier item
+    usage: /veresonant give [player]
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -58,4 +78,24 @@ permissions:
 
   vestigium.alchemy.admin:
     description: Register alchemy stations and give station designator items
+    default: op
+
+  vestigium.relic.admin:
+    description: Bind and unbind relic items
+    default: op
+
+  vestigium.shrine.admin:
+    description: Register and remove shrine blessing blocks
+    default: op
+
+  vestigium.titanbone.admin:
+    description: Give Titan Bone materials to players
+    default: op
+
+  vestigium.divine.admin:
+    description: Give Divine Artifact items to players
+    default: op
+
+  vestigium.resonant.admin:
+    description: Give Resonant Artifact items to players
     default: op

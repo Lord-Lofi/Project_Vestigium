@@ -7,6 +7,11 @@ import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
 import com.vestigium.vestigiumeconomy.alchemy.AlchemyManager;
 import com.vestigium.vestigiumeconomy.ritual.RitualManager;
 import com.vestigium.vestigiumeconomy.runic.RuneManager;
+import com.vestigium.vestigiumeconomy.specialitems.DivineArtifactManager;
+import com.vestigium.vestigiumeconomy.specialitems.RelicManager;
+import com.vestigium.vestigiumeconomy.specialitems.ResonantArtifactManager;
+import com.vestigium.vestigiumeconomy.specialitems.ShrineBlessingManager;
+import com.vestigium.vestigiumeconomy.specialitems.TitanBoneManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,9 +29,14 @@ public class VestigiumEconomy extends JavaPlugin {
     private CurrencyManager      currencyManager;
     private DynamicMarketManager dynamicMarketManager;
     private TreasureManager      treasureManager;
-    private RuneManager          runeManager;
-    private AlchemyManager       alchemyManager;
-    private RitualManager        ritualManager;
+    private RuneManager             runeManager;
+    private AlchemyManager          alchemyManager;
+    private RitualManager           ritualManager;
+    private RelicManager            relicManager;
+    private ShrineBlessingManager   shrineManager;
+    private TitanBoneManager        titanBoneManager;
+    private DivineArtifactManager   divineArtifactManager;
+    private ResonantArtifactManager resonantArtifactManager;
 
     @Override
     public void onEnable() {
@@ -40,9 +50,14 @@ public class VestigiumEconomy extends JavaPlugin {
         dynamicMarketManager = new DynamicMarketManager(this);
         treasureManager      = new TreasureManager(this);
 
-        runeManager          = new RuneManager(this);
-        ritualManager        = new RitualManager(this);
-        alchemyManager       = new AlchemyManager(this);
+        runeManager             = new RuneManager(this);
+        ritualManager           = new RitualManager(this);
+        alchemyManager          = new AlchemyManager(this);
+        relicManager            = new RelicManager(this);
+        shrineManager           = new ShrineBlessingManager(this);
+        titanBoneManager        = new TitanBoneManager(this);
+        divineArtifactManager   = new DivineArtifactManager(this);
+        resonantArtifactManager = new ResonantArtifactManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
@@ -50,6 +65,11 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager.init();
         ritualManager.init();
         alchemyManager.init();
+        relicManager.init();
+        shrineManager.init();
+        titanBoneManager.init();
+        divineArtifactManager.init();
+        resonantArtifactManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -73,10 +93,12 @@ public class VestigiumEconomy extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (dynamicMarketManager != null) dynamicMarketManager.shutdown();
-        if (runeManager          != null) runeManager.shutdown();
-        if (ritualManager        != null) ritualManager.shutdown();
-        if (alchemyManager       != null) alchemyManager.shutdown();
+        if (dynamicMarketManager    != null) dynamicMarketManager.shutdown();
+        if (runeManager             != null) runeManager.shutdown();
+        if (ritualManager           != null) ritualManager.shutdown();
+        if (alchemyManager          != null) alchemyManager.shutdown();
+        if (divineArtifactManager   != null) divineArtifactManager.shutdown();
+        if (resonantArtifactManager != null) resonantArtifactManager.shutdown();
         getLogger().info("VestigiumEconomy disabled.");
     }
 
@@ -86,7 +108,12 @@ public class VestigiumEconomy extends JavaPlugin {
     public CurrencyManager getCurrencyManager()              { return currencyManager; }
     public DynamicMarketManager getDynamicMarketManager()    { return dynamicMarketManager; }
     public TreasureManager getTreasureManager()              { return treasureManager; }
-    public RuneManager getRuneManager()                      { return runeManager; }
-    public RitualManager getRitualManager()                  { return ritualManager; }
-    public AlchemyManager getAlchemyManager()                { return alchemyManager; }
+    public RuneManager getRuneManager()                              { return runeManager; }
+    public RitualManager getRitualManager()                          { return ritualManager; }
+    public AlchemyManager getAlchemyManager()                        { return alchemyManager; }
+    public RelicManager getRelicManager()                            { return relicManager; }
+    public ShrineBlessingManager getShrineManager()                  { return shrineManager; }
+    public TitanBoneManager getTitanBoneManager()                    { return titanBoneManager; }
+    public DivineArtifactManager getDivineArtifactManager()          { return divineArtifactManager; }
+    public ResonantArtifactManager getResonantArtifactManager()      { return resonantArtifactManager; }
 }
