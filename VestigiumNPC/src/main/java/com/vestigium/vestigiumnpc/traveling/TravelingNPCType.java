@@ -18,6 +18,12 @@ public final class TravelingNPCType {
     public static final String STRAY_CHILD          = "STRAY_CHILD";
     public static final String PEARL_DIVER          = "PEARL_DIVER";
     public static final String DELVER               = "DELVER";
+    public static final String LAST_RESONANT        = "LAST_RESONANT";
+    public static final String ORE_BROKER           = "ORE_BROKER";
+    public static final String TRAPPED_MINER        = "TRAPPED_MINER";
+    public static final String CRYSTAL_HERMIT       = "CRYSTAL_HERMIT";
+    public static final String VEIN_WHISPERER       = "VEIN_WHISPERER";
+    public static final String LORE_SCHOLAR         = "LORE_SCHOLAR";
 
     private TravelingNPCType() {}
 }

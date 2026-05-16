@@ -15,6 +15,10 @@ commands:
     description: Bounty Board interaction and administration
     usage: /vcbounty <take <n>|abandon|status|board <place <type>|remove>>
 
+  vcmage:
+    description: Hired mercenary management
+    usage: /vcmage dismiss
+
 permissions:
   vestigium.npc.admin:
     description: Access to VestigiumNPC administrative functions
