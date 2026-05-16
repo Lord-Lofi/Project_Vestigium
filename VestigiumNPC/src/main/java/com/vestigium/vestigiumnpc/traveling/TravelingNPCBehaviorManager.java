@@ -298,7 +298,7 @@ public class TravelingNPCBehaviorManager implements Listener, CommandExecutor {
         // Spawn mercenary Zombie near player
         Location spawnLoc = player.getLocation().clone().add(2, 0, 0);
         Zombie merc = (Zombie) player.getWorld().spawnEntity(spawnLoc, EntityType.ZOMBIE);
-        merc.setCustomName("§7Hired Blade");
+        merc.setCustomName("Hired Blade");
         merc.setCustomNameVisible(true);
         merc.setBaby(false);
         merc.setMaxHealth(40.0);

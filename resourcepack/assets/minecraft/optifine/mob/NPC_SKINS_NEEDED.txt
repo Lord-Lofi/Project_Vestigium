@@ -1,0 +1,72 @@
+VESTIGIUM NPC CUSTOM SKINS — ARTIST BRIEF
+==========================================
+
+HOW THE SYSTEM WORKS
+--------------------
+Each NPC entity has a fixed custom name set in code. OptiFine's Random Entities
+system matches that name and swaps in a custom PNG texture. Non-NPC villagers and
+zombies are completely unaffected and keep their vanilla appearance.
+
+TEXTURE SPECS
+-------------
+  Villager skins : 64×64 PNG, Villager UV layout
+                   (same layout as assets/minecraft/textures/entity/villager/type/plains.png)
+  Zombie skins   : 64×64 PNG, Zombie UV layout
+                   (same layout as assets/minecraft/textures/entity/zombie/zombie.png)
+
+NOTE ON PROFESSION OVERLAY
+--------------------------
+All code-spawned Villager NPCs are set to Profession.NONE. Minecraft still renders
+a thin "unemployed" overlay on top of the base texture. Two options:
+  A) Design skins that look intentional with the overlay visible (it's a faint plain robe).
+  B) Include a transparent unemployed.png at:
+       assets/minecraft/textures/entity/villager/profession/unemployed.png
+     This suppresses the overlay for ALL unemployed villagers server-wide.
+
+
+VILLAGER SKINS NEEDED  (place in: optifine/mob/villager/)
+==========================================================
+
+NPC Name              | File                         | Character Brief
+----------------------|------------------------------|------------------------------------------------
+Traveling Scholar     | npc_traveling_scholar.png    | Weathered academic; worn travel cloak, book or scroll tucked under arm; warm neutral tones
+The Archivist         | npc_archivist.png            | Elderly; ink-stained grey robe; round spectacles; papyrus rolls on belt; silver-grey palette
+Oracle                | npc_oracle.png               | Blindfolded; flowing pale robes with faint glowing sigil patterns; ethereal, muted whites/golds
+Rival Adventurer      | npc_rival_adventurer.png     | Rugged; mismatched armour scraps over leather; confident posture; earthy browns and dull iron
+The Chronicler        | npc_chronicler.png           | Formal but aged; deep burgundy robe; carries a quill; a ledger-shaped clasp on the collar
+Hermit                | npc_hermit.png               | Ragged; layered rough cloth; unkempt; mossy greens and browns; wise eyes beneath a hood
+Nomad                 | npc_nomad.png                | Desert-style wrap; dusty warm orange/sand tones; nomadic jewellery; wind-weathered
+Mercenary             | npc_mercenary_post.png       | Hard-worn chainmail; scarred face; mercenary badge on pauldron; grey and iron tones
+Exiled Mage           | npc_exiled_mage.png          | Torn mage robes; one sleeve burned; arcane runes partially scratched out; dark purples/greys
+Refugee               | npc_refugee.png              | Simple peasant clothing; patched and dirty; fearful expression; muted browns and whites
+Lost Child            | npc_lost_child.png           | Small child proportions (vanilla villager model); torn clothes; clutching a toy; pale/dusty
+Pearl Diver           | npc_pearl_diver.png          | Sleeveless; weathered from sun and saltwater; rope belt; blues and sandy skin tones
+The Delver            | npc_delver.png               | Cave-explorer gear; wrapped torso; glowstone dust stains; dark neutral with faint amber glow
+The Last Resonant     | npc_last_resonant.png        | Ancient; sculk-veined skin (faint blue-black cracks); tattered ceremonial robes; deep dark purple/obsidian black; haunting
+Ore Broker            | npc_ore_broker.png           | Merchant type; heavy apron with ore samples attached; sturdy; earthy greys and mineral hues
+Trapped Miner         | npc_trapped_miner.png        | Mining gear; dusty; helmet (lamp dark); arms outstretched; browns and slate grey
+Crystal Hermit        | npc_crystal_hermit.png       | Robes embedded with amethyst shards; pale with crystal-coloured eyes; purples and lavenders
+Vein Whisperer        | npc_vein_whisperer.png       | Cave-dwelling; bioluminescent-tinged skin; moss growing on shoulders; earthy with glowing accents
+Lore Scholar          | npc_lore_scholar.png         | Academic regalia; three different sigils on robe (Resonant / Antecedent / Tidal); teal and gold
+The Ferryman          | npc_ferryman.png             | Cloaked; skeletal features; pale; carries a lantern; black and bone-white; unsettling calm
+Pale Wanderer         | npc_pale_wanderer.png        | Nearly featureless; ghostly white; no eyes (smooth face); ethereal flowing pale cloth; very unsettling
+The Collector         | npc_collector.png            | Eccentric; covered in small collected items (buttons, bones, coins) stitched to robe; warm hoarding energy
+
+
+ZOMBIE SKINS NEEDED  (place in: optifine/mob/zombie/)
+======================================================
+
+NPC Name     | File                   | Character Brief
+-------------|------------------------|-------------------------------------------------------------
+Grave Robber | npc_grave_robber.png   | Ragged grave-robber attire; shovel tool mark stains; dirty browns and bone-white; opportunistic expression
+Hired Blade  | npc_hired_blade.png    | Mercenary armour on zombie frame; chainmail and iron; professional despite undead condition; cold grey palette
+
+
+WORKFLOW WHEN READY
+-------------------
+1. Create PNG at the correct texture spec (Villager = 64×64, Zombie = 64×64).
+2. Drop the PNG into the correct folder (same folder as the .properties file).
+3. Reload the resource pack in-game. The NPC will immediately display the new skin
+   for any client with OptiFine or an equivalent CEM-capable resource pack loader.
+
+No server restart needed — resource pack changes are client-side only.

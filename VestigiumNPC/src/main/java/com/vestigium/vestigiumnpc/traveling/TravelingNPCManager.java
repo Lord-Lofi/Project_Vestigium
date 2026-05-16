@@ -180,9 +180,11 @@ public class TravelingNPCManager {
         villager.setCustomName(displayNameFor(type));
         villager.setCustomNameVisible(true);
         villager.setPersistent(true);
+        // NONE profession suppresses job-specific clothing overlays; custom skin
+        // is applied via OptiFine Random Entities keyed on the custom name.
+        villager.setProfession(Villager.Profession.NONE);
         villager.getPersistentDataContainer()
                 .set(NPC_TYPE_KEY, PersistentDataType.STRING, type);
-        // Traveling NPCs don't breed or pick up items
         villager.setBreed(false);
     }
 
