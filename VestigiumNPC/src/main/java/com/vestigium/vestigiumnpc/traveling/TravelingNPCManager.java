@@ -6,6 +6,7 @@ import com.vestigium.vestigiumnpc.VestigiumNPC;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Villager;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,18 +48,30 @@ public class TravelingNPCManager {
             TravelingNPCType.DELVER,            THREE_DAYS_MILLIS
     );
 
-    // Max simultaneous instances per type (0 = unlimited within pool)
-    private static final Map<String, Integer> MAX_INSTANCES = Map.of(
-            TravelingNPCType.TRAVELING_SCHOLAR, 1,
-            TravelingNPCType.ARCHIVIST,         1,
-            TravelingNPCType.ORACLE,            1,
-            TravelingNPCType.RIVAL_ADVENTURER,  3,
-            TravelingNPCType.CHRONICLER,        1,
-            TravelingNPCType.REFUGEE,           5,
-            TravelingNPCType.STRAY_CHILD,       3,
-            TravelingNPCType.DELVER,            1,
-            TravelingNPCType.PEARL_DIVER,       2
-    );
+    // Max simultaneous instances per type
+    private static final Map<String, Integer> MAX_INSTANCES;
+    static {
+        Map<String, Integer> m = new java.util.HashMap<>();
+        m.put(TravelingNPCType.TRAVELING_SCHOLAR, 1);
+        m.put(TravelingNPCType.ARCHIVIST,         1);
+        m.put(TravelingNPCType.ORACLE,            1);
+        m.put(TravelingNPCType.RIVAL_ADVENTURER,  3);
+        m.put(TravelingNPCType.CHRONICLER,        1);
+        m.put(TravelingNPCType.REFUGEE,           5);
+        m.put(TravelingNPCType.STRAY_CHILD,       3);
+        m.put(TravelingNPCType.DELVER,            1);
+        m.put(TravelingNPCType.PEARL_DIVER,       2);
+        m.put(TravelingNPCType.HERMIT,            2);
+        m.put(TravelingNPCType.MERCENARY_POST,    3);
+        m.put(TravelingNPCType.EXILED_MAGE,       2);
+        m.put(TravelingNPCType.LAST_RESONANT,     1);
+        m.put(TravelingNPCType.ORE_BROKER,        2);
+        m.put(TravelingNPCType.TRAPPED_MINER,     1);
+        m.put(TravelingNPCType.CRYSTAL_HERMIT,    1);
+        m.put(TravelingNPCType.VEIN_WHISPERER,    2);
+        m.put(TravelingNPCType.LORE_SCHOLAR,      1);
+        MAX_INSTANCES = java.util.Collections.unmodifiableMap(m);
+    }
 
     private final VestigiumNPC plugin;
     private final List<TravelingNPC> active = new ArrayList<>();
@@ -137,7 +150,9 @@ public class TravelingNPCManager {
             String type = entry.getKey();
             int max = entry.getValue();
             if (countActive(type) < max) {
-                Location loc = randomOverworldLocation();
+                Location loc = TravelingNPCType.LAST_RESONANT.equals(type)
+                        ? deepDarkLocation()
+                        : randomOverworldLocation();
                 if (loc != null) spawn(type, loc);
             }
         }
@@ -186,8 +201,35 @@ public class TravelingNPCManager {
             case TravelingNPCType.STRAY_CHILD       -> "Lost Child";
             case TravelingNPCType.PEARL_DIVER       -> "Pearl Diver";
             case TravelingNPCType.DELVER            -> "The Delver";
+            case TravelingNPCType.LAST_RESONANT     -> "The Last Resonant";
+            case TravelingNPCType.ORE_BROKER        -> "Ore Broker";
+            case TravelingNPCType.TRAPPED_MINER     -> "Trapped Miner";
+            case TravelingNPCType.CRYSTAL_HERMIT    -> "Crystal Hermit";
+            case TravelingNPCType.VEIN_WHISPERER    -> "Vein Whisperer";
+            case TravelingNPCType.LORE_SCHOLAR      -> "Lore Scholar";
             default -> type;
         };
+    }
+
+    private Location deepDarkLocation() {
+        List<org.bukkit.entity.Player> players = new ArrayList<>(
+                plugin.getServer().getOnlinePlayers());
+        if (players.isEmpty()) return null;
+        org.bukkit.entity.Player anchor = players.get(
+                ThreadLocalRandom.current().nextInt(players.size()));
+        World world = anchor.getWorld();
+        if (world.getEnvironment() != World.Environment.NORMAL) return null;
+
+        double angle = ThreadLocalRandom.current().nextDouble() * 2 * Math.PI;
+        double dist  = 100 + ThreadLocalRandom.current().nextDouble() * 300;
+        int x = anchor.getLocation().getBlockX() + (int) (Math.cos(angle) * dist);
+        int z = anchor.getLocation().getBlockZ() + (int) (Math.sin(angle) * dist);
+        // The Last Resonant lives deep underground — scan downward from Y=-40 for DEEP_DARK biome
+        for (int y = -40; y >= -58; y--) {
+            Location candidate = new Location(world, x, y, z);
+            if (candidate.getBlock().getBiome() == Biome.DEEP_DARK) return candidate;
+        }
+        return null;
     }
 
     private Location randomOverworldLocation() {
