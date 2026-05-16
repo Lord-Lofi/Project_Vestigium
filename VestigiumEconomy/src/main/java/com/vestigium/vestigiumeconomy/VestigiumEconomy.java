@@ -5,6 +5,8 @@ import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
 import com.vestigium.vestigiumeconomy.alchemy.AlchemyManager;
+import com.vestigium.vestigiumeconomy.artificer.ArtificerManager;
+import com.vestigium.vestigiumeconomy.blackmarket.BlackMarketManager;
 import com.vestigium.vestigiumeconomy.ritual.RitualManager;
 import com.vestigium.vestigiumeconomy.runic.RuneManager;
 import com.vestigium.vestigiumeconomy.treasure.TreasureManager;
@@ -27,6 +29,8 @@ public class VestigiumEconomy extends JavaPlugin {
     private RuneManager          runeManager;
     private AlchemyManager       alchemyManager;
     private RitualManager        ritualManager;
+    private BlackMarketManager   blackMarketManager;
+    private ArtificerManager     artificerManager;
 
     @Override
     public void onEnable() {
@@ -43,6 +47,8 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager          = new RuneManager(this);
         ritualManager        = new RitualManager(this);
         alchemyManager       = new AlchemyManager(this);
+        blackMarketManager   = new BlackMarketManager(this);
+        artificerManager     = new ArtificerManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
@@ -50,6 +56,8 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager.init();
         ritualManager.init();
         alchemyManager.init();
+        blackMarketManager.init();
+        artificerManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -89,4 +97,6 @@ public class VestigiumEconomy extends JavaPlugin {
     public RuneManager getRuneManager()                      { return runeManager; }
     public RitualManager getRitualManager()                  { return ritualManager; }
     public AlchemyManager getAlchemyManager()                { return alchemyManager; }
+    public BlackMarketManager getBlackMarketManager()        { return blackMarketManager; }
+    public ArtificerManager getArtificerManager()            { return artificerManager; }
 }
