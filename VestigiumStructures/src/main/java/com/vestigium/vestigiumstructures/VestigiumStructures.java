@@ -1,6 +1,9 @@
 package com.vestigium.vestigiumstructures;
 
+import com.vestigium.vestigiumstructures.command.StructureAdminCommand;
+import com.vestigium.vestigiumstructures.injection.ChunkStructureInjector;
 import com.vestigium.vestigiumstructures.registry.StructureRegistry;
+import com.vestigium.vestigiumstructures.resonantarchive.ResonantArchiveManager;
 import com.vestigium.vestigiumstructures.schematic.SchematicManager;
 import com.vestigium.vestigiumstructures.schematic.StructurePlacer;
 import com.vestigium.vestigiumstructures.spawner.StructureNPCSpawner;
@@ -24,6 +27,8 @@ public class VestigiumStructures extends JavaPlugin {
     private WaystoneManager         waystoneManager;
     private SchematicManager        schematicManager;
     private StructurePlacer         structurePlacer;
+    private ChunkStructureInjector  chunkStructureInjector;
+    private ResonantArchiveManager  resonantArchiveManager;
 
     @Override
     public void onEnable() {
@@ -33,19 +38,27 @@ public class VestigiumStructures extends JavaPlugin {
         wanderingDungeonManager = new WanderingDungeonManager(this);
         structureNPCSpawner     = new StructureNPCSpawner(this);
         waystoneManager         = new WaystoneManager(this);
+        resonantArchiveManager  = new ResonantArchiveManager(this);
 
         structureRegistry.load();
         wanderingDungeonManager.init();
         structureNPCSpawner.init();
         waystoneManager.init();
+        resonantArchiveManager.init();
 
         if (isWorldEditAvailable()) {
-            schematicManager = new SchematicManager(this);
-            structurePlacer  = new StructurePlacer(this);
-            getLogger().info("WorldEdit detected — schematic loading enabled.");
+            schematicManager       = new SchematicManager(this);
+            structurePlacer        = new StructurePlacer(this);
+            chunkStructureInjector = new ChunkStructureInjector(this);
+            chunkStructureInjector.init();
+            getLogger().info("WorldEdit detected — schematic loading and chunk injection enabled.");
         } else {
             getLogger().info("WorldEdit not found — schematic loading disabled.");
         }
+
+        StructureAdminCommand adminCmd = new StructureAdminCommand(this);
+        getCommand("vstructure").setExecutor(adminCmd);
+        getCommand("vstructure").setTabCompleter(adminCmd);
 
         getLogger().info("VestigiumStructures enabled.");
     }
@@ -75,4 +88,7 @@ public class VestigiumStructures extends JavaPlugin {
     public SchematicManager getSchematicManager()                { return schematicManager; }
     /** Null if WorldEdit/FAWE is not installed. */
     public StructurePlacer getStructurePlacer()                  { return structurePlacer; }
+    /** Null if WorldEdit/FAWE is not installed. */
+    public ChunkStructureInjector getChunkStructureInjector()    { return chunkStructureInjector; }
+    public ResonantArchiveManager getResonantArchiveManager()    { return resonantArchiveManager; }
 }

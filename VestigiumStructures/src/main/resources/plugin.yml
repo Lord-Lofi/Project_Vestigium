@@ -17,8 +17,13 @@ commands:
     usage: /vwaystone <add|remove|list|energy|go>
     permission: vestigium.use
     permission-message: §cYou do not have permission to use waystones.
+  vstructure:
+    description: Structure admin — paste schematics into the world
+    usage: /vstructure paste <id>
+    permission: vestigium.structures.admin
+    permission-message: §cYou do not have permission to manage structures.
 
 permissions:
   vestigium.structures.admin:
-    description: Manage structure registrations and wandering dungeon placements
+    description: Manage structure registrations, paste schematics, and manage wandering dungeons
     default: op
