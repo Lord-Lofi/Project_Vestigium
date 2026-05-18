@@ -59,6 +59,10 @@
             <id>extendedclip-releases</id>
             <url>https://repo.extendedclip.com/releases/</url>
         </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
@@ -89,6 +93,14 @@
                 <groupId>me.clip</groupId>
                 <artifactId>placeholderapi</artifactId>
                 <version>2.11.6</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+            <!-- WorldEdit (soft dep for VestigiumStructures schematic loading) -->
+            <dependency>
+                <groupId>com.sk89q.worldedit</groupId>
+                <artifactId>worldedit-bukkit</artifactId>
+                <version>7.3.0</version>
                 <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
