@@ -24,6 +24,10 @@
             <groupId>com.vestigium</groupId>
             <artifactId>VestigiumLib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

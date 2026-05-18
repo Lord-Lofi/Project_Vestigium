@@ -7,6 +7,16 @@ authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+softdepend:
+  - WorldEdit
+  - FastAsyncWorldEdit
+
+commands:
+  vwaystone:
+    description: Waystone Network — register, travel, and manage waystone energy
+    usage: /vwaystone <add|remove|list|energy|go>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use waystones.
 
 permissions:
   vestigium.structures.admin:
