@@ -34,10 +34,12 @@ import java.util.List;
  */
 public class RuneManager implements Listener, CommandExecutor {
 
-    static final NamespacedKey RUNES_KEY    = new NamespacedKey("vestigium", "runes");
-    private static final NamespacedKey RUNE_TYPE_KEY = new NamespacedKey("vestigium", "rune_type");
+    public static final NamespacedKey RUNES_KEY  = new NamespacedKey("vestigium", "runes");
+    private static final NamespacedKey RUNE_TYPE_KEY  = new NamespacedKey("vestigium", "rune_type");
+    private static final NamespacedKey RUNIC_HILT_KEY = new NamespacedKey("vestigium", "runic_hilt");
 
-    private static final int    MAX_RUNES    = 2;
+    private static final int MAX_RUNES       = 2;
+    private static final int MAX_RUNES_RUNIC = 3;
     private static final String LORE_PREFIX  = "§8◆ ";
 
     private final VestigiumEconomy plugin;
@@ -108,8 +110,12 @@ public class RuneManager implements Listener, CommandExecutor {
         }
 
         List<String> current = getItemRunes(gear);
-        if (current.size() >= MAX_RUNES) {
-            player.sendMessage("§cThis item already holds " + MAX_RUNES
+        boolean runicHilt = gear.getItemMeta() != null
+                && gear.getItemMeta().getPersistentDataContainer()
+                        .has(RUNIC_HILT_KEY, PersistentDataType.BYTE);
+        int cap = runicHilt ? MAX_RUNES_RUNIC : MAX_RUNES;
+        if (current.size() >= cap) {
+            player.sendMessage("§cThis item already holds " + cap
                     + " runes. Use §f/verunic remove <1|2> §cto free a slot.");
             return;
         }
