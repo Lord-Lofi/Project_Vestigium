@@ -47,6 +47,44 @@ commands:
     permission: vestigium.forgery.admin
     permission-message: §cYou do not have permission to manage the forgery system.
 
+  veblackmarket:
+    description: Black Market broker management (notoriety ≥ 75 gate for players)
+    usage: /veblackmarket <spawn | remove | list>
+    permission: vestigium.blackmarket.admin
+    permission-message: §cYou do not have permission to manage the Black Market.
+
+  veartificer:
+    description: Artificer NPC management and gear reforging
+    usage: /veartificer <reforge <temper|runes|artisan> | spawn [name] | remove | list>
+
+  verelic:
+    description: Relic binding — bind items to players so they persist through death
+    usage: /verelic <bind [player] | unbind | info>
+
+  veshrine:
+    description: Shrine Blessings — register shrine blocks and view blessing types
+    usage: /veshrine <set <type> | remove | list | types>
+
+  vetitanbone:
+    description: Titan Bone Materials — list and give biome-specific crafting components
+    usage: /vetitanbone <list | give <type> [player]>
+
+  vedivine:
+    description: Divine Artifacts — list and give powerful passive artifact items
+    usage: /vedivine <list | give <type> [player]>
+
+  veresonant:
+    description: Resonant Artifact — give sculk-bloom amplifier item
+    usage: /veresonant give [player]
+
+  vetemper:
+    description: Tempered Gear — apply elemental tempers to weapons and armor
+    usage: /vetemper <list | give <type> [player] | inspect>
+
+  vecomponent:
+    description: Component Weapons — assemble custom blades from parts at an Anvil
+    usage: /vecomponent <list | give <type> [player]>
+
 permissions:
   vestigium.currency.use:
     description: Check your own Vestige Shard balance
@@ -74,4 +112,40 @@ permissions:
 
   vestigium.forgery.admin:
     description: Spawn/remove Forger NPCs and inspect item authenticity
+    default: op
+
+  vestigium.blackmarket.admin:
+    description: Spawn and remove Black Market broker NPCs
+    default: op
+
+  vestigium.artificer.admin:
+    description: Spawn and remove Artificer NPCs
+    default: op
+
+  vestigium.relic.admin:
+    description: Bind and unbind relic items
+    default: op
+
+  vestigium.shrine.admin:
+    description: Register and remove shrine blessing blocks
+    default: op
+
+  vestigium.titanbone.admin:
+    description: Give Titan Bone materials to players
+    default: op
+
+  vestigium.divine.admin:
+    description: Give Divine Artifact items to players
+    default: op
+
+  vestigium.resonant.admin:
+    description: Give Resonant Artifact items to players
+    default: op
+
+  vestigium.temper.admin:
+    description: Give temper shards to players
+    default: op
+
+  vestigium.component.admin:
+    description: Give component weapon parts to players
     default: op
