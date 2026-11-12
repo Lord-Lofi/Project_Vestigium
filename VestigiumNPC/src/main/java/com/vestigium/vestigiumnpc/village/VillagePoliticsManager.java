@@ -43,7 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class VillagePoliticsManager implements Listener, CommandExecutor, TabCompleter {
 
     static final int RIVAL_RANGE    = 500; // blocks — within this distance = rivals
-    static final int VILLAGE_RADIUS = 100; // blocks — radius to attribute a villager to a village
+    public static final int VILLAGE_RADIUS = 100; // blocks — radius to attribute a villager to a village
     private static final int GOLEM_SCAN     = 64;  // scan radius for village iron golems
     private static final int PATROL_RANGE   = 200; // max distance to rival for nudge to fire
     private static final int LOYALTY_TRADES = 5;   // trades to become loyal
