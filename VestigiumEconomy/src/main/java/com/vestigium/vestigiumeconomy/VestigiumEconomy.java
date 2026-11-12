@@ -3,6 +3,7 @@ package com.vestigium.vestigiumeconomy;
 import com.vestigium.lib.api.PlaceholderAPIHook;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
 import com.vestigium.vestigiumeconomy.economy.VaultHook;
+import com.vestigium.vestigiumeconomy.forgery.ForgeryManager;
 import com.vestigium.vestigiumeconomy.market.DynamicMarketManager;
 import com.vestigium.vestigiumeconomy.alchemy.AlchemyManager;
 import com.vestigium.vestigiumeconomy.ritual.RitualManager;
@@ -27,6 +28,7 @@ public class VestigiumEconomy extends JavaPlugin {
     private RuneManager          runeManager;
     private AlchemyManager       alchemyManager;
     private RitualManager        ritualManager;
+    private ForgeryManager       forgeryManager;
 
     @Override
     public void onEnable() {
@@ -43,6 +45,7 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager          = new RuneManager(this);
         ritualManager        = new RitualManager(this);
         alchemyManager       = new AlchemyManager(this);
+        forgeryManager       = new ForgeryManager(this);
 
         currencyManager.init();
         dynamicMarketManager.init();
@@ -50,6 +53,7 @@ public class VestigiumEconomy extends JavaPlugin {
         runeManager.init();
         ritualManager.init();
         alchemyManager.init();
+        forgeryManager.init();
 
         var vebuy = getCommand("vebuy");
         if (vebuy != null) vebuy.setExecutor(dynamicMarketManager);
@@ -77,6 +81,7 @@ public class VestigiumEconomy extends JavaPlugin {
         if (runeManager          != null) runeManager.shutdown();
         if (ritualManager        != null) ritualManager.shutdown();
         if (alchemyManager       != null) alchemyManager.shutdown();
+        // ForgeryManager has no background tasks; no shutdown needed
         getLogger().info("VestigiumEconomy disabled.");
     }
 
@@ -89,4 +94,5 @@ public class VestigiumEconomy extends JavaPlugin {
     public RuneManager getRuneManager()                      { return runeManager; }
     public RitualManager getRitualManager()                  { return ritualManager; }
     public AlchemyManager getAlchemyManager()                { return alchemyManager; }
+    public ForgeryManager getForgeryManager()                { return forgeryManager; }
 }

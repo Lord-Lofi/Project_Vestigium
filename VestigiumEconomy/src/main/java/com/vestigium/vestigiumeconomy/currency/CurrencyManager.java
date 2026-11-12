@@ -56,6 +56,7 @@ public class CurrencyManager implements CommandExecutor {
                     "§7A fragment of something that once mattered.",
                     "§8Sell at any market for §6" + (int) plugin.getShardValue() + " §8each."
             ));
+            meta.setCustomModelData(90001);
             meta.getPersistentDataContainer()
                     .set(SHARD_ITEM_KEY, PersistentDataType.BOOLEAN, true);
             item.setItemMeta(meta);

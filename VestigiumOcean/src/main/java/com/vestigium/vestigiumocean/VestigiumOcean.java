@@ -1,5 +1,6 @@
 package com.vestigium.vestigiumocean;
 
+import com.vestigium.vestigiumocean.civilization.DrownedCivilizationManager;
 import com.vestigium.vestigiumocean.depth.OceanDepthManager;
 import com.vestigium.vestigiumocean.mob.OceanMobManager;
 import com.vestigium.vestigiumocean.tidal.TidalEventManager;
@@ -13,33 +14,38 @@ public class VestigiumOcean extends JavaPlugin {
 
     private static VestigiumOcean instance;
 
-    private OceanMobManager   oceanMobManager;
-    private TidalEventManager tidalEventManager;
-    private OceanDepthManager oceanDepthManager;
+    private OceanMobManager            oceanMobManager;
+    private TidalEventManager          tidalEventManager;
+    private OceanDepthManager          oceanDepthManager;
+    private DrownedCivilizationManager drownedCivilizationManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        oceanMobManager   = new OceanMobManager(this);
-        tidalEventManager = new TidalEventManager(this);
-        oceanDepthManager = new OceanDepthManager(this);
+        oceanMobManager            = new OceanMobManager(this);
+        tidalEventManager          = new TidalEventManager(this);
+        oceanDepthManager          = new OceanDepthManager(this);
+        drownedCivilizationManager = new DrownedCivilizationManager(this);
 
         oceanMobManager.init();
         tidalEventManager.init();
         oceanDepthManager.init();
+        drownedCivilizationManager.init();
 
         getLogger().info("VestigiumOcean enabled.");
     }
 
     @Override
     public void onDisable() {
-        if (oceanDepthManager != null) oceanDepthManager.shutdown();
+        if (oceanDepthManager          != null) oceanDepthManager.shutdown();
+        if (drownedCivilizationManager != null) drownedCivilizationManager.shutdown();
         getLogger().info("VestigiumOcean disabled.");
     }
 
-    public static VestigiumOcean getInstance()           { return instance; }
-    public OceanMobManager getOceanMobManager()          { return oceanMobManager; }
-    public TidalEventManager getTidalEventManager()      { return tidalEventManager; }
-    public OceanDepthManager getOceanDepthManager()      { return oceanDepthManager; }
+    public static VestigiumOcean getInstance()                                   { return instance; }
+    public OceanMobManager getOceanMobManager()                                  { return oceanMobManager; }
+    public TidalEventManager getTidalEventManager()                              { return tidalEventManager; }
+    public OceanDepthManager getOceanDepthManager()                              { return oceanDepthManager; }
+    public DrownedCivilizationManager getDrownedCivilizationManager()            { return drownedCivilizationManager; }
 }

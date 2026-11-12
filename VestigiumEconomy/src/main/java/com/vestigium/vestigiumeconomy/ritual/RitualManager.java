@@ -3,6 +3,7 @@ package com.vestigium.vestigiumeconomy.ritual;
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.model.Season;
 import com.vestigium.vestigiumeconomy.VestigiumEconomy;
+import com.vestigium.vestigiumeconomy.forgery.ForgeryManager;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -260,32 +261,33 @@ public class RitualManager implements Listener, CommandExecutor {
         return switch (recipeId) {
             case "warden_heart"    -> makeItem(Material.ECHO_SHARD,     "§5Warden's Heart",
                     List.of("§7Suppresses Warden targeting for §f5 minutes§7.",
-                            "§8Right-click to activate. 10-min recharge."), recipeId);
+                            "§8Right-click to activate. 10-min recharge."), recipeId, 80001);
             case "omen_candle"     -> makeItem(Material.CANDLE,         "§6Omen Candle",
                     List.of("§7Channels omen into a §f2-minute §7buff scaled to omen level.",
-                            "§8Right-click to use. 30-min cooldown."), recipeId);
+                            "§8Right-click to use. 30-min cooldown."), recipeId, 80002);
             case "ancient_compass" -> makeItem(Material.COMPASS,        "§bAncient Compass",
                     List.of("§7Reads omen, season, tidal phase, and next threshold.",
-                            "§8Right-click to sense. 5-min cooldown."), recipeId);
+                            "§8Right-click to sense. 5-min cooldown."), recipeId, 80003);
             case "season_lens"     -> makeItem(Material.AMETHYST_SHARD, "§aSeason Lens",
                     List.of("§7Grants a §f3-minute §7buff from the current season.",
-                            "§8Right-click to use. 20-min cooldown."), recipeId);
+                            "§8Right-click to use. 20-min cooldown."), recipeId, 80004);
             case "soul_lantern"    -> makeItem(Material.SOUL_LANTERN,   "§fSoul Lantern",
                     List.of("§7Afflicts nearby hostile mobs with §fGlowing §7and §fSlowness§7.",
-                            "§8Passive while held in main hand."), recipeId);
+                            "§8Passive while held in main hand."), recipeId, 80005);
             case "void_extract"    -> makeItem(Material.ENDER_PEARL,    "§8Void Extract",
                     List.of("§7Tears you 50–200 blocks in a random direction.",
-                            "§8Causes Blindness II. Subtracts 30 omen. §cSingle use."), recipeId);
+                            "§8Causes Blindness II. Subtracts 30 omen. §cSingle use."), recipeId, 80006);
             default -> new ItemStack(Material.BARRIER);
         };
     }
 
-    private ItemStack makeItem(Material mat, String name, List<String> lore, String ritualId) {
+    private ItemStack makeItem(Material mat, String name, List<String> lore, String ritualId, int cmd) {
         ItemStack item = new ItemStack(mat);
         ItemMeta meta  = item.getItemMeta();
         if (meta == null) return item;
         meta.setDisplayName(name);
         meta.setLore(lore);
+        meta.setCustomModelData(cmd);
         meta.getPersistentDataContainer()
                 .set(RITUAL_ITEM_KEY, PersistentDataType.STRING, ritualId);
         item.setItemMeta(meta);
@@ -297,6 +299,10 @@ public class RitualManager implements Listener, CommandExecutor {
     // -------------------------------------------------------------------------
 
     private void useRitualItem(Player player, ItemStack item, String ritualId) {
+        if (ForgeryManager.isForged(item)) {
+            player.sendMessage("§cThis item is a counterfeit. It holds no power.");
+            return;
+        }
         switch (ritualId) {
             case "warden_heart"    -> activateWardenHeart(player, item);
             case "omen_candle"     -> activateOmenCandle(player, item);

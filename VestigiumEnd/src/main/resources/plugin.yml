@@ -14,6 +14,12 @@ commands:
     usage: /veend corruption <clear|status> <player>
     permission: vestigium.end.admin
 
+  vestructure:
+    description: End structure site and NPC management
+    usage: /vestructure <add|remove|list|npc|sanctumpart>
+    permission: vestigium.end.admin
+    permission-message: §cYou do not have permission to manage End structures.
+
 permissions:
   vestigium.end.admin:
     description: Administrative access to VestigiumEnd systems

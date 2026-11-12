@@ -42,7 +42,9 @@ public class LoreRegistry {
         "cartographer_waystone_1", "cartographer_terminus",
         "ancient_guardian_chamber", "antecedent_vault", "deep_archive_alpha",
         "piglin_expedition_log", "piglin_golden_directive",
-        "dragon_seal", "end_convergence", "enderman_witness"
+        "dragon_seal", "end_convergence", "enderman_witness",
+        "soul_road", "drowned_civilization",
+        "end_biomes", "end_structures"
     };
 
     /** Loads all lore YAML files from the lore/ data directory. */

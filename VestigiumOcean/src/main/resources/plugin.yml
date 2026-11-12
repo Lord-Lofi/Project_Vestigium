@@ -8,6 +8,13 @@ load: POSTWORLD
 depend:
   - VestigiumLib
 
+commands:
+  vcivil:
+    description: Drowned Civilization — manage sites, NPCs, and player progress
+    usage: /vcivil <site|npc|unlock|progress>
+    permission: vestigium.ocean.admin
+    permission-message: §cYou do not have permission to manage drowned civilization systems.
+
 permissions:
   vestigium.ocean.admin:
     description: Administrative access to VestigiumOcean systems

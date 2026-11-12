@@ -26,14 +26,26 @@ commands:
   verunic:
     description: Runic Crafting — list runes, inspect gear, admin give/remove
     usage: /verunic <list | give <rune> [player] | inspect | remove <1|2>>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use runic crafting.
 
   veritual:
     description: Ritual Crafting — list recipes, manage stations, admin give
     usage: /veritual <recipes | station <set <id> | remove | list> | give <recipe> [player]>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use ritual crafting.
 
   vealchemy:
     description: Alchemy Expansion — brew multi-ingredient flasks at Alembic stations
     usage: /vealchemy <recipes | brew <id> | station <give [player] | remove | list>>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use alchemy.
+
+  veforgery:
+    description: Forgery system — spawn/remove The Forger NPC and inspect items
+    usage: /veforgery <spawn | remove | list | inspect>
+    permission: vestigium.forgery.admin
+    permission-message: §cYou do not have permission to manage the forgery system.
 
 permissions:
   vestigium.currency.use:
@@ -58,4 +70,8 @@ permissions:
 
   vestigium.alchemy.admin:
     description: Register alchemy stations and give station designator items
+    default: op
+
+  vestigium.forgery.admin:
+    description: Spawn/remove Forger NPCs and inspect item authenticity
     default: op
