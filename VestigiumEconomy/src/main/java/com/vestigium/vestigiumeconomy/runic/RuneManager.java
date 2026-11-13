@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumeconomy.runic;
 
 import com.vestigium.vestigiumeconomy.VestigiumEconomy;
+import com.vestigium.vestigiumeconomy.forgery.ForgeryManager;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,10 +34,12 @@ import java.util.List;
  */
 public class RuneManager implements Listener, CommandExecutor {
 
-    static final NamespacedKey RUNES_KEY    = new NamespacedKey("vestigium", "runes");
-    private static final NamespacedKey RUNE_TYPE_KEY = new NamespacedKey("vestigium", "rune_type");
+    public static final NamespacedKey RUNES_KEY  = new NamespacedKey("vestigium", "runes");
+    private static final NamespacedKey RUNE_TYPE_KEY  = new NamespacedKey("vestigium", "rune_type");
+    private static final NamespacedKey RUNIC_HILT_KEY = new NamespacedKey("vestigium", "runic_hilt");
 
-    private static final int    MAX_RUNES    = 2;
+    private static final int MAX_RUNES       = 2;
+    private static final int MAX_RUNES_RUNIC = 3;
     private static final String LORE_PREFIX  = "§8◆ ";
 
     private final VestigiumEconomy plugin;
@@ -96,14 +99,23 @@ public class RuneManager implements Listener, CommandExecutor {
 
         event.setCancelled(true);
 
+        if (ForgeryManager.isForged(gear)) {
+            player.sendMessage("§cForged items cannot be inscribed with runes.");
+            return;
+        }
+
         if (gear.getType() == Material.AIR || !isInscribable(gear.getType())) {
             player.sendMessage("§cHold the gear to inscribe in your main hand.");
             return;
         }
 
         List<String> current = getItemRunes(gear);
-        if (current.size() >= MAX_RUNES) {
-            player.sendMessage("§cThis item already holds " + MAX_RUNES
+        boolean runicHilt = gear.getItemMeta() != null
+                && gear.getItemMeta().getPersistentDataContainer()
+                        .has(RUNIC_HILT_KEY, PersistentDataType.BYTE);
+        int cap = runicHilt ? MAX_RUNES_RUNIC : MAX_RUNES;
+        if (current.size() >= cap) {
+            player.sendMessage("§cThis item already holds " + cap
                     + " runes. Use §f/verunic remove <1|2> §cto free a slot.");
             return;
         }
@@ -279,6 +291,7 @@ public class RuneManager implements Listener, CommandExecutor {
                 "§8Drop: §7" + type.dropSource(),
                 "§8Hold gear (main) + rune (off) at a §7Stonecutter §8to inscribe."
         ));
+        meta.setCustomModelData(type.cmd());
         meta.getPersistentDataContainer()
                 .set(RUNE_TYPE_KEY, PersistentDataType.STRING, type.id());
         item.setItemMeta(meta);
@@ -338,42 +351,44 @@ public class RuneManager implements Listener, CommandExecutor {
     // -------------------------------------------------------------------------
 
     public enum RuneType {
-        WARDING("warding",    "§6Rune of Warding",    Material.BONE,
+        WARDING("warding",    "§6Rune of Warding",    Material.BONE,            70001,
                 "15% chance to reflect 3 damage to your attacker.",
                 "Skeleton (5%)"),
-        VENOM("venom",        "§aRune of Venom",      Material.SPIDER_EYE,
+        VENOM("venom",        "§aRune of Venom",      Material.SPIDER_EYE,      70002,
                 "20% chance to inflict Poison I (3s) on hit.",
                 "Spider / Cave Spider (8%)"),
-        RESILIENCE("resilience", "§cRune of Resilience", Material.ROTTEN_FLESH,
+        RESILIENCE("resilience", "§cRune of Resilience", Material.ROTTEN_FLESH, 70003,
                 "Once per 60s: fully absorb a hit of 6+ damage.",
                 "Zombie (6%)"),
-        THUNDER("thunder",    "§eRune of Thunder",    Material.GUNPOWDER,
+        THUNDER("thunder",    "§eRune of Thunder",    Material.GUNPOWDER,       70004,
                 "Killing blow: Slowness I (3s) to nearby enemies.",
                 "Creeper (10%)"),
-        DEEP("deep",          "§bRune of the Deep",   Material.PRISMARINE_SHARD,
+        DEEP("deep",          "§bRune of the Deep",   Material.PRISMARINE_SHARD,70005,
                 "40% reduced damage while submerged.",
                 "Drowned (8%)"),
-        SWIFTNESS("swiftness","§fRune of Swiftness",  Material.BLAZE_ROD,
+        SWIFTNESS("swiftness","§fRune of Swiftness",  Material.BLAZE_ROD,       70006,
                 "Killing an enemy grants Speed I (4s).",
                 "Blaze (7%)"),
-        SIGHT("sight",        "§dRune of Sight",      Material.PHANTOM_MEMBRANE,
+        SIGHT("sight",        "§dRune of Sight",      Material.PHANTOM_MEMBRANE,70007,
                 "Night Vision while your health is below 5 hearts.",
                 "Phantom (12%)"),
-        SCULK("sculk",        "§9Rune of Sculk",      Material.ECHO_SHARD,
+        SCULK("sculk",        "§9Rune of Sculk",      Material.ECHO_SHARD,      70008,
                 "Wardens lose track of you 50% of the time.",
                 "Warden (3%)");
 
         private final String   id;
         private final String   displayName;
         private final Material material;
+        private final int      cmd;
         private final String   effect;
         private final String   dropSource;
 
-        RuneType(String id, String displayName, Material material,
+        RuneType(String id, String displayName, Material material, int cmd,
                  String effect, String dropSource) {
             this.id          = id;
             this.displayName = displayName;
             this.material    = material;
+            this.cmd         = cmd;
             this.effect      = effect;
             this.dropSource  = dropSource;
         }
@@ -381,6 +396,7 @@ public class RuneManager implements Listener, CommandExecutor {
         public String   id()          { return id; }
         public String   displayName() { return displayName; }
         public Material material()    { return material; }
+        public int      cmd()         { return cmd; }
         public String   effect()      { return effect; }
         public String   dropSource()  { return dropSource; }
 

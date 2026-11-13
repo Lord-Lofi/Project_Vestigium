@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/amethyst_shard"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 80004 }, "model": "vestigium:item/ritual_season_lens" },
+    { "predicate": { "custom_model_data": 90001 }, "model": "vestigium:item/vestige_shard" }
+  ]
+}

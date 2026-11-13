@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/candle",
+  "overrides": [
+    { "predicate": { "custom_model_data": 80002 }, "model": "vestigium:item/ritual_omen_candle" }
+  ]
+}

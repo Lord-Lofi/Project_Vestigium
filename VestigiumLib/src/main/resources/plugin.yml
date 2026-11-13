@@ -20,28 +20,75 @@ permissions:
       vestigium.use: true
 
   vestigium.admin:
-    description: Grants all Vestigium administrative permissions
+    description: Grants all Vestigium administrative permissions across every module
     default: op
     children:
+      # VestigiumLib
+      vestigium.lore.bypass: true
+      # VestigiumAtmosphere
+      vestigium.atmosphere.admin: true
+      # VestigiumCaves
+      vestigium.caves.admin: true
+      # VestigiumCombat
+      vestigium.combat.admin: true
+      # VestigiumEconomy
+      vestigium.currency.admin: true
+      vestigium.runic.admin: true
+      vestigium.ritual.admin: true
+      vestigium.alchemy.admin: true
+      vestigium.forgery.admin: true
+      # VestigiumEnd
+      vestigium.end.admin: true
+      # VestigiumLore
       vestigium.cipher.admin: true
       vestigium.tome.admin: true
-      vestigium.warden.admin: true
-      vestigium.structures.admin: true
-      vestigium.currency.admin: true
-      vestigium.quest.admin: true
-      vestigium.title.admin: true
+      vestigium.terminal.admin: true
+      # VestigiumMagic
       vestigium.artifact.admin: true
-      vestigium.lore.bypass: true
+      # VestigiumMobs
+      vestigium.warden.admin: true
+      vestigium.boss.admin: true
+      # VestigiumNether
+      vestigium.nether.admin: true
+      # VestigiumNPC
+      vestigium.npc.admin: true
+      vestigium.bounty.admin: true
+      vestigium.spy.admin: true
+      # VestigiumOcean
+      vestigium.ocean.admin: true
+      # VestigiumPlayer
+      vestigium.stats.admin: true
+      vestigium.title.admin: true
+      vestigium.notoriety.admin: true
+      vestigium.item.admin: true
+      vestigium.achievements.admin: true
+      vestigium.epitaph.admin: true
+      # VestigiumQuests
+      vestigium.quest.admin: true
+      # VestigiumStructures
+      vestigium.structures.admin: true
+      # VestigiumWorld
+      vestigium.world.admin: true
 
   vestigium.use:
-    description: Grants all standard player-use permissions
+    description: Grants all standard player-facing permissions across every module
     default: true
     children:
+      # VestigiumCombat
+      vestigium.combat.use: true
+      # VestigiumEconomy
       vestigium.currency.use: true
-      vestigium.title.use: true
-      vestigium.spell.use: true
       vestigium.market.use: true
+      # VestigiumMagic
+      vestigium.spell.use: true
       vestigium.mana.check: true
+      # VestigiumMobs
+      vestigium.minion: true
+      # VestigiumPlayer
+      vestigium.stats: true
+      vestigium.title.use: true
+      vestigium.notoriety.use: true
+      vestigium.achievements.use: true
 
   vestigium.lore.bypass:
     description: Bypass cipher requirements when reading terminals

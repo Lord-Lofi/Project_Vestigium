@@ -34,6 +34,8 @@ public class LeviathanManager implements Listener {
 
     private static final NamespacedKey LEVIATHAN_KEY =
             new NamespacedKey("vestigium", "leviathan");
+    private static final NamespacedKey TIDE_SERVANT_KEY =
+            new NamespacedKey("vestigium", "leviathan_minion");
 
     private static final double MAX_HP         = 500.0;
     private static final long   COOLDOWN_MS    = 30 * 60 * 1000L;
@@ -213,6 +215,8 @@ public class LeviathanManager implements Listener {
             loc.getWorld().spawn(ml, Drowned.class, d -> {
                 d.setCustomName("§3Tide Servant");
                 d.setCustomNameVisible(true);
+                d.getPersistentDataContainer()
+                        .set(TIDE_SERVANT_KEY, PersistentDataType.STRING, "tide_servant");
             });
         }
         nearbyPlayers(boss, DETECT_RANGE_SQ).forEach(p ->

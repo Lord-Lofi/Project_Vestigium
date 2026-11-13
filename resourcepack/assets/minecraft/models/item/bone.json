@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/bone"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 60001 }, "model": "vestigium:item/titan_bone_amber" },
+    { "predicate": { "custom_model_data": 60002 }, "model": "vestigium:item/titan_bone_aqua" },
+    { "predicate": { "custom_model_data": 60003 }, "model": "vestigium:item/titan_bone_crimson" },
+    { "predicate": { "custom_model_data": 60004 }, "model": "vestigium:item/titan_bone_pale" },
+    { "predicate": { "custom_model_data": 60005 }, "model": "vestigium:item/titan_bone_verdant" },
+    { "predicate": { "custom_model_data": 60006 }, "model": "vestigium:item/titan_bone_crystal" },
+    { "predicate": { "custom_model_data": 60007 }, "model": "vestigium:item/titan_bone_volcanic" },
+    { "predicate": { "custom_model_data": 70001 }, "model": "vestigium:item/rune_warding" }
+  ]
+}

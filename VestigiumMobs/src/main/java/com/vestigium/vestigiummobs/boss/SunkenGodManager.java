@@ -35,6 +35,8 @@ public class SunkenGodManager implements Listener {
 
     private static final NamespacedKey SUNKEN_GOD_KEY =
             new NamespacedKey("vestigium", "sunken_god");
+    private static final NamespacedKey SUNKEN_ACOLYTE_KEY =
+            new NamespacedKey("vestigium", "sunken_minion");
 
     private static final double MAX_HP          = 800.0;
     private static final int    RITUAL_SECONDS  = 30;
@@ -232,6 +234,8 @@ public class SunkenGodManager implements Listener {
             loc.getWorld().spawn(ml, Drowned.class, d -> {
                 d.setCustomName("§5Sunken Acolyte");
                 d.setCustomNameVisible(true);
+                d.getPersistentDataContainer()
+                        .set(SUNKEN_ACOLYTE_KEY, PersistentDataType.STRING, "sunken_acolyte");
             });
         }
         nearbyPlayers(boss, DETECT_RANGE_SQ).forEach(p ->

@@ -1,10 +1,13 @@
 package com.vestigium.vestigiumnpc;
 
 import com.vestigium.vestigiumnpc.bounty.BountyBoardManager;
+import com.vestigium.vestigiumnpc.dialogue.DialogueManager;
 import com.vestigium.vestigiumnpc.hostile.DoppelgangerManager;
 import com.vestigium.vestigiumnpc.special.SpecialNPCManager;
+import com.vestigium.vestigiumnpc.spy.SpyNetworkManager;
 import com.vestigium.vestigiumnpc.traveling.TravelingNPCBehaviorManager;
 import com.vestigium.vestigiumnpc.traveling.TravelingNPCManager;
+import com.vestigium.vestigiumnpc.village.VillagePoliticsManager;
 import com.vestigium.vestigiumnpc.villager.VillagerMemoryManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +25,9 @@ public class VestigiumNPC extends JavaPlugin {
     private DoppelgangerManager          doppelgangerManager;
     private SpecialNPCManager            specialNPCManager;
     private BountyBoardManager           bountyBoardManager;
+    private DialogueManager              dialogueManager;
+    private SpyNetworkManager            spyNetworkManager;
+    private VillagePoliticsManager       villagePoliticsManager;
 
     @Override
     public void onEnable() {
@@ -33,13 +39,23 @@ public class VestigiumNPC extends JavaPlugin {
         doppelgangerManager         = new DoppelgangerManager(this);
         specialNPCManager           = new SpecialNPCManager(this);
         bountyBoardManager          = new BountyBoardManager(this);
+        dialogueManager             = new DialogueManager(this);
+        spyNetworkManager           = new SpyNetworkManager(this);
+        villagePoliticsManager      = new VillagePoliticsManager(this);
 
         villagerMemoryManager.init();
         travelingNPCManager.init();
         travelingNPCBehaviorManager.init();
+        travelingNPCBehaviorManager.setDialogueManager(dialogueManager);
         doppelgangerManager.init();
         specialNPCManager.init();
         bountyBoardManager.init();
+        dialogueManager.init();
+        spyNetworkManager.init();
+        villagePoliticsManager.init();
+
+        getCommand("vcpolitics").setExecutor(villagePoliticsManager);
+        getCommand("vcpolitics").setTabCompleter(villagePoliticsManager);
 
         getLogger().info("VestigiumNPC enabled.");
     }
@@ -51,6 +67,8 @@ public class VestigiumNPC extends JavaPlugin {
         if (doppelgangerManager         != null) doppelgangerManager.shutdown();
         if (specialNPCManager           != null) specialNPCManager.shutdown();
         if (bountyBoardManager          != null) bountyBoardManager.shutdown();
+        if (dialogueManager             != null) dialogueManager.shutdown();
+        if (villagePoliticsManager      != null) villagePoliticsManager.shutdown();
         getLogger().info("VestigiumNPC disabled.");
     }
 
@@ -61,4 +79,7 @@ public class VestigiumNPC extends JavaPlugin {
     public DoppelgangerManager getDoppelgangerManager()                   { return doppelgangerManager; }
     public SpecialNPCManager getSpecialNPCManager()                       { return specialNPCManager; }
     public BountyBoardManager getBountyBoardManager()                     { return bountyBoardManager; }
+    public DialogueManager getDialogueManager()                           { return dialogueManager; }
+    public SpyNetworkManager getSpyNetworkManager()                       { return spyNetworkManager; }
+    public VillagePoliticsManager getVillagePoliticsManager()             { return villagePoliticsManager; }
 }

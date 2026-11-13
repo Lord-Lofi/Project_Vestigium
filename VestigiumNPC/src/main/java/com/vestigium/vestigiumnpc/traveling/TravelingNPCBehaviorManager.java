@@ -2,6 +2,8 @@ package com.vestigium.vestigiumnpc.traveling;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.vestigiumnpc.VestigiumNPC;
+import com.vestigium.vestigiumnpc.dialogue.DialogueManager;
+import com.vestigium.vestigiumnpc.dialogue.DialogueTree;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
@@ -74,6 +76,7 @@ public class TravelingNPCBehaviorManager implements Listener, CommandExecutor {
 
     private final VestigiumNPC plugin;
     private BukkitRunnable mercTask;
+    private DialogueManager dialogueManager;
 
     public TravelingNPCBehaviorManager(VestigiumNPC plugin) {
         this.plugin = plugin;
@@ -85,6 +88,10 @@ public class TravelingNPCBehaviorManager implements Listener, CommandExecutor {
         if (cmd != null) cmd.setExecutor(this);
         startMercenaryTask();
         plugin.getLogger().info("[TravelingNPCBehaviorManager] Initialized.");
+    }
+
+    public void setDialogueManager(DialogueManager dm) {
+        this.dialogueManager = dm;
     }
 
     public void shutdown() {
@@ -124,27 +131,62 @@ public class TravelingNPCBehaviorManager implements Listener, CommandExecutor {
     // -------------------------------------------------------------------------
 
     private void handleChronicler(Player player, Villager npc) {
-        long now = System.currentTimeMillis();
-        long cd  = player.getPersistentDataContainer()
-                .getOrDefault(CHRONICLER_CD_KEY, PersistentDataType.LONG, 0L);
-        if (now < cd) {
-            player.sendMessage("§8[Chronicler] §7The records can wait. Return in §f"
-                    + (cd - now) / 60000 + " §7min.");
-            return;
+        // Allow mid-session clicks to advance dialogue without re-checking cooldown
+        boolean hasSession = dialogueManager != null
+                && dialogueManager.hasActiveSession(player, npc);
+
+        if (!hasSession) {
+            long now = System.currentTimeMillis();
+            long cd  = player.getPersistentDataContainer()
+                    .getOrDefault(CHRONICLER_CD_KEY, PersistentDataType.LONG, 0L);
+            if (now < cd) {
+                player.sendMessage("§8[Chronicler] §7The records can wait. Return in §f"
+                        + (cd - now) / 60000 + " §7min.");
+                return;
+            }
+            player.getPersistentDataContainer()
+                    .set(CHRONICLER_CD_KEY, PersistentDataType.LONG, now + CHRONICLER_CD);
         }
-        player.getPersistentDataContainer().set(CHRONICLER_CD_KEY, PersistentDataType.LONG, now + CHRONICLER_CD);
 
         List<String> events = readServerMemory();
-        player.sendMessage("§6§lThe Chronicler §r§8speaks:");
-        if (events.isEmpty()) {
-            player.sendMessage("§7\"The record runs thin. The server has been quiet.\"");
-            return;
-        }
-        int count = Math.min(3, events.size());
-        for (int i = events.size() - count; i < events.size(); i++) {
-            player.sendMessage("§7\"" + events.get(i) + "\"");
+
+        if (dialogueManager != null) {
+            dialogueManager.startOrAdvance(player, npc, buildChroniclerTree(events));
+        } else {
+            player.sendMessage("§6§lThe Chronicler §r§8speaks:");
+            if (events.isEmpty()) {
+                player.sendMessage("§7\"The record runs thin. The server has been quiet.\"");
+            } else {
+                int count = Math.min(3, events.size());
+                for (int i = events.size() - count; i < events.size(); i++) {
+                    player.sendMessage("§7\"" + events.get(i) + "\"");
+                }
+            }
         }
         player.getWorld().playSound(npc.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.4f, 0.8f);
+    }
+
+    private DialogueTree buildChroniclerTree(List<String> events) {
+        if (events.isEmpty()) {
+            return DialogueTree.builder("intro")
+                    .message("intro", null,
+                            "§6§lThe Chronicler §r§8speaks:",
+                            "§7\"The record runs thin. The server has been quiet.\"")
+                    .build();
+        }
+        int count = Math.min(3, events.size());
+        List<String> recent = events.subList(events.size() - count, events.size());
+
+        DialogueTree.Builder builder = DialogueTree.builder("intro")
+                .message("intro", "entry_0", "§6§lThe Chronicler §r§8speaks:");
+
+        for (int i = 0; i < recent.size(); i++) {
+            String key     = "entry_" + i;
+            String nextKey = (i < recent.size() - 1) ? "entry_" + (i + 1) : null;
+            String line    = recent.get(i);
+            builder.message(key, nextKey, "§7\"" + line + "\"");
+        }
+        return builder.build();
     }
 
     private List<String> readServerMemory() {

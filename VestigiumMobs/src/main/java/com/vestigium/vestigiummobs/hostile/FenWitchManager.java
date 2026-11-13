@@ -103,6 +103,8 @@ public class FenWitchManager implements Listener {
             Vex vex = (Vex) witch.getWorld().spawnEntity(witch.getLocation(), EntityType.VEX);
             vex.setCustomName("§aBound Vex");
             vex.setCustomNameVisible(true);
+            vex.getPersistentDataContainer()
+                    .set(VARIANT_KEY, PersistentDataType.STRING, "bound_vex");
         }
     }
 }

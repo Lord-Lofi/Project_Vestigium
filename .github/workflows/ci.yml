@@ -29,9 +29,11 @@ jobs:
           cache: maven
 
       # Compiles all modules in dependency order (VestigiumLib first) and
+      # --fail-at-end reports errors from every module in one run (modules that
+      # depend on a failed one are still skipped). It also
       # packages each plugin jar.
       - name: Build all plugins
-        run: mvn -B -ntp verify
+        run: mvn -B -ntp --fail-at-end verify
 
       # Build output and IDE files are gitignored; make sure none slip in
       # (they can contain local paths such as your Windows user folder).
