@@ -1,0 +1,42 @@
+# Weekly pull requests to keep dependencies current.
+#
+# Day-to-day work happens on develop, so Dependabot opens its pull requests
+# against develop; they reach main with the next release merge.
+#
+# Groups keep the number of pull requests down:
+#   - security: all security fixes for an ecosystem in one pull request
+#   - minor-and-patch: routine minor and patch updates in one pull request
+# Major updates (for example a new Paper API line) get their own pull request.
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+    groups:
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+    groups:
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"

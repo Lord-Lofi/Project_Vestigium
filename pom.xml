@@ -28,10 +28,12 @@
         <module>VestigiumPlayer</module>
         <!-- Phase 5 -->
         <module>VestigiumEconomy</module>
+        <module>VestigiumCombat</module>
+        <module>VestigiumMagic</module>
+        <!-- Phase 6 -->
         <module>VestigiumCaves</module>
         <module>VestigiumOcean</module>
         <module>VestigiumNether</module>
-        <!-- Phase 6 -->
         <module>VestigiumEnd</module>
     </modules>
 
@@ -40,7 +42,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         <vestigium.version>1.0.0-SNAPSHOT</vestigium.version>
     </properties>
 
@@ -48,6 +50,18 @@
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+        <repository>
+            <id>extendedclip-releases</id>
+            <url>https://repo.extendedclip.com/releases/</url>
+        </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
     </repositories>
 
@@ -67,10 +81,39 @@
                 <version>${vestigium.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- ProtocolLib (soft dep for VestigiumNPC visual layer) -->
+            <dependency>
+                <groupId>com.comphenix.protocol</groupId>
+                <artifactId>ProtocolLib</artifactId>
+                <version>5.3.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- PlaceholderAPI (soft dep for modules that register placeholders) -->
+            <dependency>
+                <groupId>me.clip</groupId>
+                <artifactId>placeholderapi</artifactId>
+                <version>2.11.6</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+            <!-- WorldEdit (soft dep for VestigiumStructures schematic loading) -->
+            <dependency>
+                <groupId>com.sk89q.worldedit</groupId>
+                <artifactId>worldedit-bukkit</artifactId>
+                <version>7.3.0</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>

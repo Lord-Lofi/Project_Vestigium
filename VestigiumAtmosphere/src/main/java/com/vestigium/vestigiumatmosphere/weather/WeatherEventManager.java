@@ -32,6 +32,7 @@ public class WeatherEventManager {
     private final VestigiumAtmosphere plugin;
     private final Set<String> activeEvents = new HashSet<>();  // "worldName:eventType"
     private boolean cataclysmActive = false;
+    private BukkitRunnable task;
 
     public WeatherEventManager(VestigiumAtmosphere plugin) {
         this.plugin = plugin;
@@ -44,7 +45,7 @@ public class WeatherEventManager {
                 com.vestigium.lib.event.CataclysmEndEvent.class,
                 e -> cataclysmActive = false);
 
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 plugin.getServer().getWorlds().forEach(world -> {
@@ -52,7 +53,8 @@ public class WeatherEventManager {
                     evaluateWeatherEvents(world);
                 });
             }
-        }.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
+        };
+        task.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
 
         plugin.getLogger().info("[WeatherEventManager] Initialized.");
     }
@@ -140,7 +142,7 @@ public class WeatherEventManager {
         List<Player> players = world.getPlayers();
         switch (eventType) {
             case "ACID_RAIN" -> players.stream()
-                    .filter(p -> !p.getLocation().getBlock().getLightFromSky() == false)
+                    .filter(p -> p.getLocation().getBlock().getLightFromSky() > 0)
                     .filter(this::isExposedToSky)
                     .forEach(p -> p.damage(0.5));
             case "SCULK_STORM" -> players.stream()
@@ -168,6 +170,10 @@ public class WeatherEventManager {
                 player.getLocation().getBlockX(),
                 player.getLocation().getBlockZ())
                 <= player.getLocation().getBlockY();
+    }
+
+    public void shutdown() {
+        if (task != null) task.cancel();
     }
 
     public boolean isEventActive(World world, String eventType) {

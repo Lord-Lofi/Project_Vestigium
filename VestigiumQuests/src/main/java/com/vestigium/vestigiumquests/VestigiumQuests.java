@@ -1,5 +1,6 @@
 package com.vestigium.vestigiumquests;
 
+import com.vestigium.vestigiumquests.command.QuestAdminCommand;
 import com.vestigium.vestigiumquests.dispatch.FactionQuestDispenser;
 import com.vestigium.vestigiumquests.registry.QuestRegistry;
 import com.vestigium.vestigiumquests.reward.QuestRewardManager;
@@ -32,6 +33,9 @@ public class VestigiumQuests extends JavaPlugin {
         questRegistry.load();
         questTracker.init();
         factionQuestDispenser.init();
+
+        var vquest = getCommand("vquest");
+        if (vquest != null) vquest.setExecutor(new QuestAdminCommand(this));
 
         getLogger().info("VestigiumQuests enabled.");
     }

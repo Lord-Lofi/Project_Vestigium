@@ -2,8 +2,48 @@ name: VestigiumNPC
 version: '${project.version}'
 main: com.vestigium.vestigiumnpc.VestigiumNPC
 api-version: '1.21'
-description: Villager memory, traveling NPCs, faction NPCs, hostile special NPCs
+description: Villager memory, traveling NPCs, doppelgangers, and special NPCs
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+softdepend:
+  - ProtocolLib
+
+commands:
+  vcbounty:
+    description: Bounty Board interaction and administration
+    usage: /vcbounty <take <n>|abandon|status|board <place <type>|remove>>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use the bounty board.
+
+  vcmage:
+    description: Hired mercenary management
+    usage: /vcmage dismiss
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to manage mercenaries.
+
+  vcspy:
+    description: Spy Network — spawn/remove Informant NPCs
+    usage: /vcspy <spawn | remove | list>
+    permission: vestigium.spy.admin
+    permission-message: §cYou do not have permission to manage spy contacts.
+
+  vcpolitics:
+    description: Village Politics — register villages and manage rivalry relationships
+    usage: /vcpolitics <village <add|remove|list>|rivals|status [player]>
+    permission: vestigium.npc.admin
+    permission-message: §cYou do not have permission to manage village politics.
+
+permissions:
+  vestigium.npc.admin:
+    description: Administrative access to VestigiumNPC systems (traveling NPCs, village politics, special NPCs)
+    default: op
+
+  vestigium.bounty.admin:
+    description: Place and remove bounty boards
+    default: op
+
+  vestigium.spy.admin:
+    description: Spawn/remove Spy Network Informant NPCs
+    default: op

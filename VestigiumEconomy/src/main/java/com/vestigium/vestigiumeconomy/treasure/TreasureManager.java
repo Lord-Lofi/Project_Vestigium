@@ -102,12 +102,16 @@ public class TreasureManager implements Listener {
             inv.addItem(item);
         }
 
-        // Grant shard bonus
+        // Grant shard bonus — physical Vestige Shard items dropped as rare loot
         int shardBonus = table.rollShardBonus();
         if (shardBonus > 0) {
-            plugin.getCurrencyManager().addShards(event.getPlayer(), shardBonus);
+            org.bukkit.inventory.ItemStack shardItem =
+                    plugin.getCurrencyManager().createShardItem(shardBonus);
+            var overflow = event.getPlayer().getInventory().addItem(shardItem);
+            overflow.values().forEach(i ->
+                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), i));
             event.getPlayer().sendMessage("§dFound §f" + shardBonus
-                    + " §dVestige Shards §damong the loot.");
+                    + " §dVestige Shard" + (shardBonus != 1 ? "s" : "") + " §damong the loot!");
         }
     }
 
@@ -170,10 +174,10 @@ public class TreasureManager implements Listener {
             for (var raw : cfg.getMapList("entries")) {
                 try {
                     Material mat = Material.valueOf(raw.get("material").toString().toUpperCase());
-                    int weight     = ((Number) raw.getOrDefault("weight", 1)).intValue();
-                    int min        = ((Number) raw.getOrDefault("min", 1)).intValue();
-                    int max        = ((Number) raw.getOrDefault("max", 1)).intValue();
-                    int shardBonus = ((Number) raw.getOrDefault("shard_bonus", 0)).intValue();
+                    int weight     = raw.get("weight")     instanceof Number n ? n.intValue() : 1;
+                    int min        = raw.get("min")        instanceof Number n ? n.intValue() : 1;
+                    int max        = raw.get("max")        instanceof Number n ? n.intValue() : 1;
+                    int shardBonus = raw.get("shard_bonus") instanceof Number n ? n.intValue() : 0;
                     list.add(new LootEntry(mat, weight, min, max, shardBonus));
                 } catch (Exception ignored) {}
             }

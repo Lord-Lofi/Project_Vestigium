@@ -11,7 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Manages cipher items that unlock different reading tiers.
@@ -75,6 +77,20 @@ public class CipherManager implements CommandExecutor {
         return false;
     }
 
+    public Set<CipherType> getHeldCiphers(Player player) {
+        Set<CipherType> held = EnumSet.noneOf(CipherType.class);
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getItemMeta() == null) continue;
+            String stored = item.getItemMeta().getPersistentDataContainer()
+                    .get(CIPHER_TYPE_KEY, PersistentDataType.STRING);
+            if (stored == null) continue;
+            for (CipherType t : CipherType.values()) {
+                if (t.key().equals(stored)) held.add(t);
+            }
+        }
+        return held;
+    }
+
     // -------------------------------------------------------------------------
     // Admin command — /vccipher give <player> <type>
     // -------------------------------------------------------------------------
@@ -111,31 +127,55 @@ public class CipherManager implements CommandExecutor {
     // -------------------------------------------------------------------------
 
     public enum CipherType {
+        // Runic glyphs — organic/ancient, sculk-associated
         RESONANT(Material.ECHO_SHARD, "resonant",
                 "§bResonant Cipher",
-                "Allows reading of Resonant Terminals in ancient cities."),
+                "Allows reading of Resonant Terminals in ancient cities.",
+                "§9§l◈ §bRESONANT SCRIPT §9§l◈",
+                "§9§l◈ §8RESONANT SCRIPT §8[Cipher Required]",
+                new char[]{'ᚠ','ᚢ','ᚦ','ᚩ','ᚱ','ᚳ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛏ','ᛚ','ᛞ'}),
+
+        // Mathematical/cosmic glyphs — precise, End-associated
         ANTECEDENT(Material.AMETHYST_SHARD, "antecedent",
                 "§dAntecedent Cipher",
-                "Deciphers the script of the Antecedent people."),
+                "Deciphers the script of the Antecedent people.",
+                "§5§l⊕ §dANTECEDENT SCRIPT §5§l⊕",
+                "§5§l⊕ §8ANTECEDENT SCRIPT §8[Cipher Required]",
+                new char[]{'⊕','⊗','⊚','∆','∇','∞','∂','⊛','⋆','∑','∏','∃','∈','⊥','∴','≡','∮'}),
+
+        // Wave/fluid glyphs — flowing, ocean-associated
         TIDAL(Material.NAUTILUS_SHELL, "tidal",
                 "§3Tidal Cipher",
-                "Reads the tidal inscriptions left by deep-sea cultures.");
+                "Reads the tidal inscriptions left by deep-sea cultures.",
+                "§3§l≋ §3TIDAL SCRIPT §3§l≋",
+                "§3§l≋ §8TIDAL SCRIPT §8[Cipher Required]",
+                new char[]{'≈','≋','≃','∿','∼','∽','∾','≀','∫','⊂','⊃','∩','∪','≺','≻','⊆','⊇'});
 
         private final Material material;
-        private final String key;
-        private final String displayName;
-        private final String description;
+        private final String   key;
+        private final String   displayName;
+        private final String   description;
+        private final String   glyphHeader;
+        private final String   encryptedHeader;
+        private final char[]   glyphChars;
 
-        CipherType(Material material, String key, String displayName, String description) {
-            this.material = material;
-            this.key = key;
-            this.displayName = displayName;
-            this.description = description;
+        CipherType(Material material, String key, String displayName, String description,
+                   String glyphHeader, String encryptedHeader, char[] glyphChars) {
+            this.material        = material;
+            this.key             = key;
+            this.displayName     = displayName;
+            this.description     = description;
+            this.glyphHeader     = glyphHeader;
+            this.encryptedHeader = encryptedHeader;
+            this.glyphChars      = glyphChars;
         }
 
-        public Material material()    { return material; }
-        public String key()           { return key; }
-        public String displayName()   { return displayName; }
-        public String description()   { return description; }
+        public Material material()        { return material; }
+        public String key()               { return key; }
+        public String displayName()       { return displayName; }
+        public String description()       { return description; }
+        public String glyphHeader()       { return glyphHeader; }
+        public String encryptedHeader()   { return encryptedHeader; }
+        public char[] glyphChars()        { return glyphChars; }
     }
 }

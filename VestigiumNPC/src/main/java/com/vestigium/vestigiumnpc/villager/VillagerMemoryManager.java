@@ -2,6 +2,8 @@ package com.vestigium.vestigiumnpc.villager;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.vestigiumnpc.VestigiumNPC;
+import com.vestigium.vestigiumnpc.village.VillagePoliticsManager;
+import com.vestigium.vestigiumnpc.village.VillageRecord;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -57,8 +59,14 @@ public class VillagerMemoryManager implements Listener {
      * Returns the dialogue tier (0-3) this villager has with the given player.
      */
     public int getDialogueTier(Villager villager, UUID playerUUID) {
-        return villager.getPersistentDataContainer()
+        int tier = villager.getPersistentDataContainer()
                 .getOrDefault(dialogueKey(playerUUID), PersistentDataType.INTEGER, 0);
+        VillagePoliticsManager vpm = plugin.getVillagePoliticsManager();
+        if (vpm != null) {
+            VillageRecord village = vpm.getVillageAt(villager.getLocation(), VillagePoliticsManager.VILLAGE_RADIUS);
+            if (village != null && vpm.isEnemy(playerUUID, village.id())) return 0;
+        }
+        return tier;
     }
 
     /**

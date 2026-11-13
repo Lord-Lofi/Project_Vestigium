@@ -2,8 +2,28 @@ name: VestigiumStructures
 version: '${project.version}'
 main: com.vestigium.vestigiumstructures.VestigiumStructures
 api-version: '1.21'
-description: Custom structure injection at worldgen and post-gen, dungeon management
+description: Custom structure injection, wandering dungeons, structure NPC spawning
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+softdepend:
+  - WorldEdit
+  - FastAsyncWorldEdit
+
+commands:
+  vwaystone:
+    description: Waystone Network — register, travel, and manage waystone energy
+    usage: /vwaystone <add|remove|list|energy|go>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use waystones.
+  vstructure:
+    description: Structure admin — paste schematics into the world
+    usage: /vstructure paste <id>
+    permission: vestigium.structures.admin
+    permission-message: §cYou do not have permission to manage structures.
+
+permissions:
+  vestigium.structures.admin:
+    description: Manage structure registrations, paste schematics, and manage wandering dungeons
+    default: op

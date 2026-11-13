@@ -1,0 +1,25 @@
+name: VestigiumCombat
+version: '${project.version}'
+main: com.vestigium.vestigiumcombat.VestigiumCombat
+api-version: '1.21'
+description: Combo system, custom status effects, and combat state tracking
+authors: [ Lord-Lofi ]
+load: POSTWORLD
+depend:
+  - VestigiumLib
+
+commands:
+  vcombat:
+    description: View your current combat stats
+    usage: /vcombat stats
+    permission: vestigium.combat.use
+    permission-message: §cYou do not have permission to view combat stats.
+
+permissions:
+  vestigium.combat.use:
+    description: Benefit from the combo and custom status effect systems
+    default: true
+
+  vestigium.combat.admin:
+    description: Manage and inspect combat state for any player
+    default: op

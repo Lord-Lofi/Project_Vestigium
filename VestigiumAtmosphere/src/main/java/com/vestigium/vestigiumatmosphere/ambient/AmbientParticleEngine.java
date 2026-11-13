@@ -36,13 +36,14 @@ public class AmbientParticleEngine {
     private static final double PARTICLE_SPREAD = 5.0;
 
     private final VestigiumAtmosphere plugin;
+    private BukkitRunnable task;
 
     public AmbientParticleEngine(VestigiumAtmosphere plugin) {
         this.plugin = plugin;
     }
 
     public void init() {
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 plugin.getServer().getWorlds().forEach(world -> {
@@ -50,7 +51,8 @@ public class AmbientParticleEngine {
                     world.getPlayers().forEach(player -> emitForPlayer(player, world));
                 });
             }
-        }.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
+        };
+        task.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
 
         plugin.getLogger().info("[AmbientParticleEngine] Initialized.");
     }
@@ -113,37 +115,30 @@ public class AmbientParticleEngine {
     // Biome classification helpers
     // -------------------------------------------------------------------------
 
-    private static boolean isWarmBiome(Biome b) {
-        return switch (b) {
-            case PLAINS, SUNFLOWER_PLAINS, SAVANNA, SAVANNA_PLATEAU,
-                 WINDSWEPT_SAVANNA, JUNGLE, SPARSE_JUNGLE, BAMBOO_JUNGLE,
-                 DESERT, BADLANDS, ERODED_BADLANDS, WOODED_BADLANDS -> true;
-            default -> false;
-        };
+    private static final java.util.Set<String> WARM_BIOMES = java.util.Set.of(
+            "plains", "sunflower_plains", "savanna", "savanna_plateau",
+            "windswept_savanna", "jungle", "sparse_jungle", "bamboo_jungle",
+            "desert", "badlands", "eroded_badlands", "wooded_badlands");
+
+    private static final java.util.Set<String> FOREST_BIOMES = java.util.Set.of(
+            "forest", "flower_forest", "birch_forest", "old_growth_birch_forest",
+            "dark_forest", "taiga", "old_growth_pine_taiga", "old_growth_spruce_taiga",
+            "windswept_forest");
+
+    private static final java.util.Set<String> TUNDRA_BIOMES = java.util.Set.of(
+            "snowy_plains", "snowy_taiga", "snowy_slopes",
+            "frozen_peaks", "jagged_peaks", "ice_spikes");
+
+    private static final java.util.Set<String> SPORY_BIOMES = java.util.Set.of(
+            "swamp", "mangrove_swamp", "jungle", "bamboo_jungle", "sparse_jungle",
+            "mushroom_fields", "lush_caves");
+
+    public void shutdown() {
+        if (task != null) task.cancel();
     }
 
-    private static boolean isForestBiome(Biome b) {
-        return switch (b) {
-            case FOREST, FLOWER_FOREST, BIRCH_FOREST, OLD_GROWTH_BIRCH_FOREST,
-                 DARK_FOREST, TAIGA, OLD_GROWTH_PINE_TAIGA, OLD_GROWTH_SPRUCE_TAIGA,
-                 WINDSWEPT_FOREST -> true;
-            default -> false;
-        };
-    }
-
-    private static boolean isTundraBiome(Biome b) {
-        return switch (b) {
-            case SNOWY_PLAINS, SNOWY_TAIGA, SNOWY_SLOPES,
-                 FROZEN_PEAKS, JAGGED_PEAKS, ICE_SPIKES -> true;
-            default -> false;
-        };
-    }
-
-    private static boolean isSporyBiome(Biome b) {
-        return switch (b) {
-            case SWAMP, MANGROVE_SWAMP, JUNGLE, BAMBOO_JUNGLE, SPARSE_JUNGLE,
-                 MUSHROOM_FIELDS, LUSH_CAVES -> true;
-            default -> false;
-        };
-    }
+    private static boolean isWarmBiome(Biome b)   { return WARM_BIOMES.contains(b.getKey().getKey()); }
+    private static boolean isForestBiome(Biome b) { return FOREST_BIOMES.contains(b.getKey().getKey()); }
+    private static boolean isTundraBiome(Biome b) { return TUNDRA_BIOMES.contains(b.getKey().getKey()); }
+    private static boolean isSporyBiome(Biome b)  { return SPORY_BIOMES.contains(b.getKey().getKey()); }
 }

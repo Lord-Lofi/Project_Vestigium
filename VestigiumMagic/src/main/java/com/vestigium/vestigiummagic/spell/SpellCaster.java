@@ -7,6 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,7 +31,7 @@ import java.util.*;
  * Mana is stored as Player PDC "vestigium:vm_mana" INTEGER (max 100, regenerates 1/10s).
  * Cooldowns are tracked in memory: UUID → Map<spellId, expireMillis>.
  */
-public class SpellCaster implements Listener {
+public class SpellCaster implements Listener, CommandExecutor {
 
     public static final NamespacedKey MANA_KEY  = new NamespacedKey("vestigium", "vm_mana");
     public static final int MAX_MANA            = 100;
@@ -38,6 +41,7 @@ public class SpellCaster implements Listener {
     private final VestigiumMagic plugin;
     private final SpellRegistry spellRegistry;
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
+    private org.bukkit.scheduler.BukkitRunnable manaRegenTask;
 
     public SpellCaster(VestigiumMagic plugin, SpellRegistry spellRegistry) {
         this.plugin = plugin;
@@ -48,14 +52,15 @@ public class SpellCaster implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Mana regen
-        new org.bukkit.scheduler.BukkitRunnable() {
+        manaRegenTask = new org.bukkit.scheduler.BukkitRunnable() {
             @Override public void run() {
                 plugin.getServer().getOnlinePlayers().forEach(p -> {
                     int mana = getMana(p);
                     if (mana < MAX_MANA) setMana(p, Math.min(MAX_MANA, mana + MANA_REGEN_AMOUNT));
                 });
             }
-        }.runTaskTimer(plugin, MANA_REGEN_TICKS, MANA_REGEN_TICKS);
+        };
+        manaRegenTask.runTaskTimer(plugin, MANA_REGEN_TICKS, MANA_REGEN_TICKS);
 
         plugin.getLogger().info("[SpellCaster] Initialized.");
     }
@@ -215,6 +220,21 @@ public class SpellCaster implements Listener {
     public void setMana(Player player, int mana) {
         player.getPersistentDataContainer()
                 .set(MANA_KEY, PersistentDataType.INTEGER, Math.max(0, Math.min(MAX_MANA, mana)));
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cPlayer only.");
+            return true;
+        }
+        int mana = getMana(player);
+        player.sendMessage("§9Mana: §b" + mana + "§9/§b" + MAX_MANA);
+        return true;
+    }
+
+    public void shutdown() {
+        if (manaRegenTask != null) manaRegenTask.cancel();
     }
 
     private boolean isOnCooldown(Player player, String spellId) {

@@ -26,6 +26,11 @@
             <id>jitpack</id>
             <url>https://jitpack.io</url>
         </repository>
+        <!-- PlaceholderAPI -->
+        <repository>
+            <id>extendedclip-releases</id>
+            <url>https://repo.extendedclip.com/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -48,6 +53,24 @@
             <groupId>com.github.TechFortress</groupId>
             <artifactId>GriefPrevention</artifactId>
             <version>16.18.2</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- PlaceholderAPI — soft dependency -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- LuckPerms — soft dependency (Maven Central) -->
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.4</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

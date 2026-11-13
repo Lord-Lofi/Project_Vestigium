@@ -35,6 +35,8 @@ public class SkyEventManager {
 
     private final VestigiumAtmosphere plugin;
     private final Map<String, Long> activeEvents = new HashMap<>(); // eventKey → expiry tick
+    private BukkitRunnable checkTask;
+    private BukkitRunnable tickTask;
 
     public SkyEventManager(VestigiumAtmosphere plugin) {
         this.plugin = plugin;
@@ -43,7 +45,7 @@ public class SkyEventManager {
     public void init() {
         // Listen for omen threshold — eclipse trigger
         VestigiumLib.getEventBus().subscribe(OmenThresholdEvent.class, event -> {
-            if (event.threshold() == 700 && event.ascending()) {
+            if (event.getThreshold() == 700 && event.isAscending()) {
                 plugin.getServer().getWorlds().stream()
                         .filter(w -> w.getEnvironment() == World.Environment.NORMAL)
                         .forEach(this::triggerEclipse);
@@ -53,7 +55,7 @@ public class SkyEventManager {
         // Listen for cataclysm end events — starfall vigil
         VestigiumLib.getEventBus().subscribe(
                 com.vestigium.lib.event.CataclysmEndEvent.class, event -> {
-            if ("STARFALL_VIGIL".equals(event.type()) || "THE_LONG_EXHALE".equals(event.type())) {
+            if ("STARFALL_VIGIL".equals(event.getCataclysmType()) || "THE_LONG_EXHALE".equals(event.getCataclysmType())) {
                 plugin.getServer().getWorlds().stream()
                         .filter(w -> w.getEnvironment() == World.Environment.NORMAL)
                         .forEach(this::triggerStarfallVigil);
@@ -61,7 +63,7 @@ public class SkyEventManager {
         });
 
         // Periodic check for meteor/aurora
-        new BukkitRunnable() {
+        checkTask = new BukkitRunnable() {
             @Override
             public void run() {
                 plugin.getServer().getWorlds().forEach(world -> {
@@ -69,10 +71,11 @@ public class SkyEventManager {
                     evaluateSkyEvents(world);
                 });
             }
-        }.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
+        };
+        checkTask.runTaskTimer(plugin, CHECK_TICKS, CHECK_TICKS);
 
         // Tick loop for active events
-        new BukkitRunnable() {
+        tickTask = new BukkitRunnable() {
             @Override
             public void run() {
                 long now = plugin.getServer().getWorlds().get(0).getFullTime();
@@ -82,7 +85,8 @@ public class SkyEventManager {
                     tickActiveEvents(world, now);
                 });
             }
-        }.runTaskTimer(plugin, TICK_TICKS, TICK_TICKS);
+        };
+        tickTask.runTaskTimer(plugin, TICK_TICKS, TICK_TICKS);
 
         plugin.getLogger().info("[SkyEventManager] Initialized.");
     }
@@ -186,6 +190,11 @@ public class SkyEventManager {
         Location loc = player.getLocation().clone().add(
                 rng.nextDouble(-10, 10), 25 + rng.nextDouble(5), rng.nextDouble(-10, 10));
         VestigiumLib.getParticleManager().queueParticle(loc, Particle.END_ROD, null, ParticlePriority.ATMOSPHERIC);
+    }
+
+    public void shutdown() {
+        if (checkTask != null) checkTask.cancel();
+        if (tickTask  != null) tickTask.cancel();
     }
 
     public boolean isEventActive(World world, String eventType) {
