@@ -2,8 +2,150 @@ name: VestigiumEconomy
 version: '${project.version}'
 main: com.vestigium.vestigiumeconomy.VestigiumEconomy
 api-version: '1.21'
-description: Crafting depth systems, special items, market systems
+description: Vestige Shard currency, dynamic faction market, structure loot tables
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+softdepend:
+  - Vault
+
+commands:
+  vecurrency:
+    description: Manage Vestige Shard balances
+    usage: /vecurrency <balance | give <player> <amount> | take <player> <amount> | check <player>>
+    permission: vestigium.currency.use
+    permission-message: §cYou do not have permission to use this command.
+
+  vebuy:
+    description: Purchase an item from the last market you visited
+    usage: /vebuy <number>
+    permission: vestigium.market.use
+    permission-message: §cYou do not have permission to buy from markets.
+
+  verunic:
+    description: Runic Crafting — list runes, inspect gear, admin give/remove
+    usage: /verunic <list | give <rune> [player] | inspect | remove <1|2>>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use runic crafting.
+
+  veritual:
+    description: Ritual Crafting — list recipes, manage stations, admin give
+    usage: /veritual <recipes | station <set <id> | remove | list> | give <recipe> [player]>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use ritual crafting.
+
+  vealchemy:
+    description: Alchemy Expansion — brew multi-ingredient flasks at Alembic stations
+    usage: /vealchemy <recipes | brew <id> | station <give [player] | remove | list>>
+    permission: vestigium.use
+    permission-message: §cYou do not have permission to use alchemy.
+
+  veforgery:
+    description: Forgery system — spawn/remove The Forger NPC and inspect items
+    usage: /veforgery <spawn | remove | list | inspect>
+    permission: vestigium.forgery.admin
+    permission-message: §cYou do not have permission to manage the forgery system.
+
+  veblackmarket:
+    description: Black Market broker management (notoriety ≥ 75 gate for players)
+    usage: /veblackmarket <spawn | remove | list>
+    permission: vestigium.blackmarket.admin
+    permission-message: §cYou do not have permission to manage the Black Market.
+
+  veartificer:
+    description: Artificer NPC management and gear reforging
+    usage: /veartificer <reforge <temper|runes|artisan> | spawn [name] | remove | list>
+
+  verelic:
+    description: Relic binding — bind items to players so they persist through death
+    usage: /verelic <bind [player] | unbind | info>
+
+  veshrine:
+    description: Shrine Blessings — register shrine blocks and view blessing types
+    usage: /veshrine <set <type> | remove | list | types>
+
+  vetitanbone:
+    description: Titan Bone Materials — list and give biome-specific crafting components
+    usage: /vetitanbone <list | give <type> [player]>
+
+  vedivine:
+    description: Divine Artifacts — list and give powerful passive artifact items
+    usage: /vedivine <list | give <type> [player]>
+
+  veresonant:
+    description: Resonant Artifact — give sculk-bloom amplifier item
+    usage: /veresonant give [player]
+
+  vetemper:
+    description: Tempered Gear — apply elemental tempers to weapons and armor
+    usage: /vetemper <list | give <type> [player] | inspect>
+
+  vecomponent:
+    description: Component Weapons — assemble custom blades from parts at an Anvil
+    usage: /vecomponent <list | give <type> [player]>
+
+permissions:
+  vestigium.currency.use:
+    description: Check your own Vestige Shard balance
+    default: true
+
+  vestigium.currency.admin:
+    description: Give, take, and inspect Vestige Shard balances for any player
+    default: op
+
+  vestigium.market.use:
+    description: Purchase items from Vestigium markets
+    default: true
+
+  vestigium.runic.admin:
+    description: Give runes to players and remove runes from gear
+    default: op
+
+  vestigium.ritual.admin:
+    description: Manage ritual stations and give ritual items to players
+    default: op
+
+  vestigium.alchemy.admin:
+    description: Register alchemy stations and give station designator items
+    default: op
+
+  vestigium.forgery.admin:
+    description: Spawn/remove Forger NPCs and inspect item authenticity
+    default: op
+
+  vestigium.blackmarket.admin:
+    description: Spawn and remove Black Market broker NPCs
+    default: op
+
+  vestigium.artificer.admin:
+    description: Spawn and remove Artificer NPCs
+    default: op
+
+  vestigium.relic.admin:
+    description: Bind and unbind relic items
+    default: op
+
+  vestigium.shrine.admin:
+    description: Register and remove shrine blessing blocks
+    default: op
+
+  vestigium.titanbone.admin:
+    description: Give Titan Bone materials to players
+    default: op
+
+  vestigium.divine.admin:
+    description: Give Divine Artifact items to players
+    default: op
+
+  vestigium.resonant.admin:
+    description: Give Resonant Artifact items to players
+    default: op
+
+  vestigium.temper.admin:
+    description: Give temper shards to players
+    default: op
+
+  vestigium.component.admin:
+    description: Give component weapon parts to players
+    default: op

@@ -5,8 +5,12 @@ import com.vestigium.lib.event.FactionCollapseEvent;
 import com.vestigium.lib.model.Faction;
 import com.vestigium.vestigiumeconomy.VestigiumEconomy;
 import com.vestigium.vestigiumeconomy.currency.CurrencyManager;
+import com.vestigium.vestigiumeconomy.economy.VaultHook;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -43,7 +47,7 @@ import java.util.*;
  *   GUNPOWDER     8   BANDITS
  *   ECHO_SHARD   60   none     (rare, flat price)
  */
-public class DynamicMarketManager implements Listener {
+public class DynamicMarketManager implements Listener, CommandExecutor {
 
     private static final long PRICE_REFRESH_TICKS = 12_000L;
     private static final NamespacedKey MARKET_TYPE_KEY =
@@ -63,8 +67,9 @@ public class DynamicMarketManager implements Listener {
     private final VestigiumEconomy plugin;
     // Cached effective prices: Material → current shard cost
     private final Map<Material, Integer> effectivePrices = new LinkedHashMap<>();
-    // Players in a pending purchase: UUID → MarketEntry chosen
-    private final Map<UUID, MarketEntry> pendingPurchase = new HashMap<>();
+    // Last market type each player interacted with — used by /vebuy
+    private final Map<UUID, String> lastMarketType = new HashMap<>();
+    private BukkitRunnable refreshTask;
 
     public DynamicMarketManager(VestigiumEconomy plugin) {
         this.plugin = plugin;
@@ -74,14 +79,19 @@ public class DynamicMarketManager implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         refreshPrices();
 
-        new BukkitRunnable() {
+        refreshTask = new BukkitRunnable() {
             @Override public void run() { refreshPrices(); }
-        }.runTaskTimer(plugin, PRICE_REFRESH_TICKS, PRICE_REFRESH_TICKS);
+        };
+        refreshTask.runTaskTimer(plugin, PRICE_REFRESH_TICKS, PRICE_REFRESH_TICKS);
 
         VestigiumLib.getEventBus().subscribe(FactionCollapseEvent.class,
                 e -> refreshPrices());
 
         plugin.getLogger().info("[DynamicMarketManager] Initialized.");
+    }
+
+    public void shutdown() {
+        if (refreshTask != null) refreshTask.cancel();
     }
 
     // -------------------------------------------------------------------------
@@ -102,7 +112,7 @@ public class DynamicMarketManager implements Listener {
             if (!"none".equals(entry.faction())) {
                 try {
                     Faction faction = Faction.valueOf(entry.faction().toUpperCase());
-                    var state = VestigiumLib.getFactionRegistry().getFactionState(faction);
+                    var state = VestigiumLib.getFactionRegistry().getFactionState(faction.getKey());
                     if (state.isCollapsed())      price *= 2.0;
                     else if (state.canExpand())   price *= 0.8;
                 } catch (IllegalArgumentException ignored) {}
@@ -138,21 +148,38 @@ public class DynamicMarketManager implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
 
-        // Absorb any physical shards first
-        plugin.getCurrencyManager().absorbPhysicalShards(player);
+        CurrencyManager cm = plugin.getCurrencyManager();
+        VaultHook vault = plugin.getVaultHook();
+
+        // Auto-sell any physical Vestige Shards in inventory
+        int shardCount = cm.countShards(player);
+        if (shardCount > 0) {
+            double sellTotal = shardCount * plugin.getShardValue();
+            cm.removeShards(player, shardCount);
+            if (vault.isEnabled()) vault.deposit(player, sellTotal);
+            player.sendMessage("§dSold §f" + shardCount + " Vestige Shard"
+                    + (shardCount != 1 ? "s" : "") + " §dfor §6"
+                    + vault.format(sellTotal) + "§d.");
+        }
+
+        // Remember last market type for /vebuy
+        lastMarketType.put(player.getUniqueId(), marketType);
 
         // Show catalogue for this market type
         List<MarketEntry> available = CATALOGUE.stream()
                 .filter(e -> e.faction().equals(marketType) || "none".equals(e.faction()))
                 .toList();
 
-        player.sendMessage("§d=== Market (" + marketType + ") ===");
-        player.sendMessage("§7Balance: §d" + plugin.getCurrencyManager().getBalance(player) + " shards");
+        player.sendMessage("§6=== Market (" + marketType + ") ===");
+        String balDisplay = vault.isEnabled()
+                ? vault.format(vault.getBalance(player))
+                : "§cNo economy provider";
+        player.sendMessage("§7Balance: §6" + balDisplay);
         for (int i = 0; i < available.size(); i++) {
             MarketEntry entry = available.get(i);
             int price = getPrice(entry.material());
             player.sendMessage("§e[" + (i + 1) + "] §f"
-                    + formatMat(entry.material()) + " §7— §d" + price + " shards");
+                    + formatMat(entry.material()) + " §7— §6" + vault.format(price));
         }
         player.sendMessage("§7Type §e/vebuy <number> §7to purchase.");
     }
@@ -170,17 +197,54 @@ public class DynamicMarketManager implements Listener {
         MarketEntry entry = available.get(index - 1);
         int price = getPrice(entry.material());
 
-        CurrencyManager cm = plugin.getCurrencyManager();
-        if (!cm.hasShards(player, price)) {
-            player.sendMessage("§cNot enough shards. Need §d" + price + "§c, have §d" + cm.getBalance(player) + "§c.");
+        VaultHook vault = plugin.getVaultHook();
+        if (!vault.isEnabled()) {
+            player.sendMessage("§cMarket unavailable — no economy provider configured.");
             return;
         }
-        cm.spendShards(player, price);
+        if (!vault.has(player, price)) {
+            player.sendMessage("§cNot enough " + vault.currencyNamePlural()
+                    + "§c. Need §6" + vault.format(price)
+                    + "§c, have §6" + vault.format(vault.getBalance(player)) + "§c.");
+            return;
+        }
+        vault.withdraw(player, price);
         Map<Integer, org.bukkit.inventory.ItemStack> overflow =
                 player.getInventory().addItem(new org.bukkit.inventory.ItemStack(entry.material()));
         overflow.values().forEach(i -> player.getWorld().dropItemNaturally(player.getLocation(), i));
         player.sendMessage("§aPurchased §f" + formatMat(entry.material())
-                + " §afor §d" + price + " shards§a. Remaining: §d" + cm.getBalance(player));
+                + " §afor §6" + vault.format(price)
+                + "§a. Remaining: §6" + vault.format(vault.getBalance(player)));
+    }
+
+    // -------------------------------------------------------------------------
+    // /vebuy command
+    // -------------------------------------------------------------------------
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cPlayer only.");
+            return true;
+        }
+        if (args.length < 1) {
+            player.sendMessage("§7Usage: /vebuy <number>");
+            return true;
+        }
+        String marketType = lastMarketType.get(player.getUniqueId());
+        if (marketType == null) {
+            player.sendMessage("§cYou have not visited a market recently.");
+            return true;
+        }
+        int index;
+        try {
+            index = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            player.sendMessage("§cPlease enter a number.");
+            return true;
+        }
+        processBuy(player, index, marketType);
+        return true;
     }
 
     // -------------------------------------------------------------------------

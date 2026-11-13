@@ -24,6 +24,10 @@
             <groupId>com.vestigium</groupId>
             <artifactId>VestigiumLib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

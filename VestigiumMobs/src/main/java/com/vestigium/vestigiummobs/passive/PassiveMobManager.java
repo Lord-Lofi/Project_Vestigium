@@ -40,6 +40,7 @@ public class PassiveMobManager implements Listener {
     private static final long SEASON_TICK_INTERVAL = 6_000L;
 
     private final VestigiumMobs plugin;
+    private BukkitRunnable seasonTask;
 
     public PassiveMobManager(VestigiumMobs plugin) {
         this.plugin = plugin;
@@ -117,8 +118,12 @@ public class PassiveMobManager implements Listener {
     // Seasonal refresh task — re-checks world season and updates existing mobs
     // -------------------------------------------------------------------------
 
+    public void shutdown() {
+        if (seasonTask != null) seasonTask.cancel();
+    }
+
     private void startSeasonalBehaviorTask() {
-        new BukkitRunnable() {
+        seasonTask = new BukkitRunnable() {
             @Override
             public void run() {
                 Season season = VestigiumLib.getSeasonAPI().getCurrentSeason();
@@ -128,13 +133,13 @@ public class PassiveMobManager implements Listener {
                         String role = wolf.getPersistentDataContainer()
                                 .get(PACK_ROLE_KEY, PersistentDataType.STRING);
                         if ("alpha".equals(role) && season == Season.WINTER) {
-                            // Alphas retain full speed in winter — remove any slow
                             wolf.getPersistentDataContainer().remove(SEASONAL_BUFF_KEY);
                         }
                     });
                 });
             }
-        }.runTaskTimer(plugin, SEASON_TICK_INTERVAL, SEASON_TICK_INTERVAL);
+        };
+        seasonTask.runTaskTimer(plugin, SEASON_TICK_INTERVAL, SEASON_TICK_INTERVAL);
     }
 
     // -------------------------------------------------------------------------

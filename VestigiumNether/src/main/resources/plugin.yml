@@ -7,3 +7,21 @@ authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+commands:
+  vnnether:
+    description: VestigiumNether administrative commands
+    usage: /vnnether terminal <set|remove|list>
+    permission: vestigium.nether.admin
+    permission-message: §cYou do not have permission to use this command.
+
+  vnroad:
+    description: Soul Road Navigation — register destinations and track player progress
+    usage: /vnroad <add <id> [display] | remove <id> | list | progress [player]>
+    permission: vestigium.nether.admin
+    permission-message: §cYou do not have permission to manage soul road destinations.
+
+permissions:
+  vestigium.nether.admin:
+    description: Administrative access to VestigiumNether systems
+    default: op

@@ -16,6 +16,7 @@ public record QuestDefinition(
         int maxOmen,
         String season,
         boolean repeatable,
+        String prerequisite,
         QuestRewards rewards
 ) {
     public static QuestDefinition fromConfig(YamlConfiguration cfg) {
@@ -45,6 +46,7 @@ public record QuestDefinition(
                 cfg.getInt("max_omen", 9999),
                 cfg.getString("season", ""),
                 cfg.getBoolean("repeatable", false),
+                cfg.getString("prerequisite", ""),
                 rewards
         );
     }

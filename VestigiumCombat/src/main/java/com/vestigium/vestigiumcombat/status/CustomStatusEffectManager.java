@@ -52,6 +52,7 @@ public class CustomStatusEffectManager implements Listener {
     private static final long TICK_INTERVAL = 40L;
 
     private final VestigiumCombat plugin;
+    private BukkitRunnable tickTask;
 
     public CustomStatusEffectManager(VestigiumCombat plugin) {
         this.plugin = plugin;
@@ -60,15 +61,20 @@ public class CustomStatusEffectManager implements Listener {
     public void init() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-        new BukkitRunnable() {
+        tickTask = new BukkitRunnable() {
             @Override public void run() {
                 long now = System.currentTimeMillis();
                 plugin.getServer().getWorlds().forEach(world ->
                         world.getLivingEntities().forEach(e -> tickEffects(e, now)));
             }
-        }.runTaskTimer(plugin, TICK_INTERVAL, TICK_INTERVAL);
+        };
+        tickTask.runTaskTimer(plugin, TICK_INTERVAL, TICK_INTERVAL);
 
         plugin.getLogger().info("[CustomStatusEffectManager] Initialized.");
+    }
+
+    public void shutdown() {
+        if (tickTask != null) tickTask.cancel();
     }
 
     // -------------------------------------------------------------------------

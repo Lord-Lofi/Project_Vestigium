@@ -2,10 +2,18 @@ package com.vestigium.vestigiumplayer.stats;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.event.CataclysmEndEvent;
+import com.vestigium.lib.event.LoreFragmentGrantedEvent;
 import com.vestigium.lib.event.WorldBossSpawnEvent;
+import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumplayer.VestigiumPlayer;
 import com.vestigium.vestigiumplayer.data.PlayerDataStore;
+import com.vestigium.vestigiumplayer.notoriety.NotorietyManager;
+import com.vestigium.vestigiumplayer.title.TitleManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Warden;
 import org.bukkit.event.EventHandler;
@@ -27,7 +35,7 @@ import java.util.*;
  *   Lore fragment gained — WorldBossSpawnEvent NOT used; QuestTracker's fragment reward path
  *                          We hook via LoreRegistry method (polled on join against PDC count)
  */
-public class PlayerStatTracker implements Listener {
+public class PlayerStatTracker implements Listener, CommandExecutor {
 
     private static final NamespacedKey STRUCTURE_ID_KEY =
             new NamespacedKey("vestigium", "structure_id");
@@ -65,7 +73,65 @@ public class PlayerStatTracker implements Listener {
             plugin.getTitleManager().checkAllOnline();
         });
 
+        VestigiumLib.getEventBus().subscribe(LoreFragmentGrantedEvent.class, event -> {
+            Player p = plugin.getServer().getPlayer(event.getPlayerUUID());
+            if (p == null) return;
+            dataStore.addInt(p, PlayerDataStore.KEY_LORE_FRAGS, 1);
+            plugin.getTitleManager().checkTitles(p);
+        });
+
+
+        plugin.getCommand("vpstats").setExecutor(this);
         plugin.getLogger().info("[PlayerStatTracker] Initialized.");
+    }
+
+    // -------------------------------------------------------------------------
+    // /vpstats command
+    // -------------------------------------------------------------------------
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        Player target;
+        if (args.length >= 1 && sender.hasPermission("vestigium.stats.admin")) {
+            target = plugin.getServer().getPlayer(args[0]);
+            if (target == null) { sender.sendMessage("§cPlayer not found: " + args[0]); return true; }
+        } else if (sender instanceof Player p) {
+            target = p;
+        } else {
+            sender.sendMessage("§cUsage: /vpstats [player]"); return true;
+        }
+
+        long minutes  = target.getPersistentDataContainer()
+                .getOrDefault(PlayerDataStore.KEY_PLAYTIME, PersistentDataType.LONG, 0L);
+        int structures = dataStore.getInt(target, PlayerDataStore.KEY_STRUCTURES);
+        int cataclysms = dataStore.getInt(target, PlayerDataStore.KEY_CATACLYSMS);
+        int bossKills  = dataStore.getInt(target, PlayerDataStore.KEY_BOSS_KILLS);
+        int loreFrags  = dataStore.getInt(target, PlayerDataStore.KEY_LORE_FRAGS);
+        int notoriety  = dataStore.getInt(target, PlayerDataStore.KEY_NOTORIETY);
+
+        String titleKey = dataStore.getActiveTitle(target);
+        String titleDisplay = TitleManager.getAllTitles().stream()
+                .filter(t -> t.key().equals(titleKey))
+                .map(t -> t.display())
+                .findFirst().orElse(titleKey.isBlank() ? "§7None" : titleKey);
+
+        NotorietyManager.Level level = NotorietyManager.Level.of(notoriety);
+
+        String header = "§8§m          §r §e" + target.getName() + "'s Stats §8§m          ";
+        sender.sendMessage(header);
+        sender.sendMessage("§7Playtime:      §f" + formatTime(minutes));
+        sender.sendMessage("§7Title:         §f" + titleDisplay);
+        sender.sendMessage("§7Structures:    §f" + structures + " §7discovered");
+        sender.sendMessage("§7Cataclysms:    §f" + cataclysms + " §7survived");
+        sender.sendMessage("§7Named Wardens: §f" + bossKills   + " §7slain");
+        sender.sendMessage("§7Lore Fragments:§f" + loreFrags);
+        sender.sendMessage("§7Notoriety:     " + level.display + " §7(" + notoriety + "/200)");
+        return true;
+    }
+
+    private String formatTime(long minutes) {
+        if (minutes < 60) return minutes + "m";
+        return (minutes / 60) + "h " + (minutes % 60) + "m";
     }
 
     // -------------------------------------------------------------------------
@@ -76,8 +142,7 @@ public class PlayerStatTracker implements Listener {
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
 
         Player player = event.getPlayer();
-        var pdc = event.getTo().getBlock().getRelative(0, -1, 0).getPersistentDataContainer();
-        String structureId = pdc.get(STRUCTURE_ID_KEY, PersistentDataType.STRING);
+        String structureId = BlockStructureTag.get(event.getTo().getBlock().getRelative(0, -1, 0));
         if (structureId == null) return;
 
         NamespacedKey seen = new NamespacedKey("vestigium", "vp_seen_" + structureId);

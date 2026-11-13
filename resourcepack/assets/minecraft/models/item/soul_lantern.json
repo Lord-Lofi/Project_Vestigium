@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/soul_lantern",
+  "overrides": [
+    { "predicate": { "custom_model_data": 80005 }, "model": "vestigium:item/ritual_soul_lantern" }
+  ]
+}

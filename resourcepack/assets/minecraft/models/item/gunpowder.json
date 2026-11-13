@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/gunpowder"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 70004 }, "model": "vestigium:item/rune_thunder" }
+  ]
+}

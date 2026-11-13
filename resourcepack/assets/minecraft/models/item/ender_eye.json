@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/ender_eye"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 10003 }, "model": "vestigium:item/wayfarer_orb" }
+  ]
+}

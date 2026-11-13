@@ -3,6 +3,7 @@ package com.vestigium.vestigiummagic.artifact;
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.model.ParticlePriority;
 import com.vestigium.vestigiummagic.VestigiumMagic;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -54,16 +55,30 @@ public class ArtifactManager implements Listener, CommandExecutor {
             new NamespacedKey("vestigium", "artifact_type");
 
     private static final List<ArtifactDef> ARTIFACTS = List.of(
-            new ArtifactDef("SOUL_MIRROR",    Material.GLASS,          "§fSoul Mirror",
-                    "§7Reflects the truth of what stands before you.", 0),
-            new ArtifactDef("HOLLOW_CROWN",   Material.GOLDEN_HELMET,  "§6Hollow Crown",
-                    "§7Power has a price. You feel it immediately.", 60_000),
-            new ArtifactDef("WAYFARER_ORB",   Material.ENDER_EYE,      "§aWayfarer's Orb",
-                    "§7The road remembers where it has been.", 120_000),
-            new ArtifactDef("ANTECEDENT_KEY", Material.TRIAL_KEY,      "§dAntecedent Key",
-                    "§7Some locks were meant to be found, not forced.", 0),
-            new ArtifactDef("TIDAL_LENS",     Material.SPYGLASS,       "§3Tidal Lens",
-                    "§7The deep has a shape. This shows you its edges.", 90_000)
+            new ArtifactDef("SOUL_MIRROR", Material.GLASS, "§fSoul Mirror",
+                    List.of("§7Reflects the truth of what stands before you.",
+                            "§8Right-click: read the nearest entity's health.",
+                            "§8Passive: +1 armor while sculk is within 8 blocks."), 0, 10001),
+            new ArtifactDef("HOLLOW_CROWN", Material.GOLDEN_HELMET, "§6Hollow Crown",
+                    List.of("§7Power has a price. You feel it immediately.",
+                            "§8Right-click: 2 seconds of Resistance V.",
+                            "§8Passive: Night Vision while omen exceeds 400.",
+                            "§860 second cooldown."), 60_000, 10002),
+            new ArtifactDef("WAYFARER_ORB", Material.ENDER_EYE, "§aWayfarer's Orb",
+                    List.of("§7The road remembers where it has been.",
+                            "§8Right-click: pulse reveals the nearest structure anchor.",
+                            "§8Glowing particles mark it for 30 seconds.",
+                            "§8120 second cooldown."), 120_000, 10003),
+            new ArtifactDef("ANTECEDENT_KEY", Material.TRIAL_KEY, "§dAntecedent Key",
+                    List.of("§7Some locks were meant to be found, not forced.",
+                            "§8Right-click near any lectern or archive:",
+                            "§8unlocks the antecedent cipher fragment.",
+                            "§8Usable once — the key remembers."), 0, 10004),
+            new ArtifactDef("TIDAL_LENS", Material.SPYGLASS, "§3Tidal Lens",
+                    List.of("§7The deep has a shape. This shows you its edges.",
+                            "§8Right-click: cast Deep Reveal.",
+                            "§8Marks nearby underwater structures with particles.",
+                            "§890 second cooldown."), 90_000, 10005)
     );
 
     private final VestigiumMagic plugin;
@@ -93,7 +108,8 @@ public class ArtifactManager implements Listener, CommandExecutor {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
         meta.setDisplayName(def.displayName());
-        meta.setLore(List.of(def.lore()));
+        meta.setLore(def.lore());
+        meta.setCustomModelData(def.customModelData());
         meta.getPersistentDataContainer()
                 .set(ARTIFACT_KEY, PersistentDataType.STRING, type);
         item.setItemMeta(meta);
@@ -180,7 +196,7 @@ public class ArtifactManager implements Listener, CommandExecutor {
             case "TIDAL_LENS" -> {
                 setCooldown(player, type, def.cooldownMs());
                 // Delegate to spell caster REVEAL effect
-                plugin.getSpellCaster().getSpellRegistry()
+                plugin.getSpellRegistry()
                         .getById("deep_reveal")
                         .ifPresent(spell -> plugin.getSpellCaster().tryCast(player, spell));
             }
@@ -196,7 +212,7 @@ public class ArtifactManager implements Listener, CommandExecutor {
         if (!sender.hasPermission("vestigium.artifact.admin")) {
             sender.sendMessage("§cNo permission."); return true;
         }
-        if (args.length < 2 || !args[0].equalsIgnoreCase("give")) {
+        if (args.length < 3 || !args[0].equalsIgnoreCase("give")) {
             sender.sendMessage("§7Usage: /vartifact give <player> <type>"); return true;
         }
         Player target = plugin.getServer().getPlayer(args[1]);
@@ -225,5 +241,5 @@ public class ArtifactManager implements Listener, CommandExecutor {
     }
 
     private record ArtifactDef(String type, Material material, String displayName,
-                                String lore, long cooldownMs) {}
+                                List<String> lore, long cooldownMs, int customModelData) {}
 }

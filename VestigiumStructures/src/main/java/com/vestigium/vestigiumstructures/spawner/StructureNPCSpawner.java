@@ -1,6 +1,7 @@
 package com.vestigium.vestigiumstructures.spawner;
 
 import com.vestigium.lib.VestigiumLib;
+import com.vestigium.lib.util.BlockStructureTag;
 import com.vestigium.vestigiumstructures.VestigiumStructures;
 import com.vestigium.vestigiumstructures.registry.StructureDefinition;
 import org.bukkit.Location;
@@ -63,8 +64,7 @@ public class StructureNPCSpawner implements Listener {
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
 
         Block underFoot = event.getTo().getBlock().getRelative(0, -1, 0);
-        String structureId = underFoot.getPersistentDataContainer()
-                .get(STRUCTURE_ID_KEY, PersistentDataType.STRING);
+        String structureId = BlockStructureTag.get(underFoot);
         if (structureId == null) return;
 
         var player = event.getPlayer();

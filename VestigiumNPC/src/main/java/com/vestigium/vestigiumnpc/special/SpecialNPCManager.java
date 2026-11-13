@@ -152,14 +152,17 @@ public class SpecialNPCManager implements Listener {
 
         activeFerrymen.add(ferryman.getUniqueId());
 
-        // Despawn if player recovers (checked every 5 seconds)
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if (!ferryman.isValid()) return;
-            if (player.getHealth() > FERRYMAN_HEALTH_THRESHOLD + 4) {
-                ferryman.remove();
-                activeFerrymen.remove(ferryman.getUniqueId());
+        // Despawn if player recovers (checked every 5 seconds); task self-cancels
+        new BukkitRunnable() {
+            @Override public void run() {
+                if (!ferryman.isValid()) { cancel(); return; }
+                if (player.getHealth() > FERRYMAN_HEALTH_THRESHOLD + 4) {
+                    ferryman.remove();
+                    activeFerrymen.remove(ferryman.getUniqueId());
+                    cancel();
+                }
             }
-        }, 100L, 100L);
+        }.runTaskTimer(plugin, 100L, 100L);
     }
 
     private boolean hasFerrymanNearby(Player player) {
@@ -186,8 +189,9 @@ public class SpecialNPCManager implements Listener {
                 20 + ThreadLocalRandom.current().nextInt(30));
 
         Villager wanderer = (Villager) near.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
-        wanderer.setCustomName("???");
-        wanderer.setCustomNameVisible(false); // name only shows when very close
+        // Name is "Pale Wanderer" (not shown in-game) so OptiFine CEM can key on it.
+        wanderer.setCustomName("Pale Wanderer");
+        wanderer.setCustomNameVisible(false);
         wanderer.setAI(true);
         wanderer.setInvulnerable(true); // never takes damage — always leads, never fights
         wanderer.getPersistentDataContainer()

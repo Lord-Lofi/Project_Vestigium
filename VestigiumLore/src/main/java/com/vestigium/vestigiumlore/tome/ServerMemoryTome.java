@@ -2,6 +2,12 @@ package com.vestigium.vestigiumlore.tome;
 
 import com.vestigium.lib.VestigiumLib;
 import com.vestigium.lib.api.OmenAPI;
+import com.vestigium.lib.event.CataclysmEndEvent;
+import com.vestigium.lib.event.CataclysmStartEvent;
+import com.vestigium.lib.event.LoreFragmentGrantedEvent;
+import com.vestigium.lib.event.OmenThresholdEvent;
+import com.vestigium.lib.event.SeasonChangeEvent;
+import com.vestigium.lib.event.WorldBossSpawnEvent;
 import com.vestigium.lib.model.Season;
 import com.vestigium.vestigiumlore.VestigiumLore;
 import org.bukkit.Material;
@@ -52,6 +58,22 @@ public class ServerMemoryTome implements CommandExecutor {
     public void init() {
         logFile = new File(plugin.getDataFolder(), "memory_log.yml");
         loadLog();
+
+        var bus = VestigiumLib.getEventBus();
+        bus.subscribe(CataclysmStartEvent.class,
+                e -> logEvent("A " + friendlyType(e.getCataclysmType()) + " cataclysm has begun."));
+        bus.subscribe(CataclysmEndEvent.class,
+                e -> logEvent(friendlyType(e.getCataclysmType()) + " ended"
+                        + (e.isPlayerResolved() ? " — stopped by the players." : " — ran its course.")));
+        bus.subscribe(LoreFragmentGrantedEvent.class,
+                e -> logEvent("A lore fragment was uncovered: §o" + e.getFragmentId() + "§r."));
+        bus.subscribe(OmenThresholdEvent.class, e -> {
+            if (e.isAscending()) logEvent("Omen crossed " + e.getThreshold() + " — " + omenLabel(e.getThreshold()) + ".");
+        });
+        bus.subscribe(SeasonChangeEvent.class,
+                e -> logEvent("The season turned to " + capitalize(e.getNewSeason().name()) + "."));
+        bus.subscribe(WorldBossSpawnEvent.class,
+                e -> logEvent("A world boss emerged: §o" + friendlyType(e.getBossType()) + "§r."));
 
         var cmd = plugin.getCommand("vctome");
         if (cmd != null) cmd.setExecutor(this);
@@ -143,11 +165,11 @@ public class ServerMemoryTome implements CommandExecutor {
     private String buildFactionPage() {
         StringBuilder sb = new StringBuilder("§0=== Faction Pulse ===\n\n");
         for (com.vestigium.lib.model.Faction faction : com.vestigium.lib.model.Faction.values()) {
-            var state = VestigiumLib.getFactionRegistry().getFactionState(faction);
+            var state = VestigiumLib.getFactionRegistry().getFactionState(faction.getKey());
             String status = state.isCollapsed() ? "§4COLLAPSED" :
                             state.canExpand()   ? "§2EXPANDING" : "§1stable";
             sb.append("§0").append(capitalize(faction.getKey())).append(": ")
-              .append(status).append(" (").append(state.health()).append(")\n");
+              .append(status).append(" (").append(state.getHealth()).append(")\n");
         }
         return sb.toString();
     }
@@ -205,11 +227,24 @@ public class ServerMemoryTome implements CommandExecutor {
                       score >= 600 ? "SEVERE"   :
                       score >= 400 ? "HIGH"      :
                       score >= 200 ? "ELEVATED"  : "LOW";
-        return new OomenData(score, tier, false);
+        boolean ascending = VestigiumLib.getOmenAPI().isAscending();
+        return new OomenData(score, tier, ascending);
     }
 
     private static String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
+    }
+
+    private static String friendlyType(String type) {
+        return type == null ? "unknown" : type.replace('_', ' ').toLowerCase();
+    }
+
+    private static String omenLabel(int threshold) {
+        if (threshold >= 1000) return "the world trembles";
+        if (threshold >= 800)  return "forces gather";
+        if (threshold >= 600)  return "the veil weakens";
+        if (threshold >= 400)  return "unrest spreads";
+        return "tension rises";
     }
 }

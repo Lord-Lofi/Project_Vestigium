@@ -1,0 +1,18 @@
+# VestigiumLib Configuration
+
+# OmenAPI settings
+omen:
+  # Starting omen level (0-100). Higher values increase cataclysm frequency.
+  initial: 0
+  # Omen decays by this amount per real-world hour of player activity
+  decay-per-hour: 2
+
+# SeasonAPI settings
+season:
+  # Length of each season in in-game days (default 30 = ~10 real hours at normal day cycle)
+  days-per-season: 30
+
+# ProtectionAPI settings
+protection:
+  # Whether to treat unclaimed wilderness as always modifiable by Vestigium systems
+  allow-wilderness-modification: true

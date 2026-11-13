@@ -2,8 +2,86 @@ name: VestigiumPlayer
 version: '${project.version}'
 main: com.vestigium.vestigiumplayer.VestigiumPlayer
 api-version: '1.21'
-description: Achievement tree, fog of war, reputation titles, notoriety, utility items
+description: Player progression, stat tracking, and unlockable titles
 authors: [ Lord-Lofi ]
 load: POSTWORLD
 depend:
   - VestigiumLib
+
+commands:
+  vpstats:
+    description: View your player stats summary
+    usage: /vpstats [player]
+    permission: vestigium.stats
+    permission-message: §cYou do not have permission to view stats.
+  vptitle:
+    description: View and set your Vestigium title
+    usage: /vptitle [list | set <title>]
+    permission: vestigium.title.use
+    permission-message: §cYou do not have permission to use titles.
+  vpnotoriety:
+    description: Check or manage notoriety
+    usage: /vpnotoriety [check|clear|add] [player] [amount]
+    permission: vestigium.notoriety.use
+    permission-message: §cYou do not have permission to use this command.
+  vpitem:
+    description: Give utility items to yourself or another player
+    usage: /vpitem give <item> [player]
+    permission: vestigium.item.admin
+    permission-message: §cYou do not have permission to give utility items.
+  vpachievements:
+    description: View unlocked achievements and their details
+    usage: /vpachievements [list | info <key>]
+    permission: vestigium.achievements.use
+    permission-message: §cYou do not have permission to view achievements.
+  vplegacy:
+    description: View all server-first legacy achievement records
+    usage: /vplegacy
+    permission: vestigium.use
+    permission-message: §cYou do not have permission.
+  vpheraldry:
+    description: Design your personal heraldry sigil or get a heraldry banner
+    usage: /vpheraldry [banner]
+    permission: vestigium.use
+    permission-message: §cYou do not have permission.
+
+permissions:
+  vestigium.stats:
+    description: View your own stat summary
+    default: true
+
+  vestigium.stats.admin:
+    description: View another player's stat summary
+    default: op
+
+  vestigium.title.use:
+    description: View and equip unlocked titles
+    default: true
+
+  vestigium.title.admin:
+    description: Grant titles to other players
+    default: op
+
+  vestigium.notoriety.use:
+    description: Check your own notoriety score
+    default: true
+
+  vestigium.notoriety.admin:
+    description: Check, clear, and modify any player's notoriety
+    default: op
+
+  vestigium.item.admin:
+    description: Give utility items to players
+    default: op
+
+  vestigium.achievements.use:
+    description: View your own achievement progress
+    default: true
+
+  vestigium.achievements.admin:
+    description: Grant achievements to other players
+    default: op
+
+  vestigium.epitaph.admin:
+    description: Remove any player's epitaph gravestone
+    default: op

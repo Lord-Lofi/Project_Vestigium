@@ -30,11 +30,15 @@ public class VestigiumMagic extends JavaPlugin {
         spellCaster.init();
         artifactManager.init();
 
+        var vmana = getCommand("vmana");
+        if (vmana != null) vmana.setExecutor(spellCaster);
+
         getLogger().info("VestigiumMagic enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (spellCaster != null) spellCaster.shutdown();
         getLogger().info("VestigiumMagic disabled.");
     }
 
