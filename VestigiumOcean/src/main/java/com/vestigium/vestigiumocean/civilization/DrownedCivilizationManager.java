@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.*;
-import org.bukkit.inventory.merchant.MerchantRecipe;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -155,7 +154,7 @@ public class DrownedCivilizationManager implements Listener, CommandExecutor, Ta
                 if (unlocked) {
                     VestigiumLib.getLoreRegistry().grantFragment(player.getUniqueId(), fragmentId);
                     player.sendMessage("§d§l" + site.displayName() + " §r§8— §7The seam yields. You were expected.");
-                    player.playSound(player.getLocation(), Sound.BLOCK_CONDUIT_ATTACK_DAMAGE, 0.8f, 0.6f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_CONDUIT_ATTACK_TARGET, 0.8f, 0.6f);
                     spawnDiscoveryParticles(player, site.center(), Particle.END_ROD, 60, 6.0);
                 } else if (!hasVisited(player, site.id())) {
                     markVisited(player, site.id());
@@ -258,7 +257,7 @@ public class DrownedCivilizationManager implements Listener, CommandExecutor, Ta
         MerchantRecipe r1 = new MerchantRecipe(new ItemStack(Material.DRIED_KELP_BLOCK), 64);
         r1.addIngredient(new ItemStack(Material.KELP, 9));
         r1.setMaxUses(32);
-        r1.setHasExperienceReward(false);
+        r1.setExperienceReward(false);
         recipes.add(r1);
 
         // prismarine shard + emerald → nautilus shell
@@ -266,7 +265,7 @@ public class DrownedCivilizationManager implements Listener, CommandExecutor, Ta
         r2.addIngredient(new ItemStack(Material.PRISMARINE_SHARD, 8));
         r2.addIngredient(new ItemStack(Material.EMERALD, 2));
         r2.setMaxUses(16);
-        r2.setHasExperienceReward(false);
+        r2.setExperienceReward(false);
         recipes.add(r2);
 
         // prismarine crystals + emerald → sea lantern
@@ -274,7 +273,7 @@ public class DrownedCivilizationManager implements Listener, CommandExecutor, Ta
         r3.addIngredient(new ItemStack(Material.PRISMARINE_CRYSTALS, 4));
         r3.addIngredient(new ItemStack(Material.EMERALD, 1));
         r3.setMaxUses(32);
-        r3.setHasExperienceReward(false);
+        r3.setExperienceReward(false);
         recipes.add(r3);
 
         // rare: nautilus shells + emerald → conduit
@@ -282,7 +281,7 @@ public class DrownedCivilizationManager implements Listener, CommandExecutor, Ta
         r4.addIngredient(new ItemStack(Material.NAUTILUS_SHELL, 8));
         r4.addIngredient(new ItemStack(Material.EMERALD, 16));
         r4.setMaxUses(1);
-        r4.setHasExperienceReward(true);
+        r4.setExperienceReward(true);
         recipes.add(r4);
 
         merchant.setRecipes(recipes);
